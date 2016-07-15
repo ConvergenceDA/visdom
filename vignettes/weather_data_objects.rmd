@@ -1,0 +1,12 @@
+---
+title: "Working With Weather Data"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Working With Weather Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Examples illustrating how to gather and work with weather data.

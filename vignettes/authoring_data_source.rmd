@@ -1,0 +1,124 @@
+---
+title: "Authoring Data Sources"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Authoring Data Sources}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+#Implementing your own data source
+
+In VISDOM, a data source is an adapter between your customer and meter data and the internal data formats used by VISDOM functions. To use VISDOM with your own data, you will need to author a DataSource object that maps between the formatting of your data and the data structures used by VISDOM by implementing all the relevant functions stubbed out by `DataSource()` in `util-dataSource.R`. This is the key step and main pre-requsite for using VISDOM. You will typically need to set up data access (i.e. to a SQL database if applicable - see `util-dbUtil.R` - or figure out how you will be loading your data from disk or elsewhere), and write the code to perform the queries or other data access steps as appropriate to load, format, and return your data in the VISDOM standard format expected to come out of a data source. You can see the DataSource implemented for testing purposes in the file `testDataSource.R` in the R directory of the package.
+
+Setting the global varaible `DATA_SOURCE = YourDataSource()` configures your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE).
+
+See the entry for the data parameter in the help for MeterDataClass:
+
+```{r eval=F}
+library(visdom)
+?MeterDataClass
+```
+
+
+The MeterDataClass object also does the weather data alignment. It matches and interpolates available weather data (from DATA_SOURCE$getWeatherData() ) to the dates associated with the meter data from getAllData.
+
+##Data formats
+
+```{r}
+library(visdom)
+DATA_SOURCE = TestData(100)
+```
+
+1. Meter data for a single customer. Note that id (i.e. the VISDOM internal identifier for the meter), geocode, and dates (of type Date - without time) are required, as are 24 hourly or 96 15 minute meter observations per day. customerID (i.e. the owner of the meter) and other fields can be added, but are not required.
+
+```{r}
+custdata = DATA_SOURCE$getMeterData(id=1)
+head(custdata,2)
+dim(custdata)
+```
+
+2. Meter data from multiple customers.
+
+```{r}
+# this is all data for a given geocode (i.e. zip code)
+geosample = DATA_SOURCE$getAllData( geocode='94305' )
+head(geosample,2)
+dim(geosample)
+unique(geosample$id)
+```
+
+3. Weather data: dates (required of type POSIXct, with time at whatever intervals observations are available in, ideally with hourly or less intervals), temperaturef (required), pressure, hourlyprecip, dewpoint.
+
+```{r}
+weather = DATA_SOURCE$getWeatherData(geocode='94305')
+head(weather,2)
+dim(weather)
+```
+
+4. Misc capabilites
+
+```{r}
+DATA_SOURCE$getGeoForId('meter_1')
+class(DATA_SOURCE$getGeoForId('meter_1'))
+```
+
+```{r}
+length(DATA_SOURCE$getIds()) # all the meter ids tracked by the data source
+class(DATA_SOURCE$getIds())
+head(DATA_SOURCE$getIds())
+```
+
+##Testing your data source
+
+You can call `DATA_SOURCE$getMeterDataClass(id=123)` on your DataSource, replacing 123 with an appropriate id from your data set (i.e. using the provided default implementation of `getMeterDataClass()` and it will hit your data source for all relevant data and instantiate a MeterDataClass object with associated weather data and WeatherData class. Until that call succeeds, you will be getting errors that related to deficiencies in your DataSource, so it is a good guide to what else you need to implement.
+
+you can also exercise your data source with calls like these:
+
+```{r eval=F}
+library(visdom)
+
+DATA_SOURCE = YourDataSource()
+
+
+# if your data source in configured to access a database
+DATA_SOURCE$run.query('select count(*) from meter_15min_user')
+
+DATA_SOURCE$run.query('select distinct zip5 from weather')
+
+# most important functions:
+# -------------------------
+
+# primary geographic codes associated with meters,
+# typically a list of zip codes or census blocks
+geos = DATA_SOURCE$getGeocodes() # all geographic regions
+ids  = DATA_SOURCE$getIds()      # all known ids
+DATA_SOURCE$getIds(geos[1])      # all ids from the first geocoded location
+
+DATA_SOURCE$getAllData(geos[1])  # all meter data from the first geocoded region
+DATA_SOURCE$getGeoForId(ids[1])  # get the geo code for a specific meterId
+
+DATA_SOURCE$getMeterData(ids[1])       # returns meter data for a specific meterId
+md = DATA_SOURCE$getMeterDataClass(ids[1]) # returns a MeterDAtaClass object, with weather data, etc.
+
+DATA_SOURCE$getWeatherData(geos[1]) # data frame of tabular weather data for a geo location
+
+# these use DATA_SOURCE internally
+w = WeatherClass(geos[1],doMeans=F,useCache=F,doSG=F)
+md = MeterDataClass(ids[1],useCache=F)
+plot(md)
+
+# functions of secondary importance (you will likely know if you need these)
+# ---------------------------------
+DATA_SOURCE$getGeoCounts()
+# these can include census statistics and other suppliments to customer meter data
+DATA_SOURCE$getGeoMetaData(geos[1]) 
+
+# gas data is optional
+DATA_SOURCE$getAllGasData()
+DATA_SOURCE$getGasMeterData(geo=geos[1])
+DATA_SOURCE$getGasMeterData(id=ids[1])
+
+```

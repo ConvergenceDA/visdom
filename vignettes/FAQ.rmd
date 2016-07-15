@@ -1,0 +1,12 @@
+---
+title: "Frequently Asked Questions"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{FAQ}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This will be a document that grows with examples of how to resolve common issues or perform common tasks.

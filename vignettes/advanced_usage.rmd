@@ -1,0 +1,12 @@
+---
+title: "Advanced Usage"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Advanced Usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+TBD. This will contain examples of advanced usage options once the basic documentation is completed and stable.

@@ -1,0 +1,39 @@
+Package: visdom
+Type: Package
+Title: R package for energy data analytics
+Version: 0.9
+Date: 2015-09-18
+Authors@R: c(
+    person("Sam", "Borgeson", email = "samb@speakeasy.net", role = c("aut","cre")),
+    person("Jungsuk", "Kwac", email = "kwjusu1@gmail.com", role = "aut"))
+Depends:
+    R (>= 3.1.0)
+Imports:
+    akmeans (>= 1.1),
+    plyr,
+    lubridate,
+    timeDate,
+    cvTools,
+    sandwich,
+    lmtest,
+    AER,
+    RColorBrewer,
+    ggplot2,
+    solaR,
+    gridExtra,
+    digest
+Suggests:
+    RPostgreSQL,
+    RMySQL,
+    foreach,
+    doParallel,
+    foreign,
+    testthat,
+    knitr
+Description: R package for energy data analytics. VISDOM stands for Visialization
+    and Insight System for Demand Operations and Management.
+License: GPL-3
+LazyData: true
+LazyLoad: yes
+RoxygenNote: 5.0.1
+VignetteBuilder: knitr

@@ -1,0 +1,45 @@
+DP02 (social):
+fields = c('VC20','VC17','VC18','VC93','VC94','VC118','VC119')
+names = c('avg_hh_size','hh_under_18','hh_over_65','pop_past_highschool','pop_past_bachelors','res_same_1yr','res_diff_1yr')
+VC20,Average household size
+VC17,Households with one or more people under 18 years
+VC18,Households with one or more people 65 years and over
+VC93,Percent high school graduate or higher
+VC94,Percent bachelor's degree or higher
+RESIDENCE 1 YEAR AGO 	 	 	 
+VC118,Same house
+VC119,Different house in the U.S.
+
+DP03 (econ):
+fields = c('VC85','VC86','VC112','VC113','VC115','VC156')
+names = c('median_hh_income','mean_hh_income','median_fam_income','mean_fam_income','per_cap_income','pct_below_poverty')
+VC85,Median household income (dollars)
+VC86,Mean household income (dollars)
+VC112,Median family income (dollars)
+VC113,Mean family income (dollars)
+VC115,Per capita income (dollars)
+PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL	 	 	 	 
+VC156,All families
+
+DP04 (housing):
+fields = c('VC04','VC63','VC64','VC66','VC67','VC125')
+names = c('occupied_units','owner_occupied','renter_occupied','owner_hh_size','renter_hh_size','median_home_value')
+HOUSING TENURE	 	 	 	 
+VC04,Occupied housing units	 	 	 	 
+VC63,Owner-occupied	 	 	 	 
+VC64,Renter-occupied	 	 	 	  	 	 	 
+VC66,Average household size of owner-occupied unit	 	 	 	 
+VC67,Average household size of renter-occupied unit
+VALUE
+VC125,Median (dollars)
+
+DP05 (demographics):
+c('VC21','VC23','VC29','VC30','VC26','VC33','VC34')
+names=c('median_pop_age','pop_above_18','pop_above_18_M','pop_above_18_F','pop_above_65','pop_above_65_M','pop_above_65_F')
+VC21,Median age (years)
+VC23,18 years and over	 	 	 	 
+VC29,Male	 	 	 	 
+VC30,Female	 	 	 	 	 	 	 	 
+VC26,65 years and over	 	 	 	 
+VC33,Male	 	 	 	 
+VC34,Female

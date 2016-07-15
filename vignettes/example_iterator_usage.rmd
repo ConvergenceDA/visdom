@@ -1,0 +1,99 @@
+---
+title: "Working With Samples from Many Meters"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Woring With Samples from Many Meters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r eval=F}
+setwd( file.path('C:/dev/smart-meter-analytics/eneRgy/R') )
+
+source('testDataSource.R')
+source('iterator.R')
+
+
+DATA_SOURCE = TestData()
+
+# returns a list of customer ids associated with
+getMeterIds = function(zip) {
+  #return DATA_SOURCE$getSPs(zip)
+  return (paste('C', zip, 1:10))
+}
+
+getTestCustomer = function(id, ctx) {
+  return(paste('Customer[',id,']',sep=''))
+}
+
+getWeather = function(zip, ctx) {
+  return(paste('weather[',zip,']',sep=''))
+}
+
+iterateCustomers = function(custList,custFn,ctx,...) {
+  out = list()
+  i = 0
+  for (custId in custList) {
+    i = i + 1
+    print(paste('Loading customer',custId,ctx$zip))
+    #cust = MeterDataClass(custId,ctx$zip,useCache=T,doSG=F)
+    cust = getMeterDataClass(custId)
+    out[[i]] = custFn(cust,ctx,...)
+  }
+  return(out)
+}
+
+iterateZip = function(custFn,zipList,ctx=NULL,...) {
+  if(is.null(ctx)) { ctx = list() }
+  out = list()
+  for (z in zipList) {
+    ctx$zip = z
+    ctx$weather = getWeather(z)
+    #ctx$weather = DATA_SOURCE$getWeather(z)
+    #ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip)
+    out = c(out,iterateCustomers(getMeterIds(ctx$zip),custFn,ctx,...))
+  }
+  return(out)
+}
+
+callAllFromCtx = function(custId,ctx,...) {
+  out = list()
+  fnVector = ctx$fnVector
+  for(i in 1:length(fnVector)) {
+    f = fnVector[[i]]
+    out = c(out, f(custId,ctx,...))
+  }
+  return(out)
+}
+
+todf = function(objs) {
+  return(as.data.frame(do.call(rbind,objs)))
+}
+
+myFn = function(custId,ctx,foo,...) {
+  customer = getTestCustomer(custId)
+  return(list(cust=customer,zip=ctx$zip,weather=ctx$weather,a=ctx$a,foo=foo))
+}
+
+myFn2 = function(custId,ctx,foo,...) {
+  customer = getTestCustomer(custId)
+  return(list(cust2=customer,zip2=ctx$zip,weather2=ctx$weather,a2=ctx$a,foo2=foo))
+}
+
+rbind.scalars = function(a,b) {
+  # trim a down to scalars is.character, is.numeric
+  # trim b down to scalars
+}
+
+ctx=list(  a='hi',
+           fnVector = c(myFn, myFn2),
+           start.date = as.Date('2010-10-15'),
+           end.date   = as.Date('2011-10-15')  )
+
+aRunOut = iterator.iterateZip(callAllFromCtx,c('93304'),ctx=ctx,foo='bam!')
+iterator.todf( aRunOut )
+
+
+```

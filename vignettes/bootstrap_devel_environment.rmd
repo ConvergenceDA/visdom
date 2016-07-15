@@ -1,0 +1,76 @@
+---
+title: "Developing the VISDOM Module"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Developing VISDOM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+First ensure that you have cloned the repository into working version only your local machine, choosing one of:
+
+```{bash eval=F}
+cd /dev
+git clone git@github.com:sborgeson/visdom.git
+git clone https://github.com/sborgeson/visdom.git
+```
+
+Then using that location as as your working directory (here we assume `/dev/visdom`), load requirements for package development and install from source.
+
+#Load requirements
+
+```{r eval=F}
+setwd('/dev/visdom')
+
+install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
+```
+
+version check
+
+```{r eval=F}
+rstudioapi::isAvailable("0.99.149")
+```
+
+for some reason, withr (a devtools dependency) will not install for RRO 3.2.2 with message that there is no 3.2.2 version of withr
+this is probably an ephemeral issue, but install from source for now
+
+```{r eval=F}
+devtools::install_github("jimhester/withr")
+```
+
+install Wickham's latest/src devtool support. Note that devtools can't install itself on Windows (!!)
+https://github.com/hadley/devtools/issues/503 explains.
+
+```{r eval=F}
+devtools::install_github("hadley/devtools")
+```
+
+#Install VISDOM as a local package from your source
+
+Ensure that your getwd() is the vsidom source dir and then call:
+
+```{r eval=F}
+devtools::document()
+devtools::build_vignettes()
+?visdom
+?MeterDataClass
+?WeatherDataClass
+
+```
+
+Followed by installing hte package from source, which should resolve and install all the package dependencies,
+with some exceptions, like for HDF5 support.
+
+```{r eval=F}
+devtools::install(build_vignettes = T)
+```
+
+
+Test your install with a fresh R session:
+```{r eval=F}
+library(visdom)
+?visdom
+browseVignettes(package='visdom')
+```

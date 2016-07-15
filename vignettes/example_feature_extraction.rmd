@@ -1,0 +1,216 @@
+---
+title: "Feature Extraction Usage"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Feature Extraction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+#Running feature extraction using VISDOM
+
+##Load the module
+
+Load VISDOM (which loads its dependencies) and any supporting libraries your custom feature extraction code will require.
+```{r}
+library(visdom)
+library(plyr)
+```
+
+##Load your custom data source
+
+To use VISDOM, you must have a DataSource implementation that maps your source data to the VISDOM cannonical data formats for meter data, meter ids, weather data, etc. You configure VISDOM to use your DataSource by assigning the global variable DATA_SOURCE as an instance of it. For this example we are using the `TestData()` data source, defined in `testDataSource.R` that conforms to the data source interface requirements, but generates loosely structured synthetic data (with coarse diurnal and seasonal changes).
+
+
+```{r}
+DATA_SOURCE = TestData(n=100) # Use random/fake test data for analysis
+```
+
+## Implement feature extraction methods
+
+Next you must provide implementation of your feature extraction algorithms. First, we wrap the return values of the VISDOM internal function `basicFeatures()` with a named list, the required output format of any feature function. Basic features include max/min/mean, range, variance, hour-of-day, peak timing, and other basic statistical extracts from the passed meter data `meterData`. Note that it relies on the presence of weather data in the meter data object.
+
+```{r}
+basicFeaturesfn = function(meterData,ctx,...) {
+  return( as.list(basicFeatures(meterData)) )
+}
+```
+
+Here are some other examples of meter data feature functions. The first simply returns the zip code of the meter. The second calculates the mean of the daily peak hour of day by gaining a reference to the kWMat 24 (or 96) x N matrix of meter observations, where N is the number of days covered by each meter's data, calculating the maximum column for each day and averaging that value across all days.
+
+```{r}
+custZipfn = function(meterData,ctx,...) {
+  return( list(zip5=meterData$zipcode) )
+}
+
+peakHOD = function(meterData,ctx,...) {
+  peakHOD = max.col( as.matrix(meterData$kwMat) )
+  return( list( meanPeakHOD = mean(peakHOD)) )
+}
+```
+
+###Regression support
+
+Next we do some configuration for regression-based features. First we instantiate a model descriptor with a call to a descriptor generator function that  dynamically generates a feature descriptor for a single thermal change point model. The key is the `toutDailyCPGenerator` function found in `R/util-regression.R`. The implementation of DescriptorGenerator is also found in the same file.
+
+```{r}
+dailyCP = DescriptorGenerator(  name='tout1CP',
+                                genImpl=toutDailyCPGenerator,
+                                subset=list(all="TRUE"),
+                                cvReps=8) # 1 CP
+```
+
+The actual feature funciton calls `run()` in the generated descriptor, here called `dailyCP` to run the specified regression model, with optional cross-validation, etc. as specified in the call to DescriptorGenerator. The model parameters of interest are stored in the object returned by `run` under `other` values. We return these with the prefix `dailyCP_`, to distinguish them from any other model outputs we might generate from other models in the same feature run.
+
+```{r}
+regressionFeaturesfn = function(cust,ctx,...) { # for future results
+  result = dailyCP$run(cust,as.daily.df(cust))
+  out = as.list(t(result$other))
+  names(out) = fixNames(rownames(result$other),prefix='dailyCP_')
+  return( out )
+}
+```
+
+Weather features can be calculated from the WeatherClass data
+
+```{r}
+weatherFeaturesfn = function(cust,ctx,...) {
+  if( is.null( ctx$weatherFeatures ) ) {
+    ctx$weatherFeatures = list()
+  }
+  wf = ctx$weatherFeatures[[cust$weather$geocode]]
+  if( is.null( wf ) ) {
+    wf = as.list(weatherFeatures(cust$weather))
+    wf$zip5 <- NULL # remove the zip code, which we already have
+    ctx$weatherFeatures[[cust$weather$geocode]] = wf
+    print('computed weather features')
+  } else {
+    print('weather features found in ctx')
+  }
+  return(wf)
+}
+```
+
+##Configure runtime context
+
+Now we turn our attention to configuring the context object that will configure the feature run and store its results. The key parameters are:
+
+1. `fnVector`, a list of all feature functions that will be invoked on each meter Note that these reference the functions just defined above.
+2. `start.date`  and `end.date` can be used by the underlying data source to filter meter data to fall within prescribed time periods.
+3. `a` is an example of an arbitrary parameter that can be accessed by a custom function of your own devising. Each feature function call is passed the context as well, so you can make use of anything found within the context (i.e. placed there by you during this configuration stage) in your own functions.
+
+Note that the context, here called `ctx`, is implemented as a new environment `new.env()`, which allows values to be set dynamically into the context during code execution. In technical terms, standard R lists are not mutable - a new copy is created for every modification. In other words, they are passed around by making copies of their values and changes functions make to them are not accessible to code that maintains a reference to the original. References to environments, on the other hand, do provide access to any changes made to the referenced environment.
+
+```{r}
+ctx=new.env()
+ctx$a='hi'
+ctx$fnVector = c(custZipfn,basicFeaturesfn,regressionFeaturesfn,weatherFeaturesfn,peakHOD)
+ctx$start.date = as.Date('2010-10-15')
+ctx$end.date   = as.Date('2011-10-15')
+```
+
+##Running the feature extraction itself
+
+The business end of feature extraction is the call to an interator method that is passed meter ids and rules for calling feature function on meter data objects created using the passed data. This single line, runs features on every customer in the list of ids (including all of them) by using the id's to instantiate `CustomerData` objects via the `DATA_SOURCE`. This can be called during feature development and for testing with just a handful of ids (as shown here), or with hundreds of thousands for running features on rich data sets. Note that as a practical matter, the latter call (on large samples of customers) would logically be called with better support for parallel processing and error failover than the simple `iterator.iterateMeters` function provides. This call returns a list of lists of features. So the outter list is indexed by customer id and there is a named list of feature for each customer.
+
+```{r}
+aRunOut = iterator.iterateMeters( DATA_SOURCE$getIds()[1:10], # just 10 for speed
+                                  iterator.callAllFromCtx, 
+                                  ctx=ctx,
+                                  extra='somedata')
+```
+
+A list of lists is returned because it is maximally flexible. Some feature functions may opt to return diagnostic, error, residual, model, etc. data that are not scalar features, but have values in diagnosing problems, testing hypotheses, etc. To boild the list of lists down to a data frame of the scalar feature values, we call the utility function `iterator.todf()`.
+
+```{r}
+runDF = iterator.todf( aRunOut )
+```
+
+With the feature data in hand and in a data frame, it can be cased as RData, incorporated into figures, merged with other customer- or meter-specific data or results form other feature runs, etc.
+
+#Advanced topics
+
+##Exporting your data
+
+Once your features are computed, you may logically want to save or export them forIn `util-export.R`, there are several functions that are designed to support exports of your feature data to various useful formats.
+
+###data for VISDOM-web
+
+Feature data for VISDOM-web is exported with specific fields and naming requirements. The rules are:
+1. you must include an `id` column and a `zip5` column, both of which should be text data.
+
+id | zip5  | all | other | features
+-- | ----- | ----|------------|------
+1  | 94610 | all | your other | feature data
+
+2. The names of your exported features can only contain letters, numbers, and underscores _'s. There is a utility function in util-export.R called `fixNames()` that will automatically convert all other punctuation to _'s and is called on a data frame, featuredf as follows: `names(featuredf) = fixNames(featuredf)`.
+
+3. Your categorical data must be converted to character strings. There is a utility function `cleanFeatureDF()` that fixes the column names and converts the categorical data.
+
+4. There are several utility functions in `util-export.R` that can be used to cleanly export files.
+
+5. Once you have exported data, see the VISDOM-web project documentation on data sources for information on how to configure the system to import and properly display your features.
+
+###csv export
+
+The simplest export format compatible with VISDOM-web is csv. If you only have a single data frame of features and are not using more complicated data, like load shape encodings, it is a great way to get up and running quickly. Picking up on the feature run example we can call the util-export.R function exportData(), which will automatically clean column names and convert factors to regular strings and save the results to a csv without row names, which corrupt data when imported into VISDOM-web.
+
+```{r eval=F}
+
+runPlusCensusDF = mergeCensus(runDF,zipCol='zip5')
+exportData(runPlusCensusDF,name='myFeatures',format='csv') # csv extension automatically added
+
+```
+
+##parallel processing
+
+Official way to do it:
+There is a function in iterator.R called iterator.runMeter that takes a meter id (one of whatever your `DATA_SOURCE$getIds()` returns), the feature extraction function, and a context object with additional config. The idea is that function can be called as the target for alply, where you can configure foreach first and use `.parallel = TRUE`.
+
+However, parallel, etc. aren't explicit package dependencies of VISDOM. They are suggested in the module DESCRIPTION, so you  have to get them yourself.
+
+The previous example used (approximately) this one liner to run features for all meters:
+
+```{r eval=F}
+aRunOut = iterator.iterateMeters(DATA_SOURCE$getIds(), iterator.callAllFromCtx, ctx=ctx)
+```
+
+The equivalent with alply is:
+
+```{r eval=F}
+aRunOut = alply(  DATA_SOURCE$getIds(), 
+                  .margins = 1, 
+                  .fun = iterator.runMeter, 
+                  iterator.callAllFromCtx, ctx)
+```
+
+where you can add the `.parallel=T` option, noting that parallel backend configuration, which uses the configuration you set up for foreach support is platform specific, better supported by Revolution R (the open version is called RRO) than standard R distributions, and you need to make decisions about multi-core vs. multi-machine parallelization. There are ample resources online addressing these issues, especially the [Getting Started with doParallel and foreach pdf](https://cran.r-project.org/web/packages/doParallel/vignettes/gettingstartedParallel.pdf). In general you will likely be setting up your foreach configuration by registering the doParallel backend:
+
+```{r eval=F}
+library(doParallel)
+nCores = 2
+registerDoParallel(cores=nCores) # setup parallel processing on multiple cores
+aRunOut = plyr::alply(  .data = DATA_SOURCE$getIds(), 
+                  .margins = 1, 
+                  .fun = iterator.runMeter,
+                  iterator.callAllFromCtx, ctx, 
+                  parallel=T,
+                  .progress='text' )
+```
+
+###Alternate 1 (eliminating redundant data access with or without parallelization):
+
+Note that one performance optimization that is pretty common when processing large numbers of meters is to load weather data for one location and process all meters from that location with the weather data and all relevant meter data cached in the ctx. This can be a bigger performance boost than naively running each customer in parallel, where data access will redundantly happen over and over. In this case, you might run alply across zip codes, calling a function that loads weather data and all customer data for that zip code, places them both into the ctx and then calls alply with all the customer ids for that zipcode (the underlying code looks in the ctx for weather data and customer data). Technically, this function does not exist. The "official" support for processing customers by zip code is in `iterator.iterateZip`, which is implemented using standard for loops, but it should be pretty clear from that what to do next if you want a parallelizable version.
+
+###Alternate 2 (subsetting meters using command line args):
+
+In practice, users have often written a wrapper script that implements a form of parallelization by segmenting meter ids (or zip codes) into N even blocks and selecting one block based on command line arguments passed to the script. They can then invoke the script N times (even from N different machines) to cover all meters. The modest amount of manual effort to get these running can be encapsulated into a shell script and is small in the context of a multi-day run time. Note that on certain cluster resources, users can be restricted to processes that run less than 24hrs (or some other fixed threshold). In this case, even with parallelization, you may need to subset your meters to ensure completion within available time and such scripts are a good way to accomplish tunable runtimes.
+
+###Caveats:
+
+Note that as will all parallel operations, error handling is a bit tricky. `iterator.runMeter` traps errors and returns NAs after printing the error message so it can keep running. This allows the rest of the data to be processed. When running in parallel the place for print statements to output to is poorly defined, so users may never see the printed error message. Thus, you have to be extra careful to investigate any NAs values returned for any customers. In the future, we hope to architect infrastrucutre that allows storing and returning  error diagnostic information for each customer that has an error within the listof lists data structure, but for now parallel processing are related error handling is a partially unsupported "advanced" feature.
+
+Also note that other than the error trapping, the official VISDOM code doesn't support mid-stream failures very gracefully. Ideally users would have the option of incrementally saving out results so they can recover from any fatal errors that could cause them to lose valid features built up in memory (or so that they can fill in NAs caused by errors without re-running all the good results). Parallel jobs tend to be all or nothing in their return values and can toss out viable computed values due to a data frame column name incompatibility or other minor issue compiling results. In the past VISDOM users have created scripted options for saving each zip code worth of features and also for savings lists of meters whose validation rules eliminated them from processing to save time re-processing good data over and over due to later failures and re-validating meters over and over. We may provide suitable official versions of these capabilities via the `iterator.R` functions in the future, but advanced users should currently plan to write their own iterators and wrappers if graceful failure is desired.
+

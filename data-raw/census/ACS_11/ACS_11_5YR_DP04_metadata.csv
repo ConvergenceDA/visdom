@@ -1,0 +1,567 @@
+GEO.id,Id
+GEO.id2,Id2
+GEO.display-label,Geography
+HC01_VC03,Estimate; HOUSING OCCUPANCY - Total housing units
+HC02_VC03,Margin of Error; HOUSING OCCUPANCY - Total housing units
+HC03_VC03,Percent; HOUSING OCCUPANCY - Total housing units
+HC04_VC03,Percent Margin of Error; HOUSING OCCUPANCY - Total housing units
+HC01_VC04,Estimate; HOUSING OCCUPANCY - Occupied housing units
+HC02_VC04,Margin of Error; HOUSING OCCUPANCY - Occupied housing units
+HC03_VC04,Percent; HOUSING OCCUPANCY - Occupied housing units
+HC04_VC04,Percent Margin of Error; HOUSING OCCUPANCY - Occupied housing units
+HC01_VC05,Estimate; HOUSING OCCUPANCY - Vacant housing units
+HC02_VC05,Margin of Error; HOUSING OCCUPANCY - Vacant housing units
+HC03_VC05,Percent; HOUSING OCCUPANCY - Vacant housing units
+HC04_VC05,Percent Margin of Error; HOUSING OCCUPANCY - Vacant housing units
+HC01_VC07,Estimate; HOUSING OCCUPANCY - Homeowner vacancy rate
+HC02_VC07,Margin of Error; HOUSING OCCUPANCY - Homeowner vacancy rate
+HC03_VC07,Percent; HOUSING OCCUPANCY - Homeowner vacancy rate
+HC04_VC07,Percent Margin of Error; HOUSING OCCUPANCY - Homeowner vacancy rate
+HC01_VC08,Estimate; HOUSING OCCUPANCY - Rental vacancy rate
+HC02_VC08,Margin of Error; HOUSING OCCUPANCY - Rental vacancy rate
+HC03_VC08,Percent; HOUSING OCCUPANCY - Rental vacancy rate
+HC04_VC08,Percent Margin of Error; HOUSING OCCUPANCY - Rental vacancy rate
+HC01_VC12,Estimate; UNITS IN STRUCTURE - Total housing units
+HC02_VC12,Margin of Error; UNITS IN STRUCTURE - Total housing units
+HC03_VC12,Percent; UNITS IN STRUCTURE - Total housing units
+HC04_VC12,Percent Margin of Error; UNITS IN STRUCTURE - Total housing units
+HC01_VC13,"Estimate; UNITS IN STRUCTURE - 1-unit, detached"
+HC02_VC13,"Margin of Error; UNITS IN STRUCTURE - 1-unit, detached"
+HC03_VC13,"Percent; UNITS IN STRUCTURE - 1-unit, detached"
+HC04_VC13,"Percent Margin of Error; UNITS IN STRUCTURE - 1-unit, detached"
+HC01_VC14,"Estimate; UNITS IN STRUCTURE - 1-unit, attached"
+HC02_VC14,"Margin of Error; UNITS IN STRUCTURE - 1-unit, attached"
+HC03_VC14,"Percent; UNITS IN STRUCTURE - 1-unit, attached"
+HC04_VC14,"Percent Margin of Error; UNITS IN STRUCTURE - 1-unit, attached"
+HC01_VC15,Estimate; UNITS IN STRUCTURE - 2 units
+HC02_VC15,Margin of Error; UNITS IN STRUCTURE - 2 units
+HC03_VC15,Percent; UNITS IN STRUCTURE - 2 units
+HC04_VC15,Percent Margin of Error; UNITS IN STRUCTURE - 2 units
+HC01_VC16,Estimate; UNITS IN STRUCTURE - 3 or 4 units
+HC02_VC16,Margin of Error; UNITS IN STRUCTURE - 3 or 4 units
+HC03_VC16,Percent; UNITS IN STRUCTURE - 3 or 4 units
+HC04_VC16,Percent Margin of Error; UNITS IN STRUCTURE - 3 or 4 units
+HC01_VC17,Estimate; UNITS IN STRUCTURE - 5 to 9 units
+HC02_VC17,Margin of Error; UNITS IN STRUCTURE - 5 to 9 units
+HC03_VC17,Percent; UNITS IN STRUCTURE - 5 to 9 units
+HC04_VC17,Percent Margin of Error; UNITS IN STRUCTURE - 5 to 9 units
+HC01_VC18,Estimate; UNITS IN STRUCTURE - 10 to 19 units
+HC02_VC18,Margin of Error; UNITS IN STRUCTURE - 10 to 19 units
+HC03_VC18,Percent; UNITS IN STRUCTURE - 10 to 19 units
+HC04_VC18,Percent Margin of Error; UNITS IN STRUCTURE - 10 to 19 units
+HC01_VC19,Estimate; UNITS IN STRUCTURE - 20 or more units
+HC02_VC19,Margin of Error; UNITS IN STRUCTURE - 20 or more units
+HC03_VC19,Percent; UNITS IN STRUCTURE - 20 or more units
+HC04_VC19,Percent Margin of Error; UNITS IN STRUCTURE - 20 or more units
+HC01_VC20,Estimate; UNITS IN STRUCTURE - Mobile home
+HC02_VC20,Margin of Error; UNITS IN STRUCTURE - Mobile home
+HC03_VC20,Percent; UNITS IN STRUCTURE - Mobile home
+HC04_VC20,Percent Margin of Error; UNITS IN STRUCTURE - Mobile home
+HC01_VC21,"Estimate; UNITS IN STRUCTURE - Boat, RV, van, etc."
+HC02_VC21,"Margin of Error; UNITS IN STRUCTURE - Boat, RV, van, etc."
+HC03_VC21,"Percent; UNITS IN STRUCTURE - Boat, RV, van, etc."
+HC04_VC21,"Percent Margin of Error; UNITS IN STRUCTURE - Boat, RV, van, etc."
+HC01_VC25,Estimate; YEAR STRUCTURE BUILT - Total housing units
+HC02_VC25,Margin of Error; YEAR STRUCTURE BUILT - Total housing units
+HC03_VC25,Percent; YEAR STRUCTURE BUILT - Total housing units
+HC04_VC25,Percent Margin of Error; YEAR STRUCTURE BUILT - Total housing units
+HC01_VC26,Estimate; YEAR STRUCTURE BUILT - Built 2005 or later
+HC02_VC26,Margin of Error; YEAR STRUCTURE BUILT - Built 2005 or later
+HC03_VC26,Percent; YEAR STRUCTURE BUILT - Built 2005 or later
+HC04_VC26,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 2005 or later
+HC01_VC27,Estimate; YEAR STRUCTURE BUILT - Built 2000 to 2004
+HC02_VC27,Margin of Error; YEAR STRUCTURE BUILT - Built 2000 to 2004
+HC03_VC27,Percent; YEAR STRUCTURE BUILT - Built 2000 to 2004
+HC04_VC27,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 2000 to 2004
+HC01_VC28,Estimate; YEAR STRUCTURE BUILT - Built 1990 to 1999
+HC02_VC28,Margin of Error; YEAR STRUCTURE BUILT - Built 1990 to 1999
+HC03_VC28,Percent; YEAR STRUCTURE BUILT - Built 1990 to 1999
+HC04_VC28,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 1990 to 1999
+HC01_VC29,Estimate; YEAR STRUCTURE BUILT - Built 1980 to 1989
+HC02_VC29,Margin of Error; YEAR STRUCTURE BUILT - Built 1980 to 1989
+HC03_VC29,Percent; YEAR STRUCTURE BUILT - Built 1980 to 1989
+HC04_VC29,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 1980 to 1989
+HC01_VC30,Estimate; YEAR STRUCTURE BUILT - Built 1970 to 1979
+HC02_VC30,Margin of Error; YEAR STRUCTURE BUILT - Built 1970 to 1979
+HC03_VC30,Percent; YEAR STRUCTURE BUILT - Built 1970 to 1979
+HC04_VC30,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 1970 to 1979
+HC01_VC31,Estimate; YEAR STRUCTURE BUILT - Built 1960 to 1969
+HC02_VC31,Margin of Error; YEAR STRUCTURE BUILT - Built 1960 to 1969
+HC03_VC31,Percent; YEAR STRUCTURE BUILT - Built 1960 to 1969
+HC04_VC31,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 1960 to 1969
+HC01_VC32,Estimate; YEAR STRUCTURE BUILT - Built 1950 to 1959
+HC02_VC32,Margin of Error; YEAR STRUCTURE BUILT - Built 1950 to 1959
+HC03_VC32,Percent; YEAR STRUCTURE BUILT - Built 1950 to 1959
+HC04_VC32,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 1950 to 1959
+HC01_VC33,Estimate; YEAR STRUCTURE BUILT - Built 1940 to 1949
+HC02_VC33,Margin of Error; YEAR STRUCTURE BUILT - Built 1940 to 1949
+HC03_VC33,Percent; YEAR STRUCTURE BUILT - Built 1940 to 1949
+HC04_VC33,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 1940 to 1949
+HC01_VC34,Estimate; YEAR STRUCTURE BUILT - Built 1939 or earlier
+HC02_VC34,Margin of Error; YEAR STRUCTURE BUILT - Built 1939 or earlier
+HC03_VC34,Percent; YEAR STRUCTURE BUILT - Built 1939 or earlier
+HC04_VC34,Percent Margin of Error; YEAR STRUCTURE BUILT - Built 1939 or earlier
+HC01_VC38,Estimate; ROOMS - Total housing units
+HC02_VC38,Margin of Error; ROOMS - Total housing units
+HC03_VC38,Percent; ROOMS - Total housing units
+HC04_VC38,Percent Margin of Error; ROOMS - Total housing units
+HC01_VC39,Estimate; ROOMS - 1 room
+HC02_VC39,Margin of Error; ROOMS - 1 room
+HC03_VC39,Percent; ROOMS - 1 room
+HC04_VC39,Percent Margin of Error; ROOMS - 1 room
+HC01_VC40,Estimate; ROOMS - 2 rooms
+HC02_VC40,Margin of Error; ROOMS - 2 rooms
+HC03_VC40,Percent; ROOMS - 2 rooms
+HC04_VC40,Percent Margin of Error; ROOMS - 2 rooms
+HC01_VC41,Estimate; ROOMS - 3 rooms
+HC02_VC41,Margin of Error; ROOMS - 3 rooms
+HC03_VC41,Percent; ROOMS - 3 rooms
+HC04_VC41,Percent Margin of Error; ROOMS - 3 rooms
+HC01_VC42,Estimate; ROOMS - 4 rooms
+HC02_VC42,Margin of Error; ROOMS - 4 rooms
+HC03_VC42,Percent; ROOMS - 4 rooms
+HC04_VC42,Percent Margin of Error; ROOMS - 4 rooms
+HC01_VC43,Estimate; ROOMS - 5 rooms
+HC02_VC43,Margin of Error; ROOMS - 5 rooms
+HC03_VC43,Percent; ROOMS - 5 rooms
+HC04_VC43,Percent Margin of Error; ROOMS - 5 rooms
+HC01_VC44,Estimate; ROOMS - 6 rooms
+HC02_VC44,Margin of Error; ROOMS - 6 rooms
+HC03_VC44,Percent; ROOMS - 6 rooms
+HC04_VC44,Percent Margin of Error; ROOMS - 6 rooms
+HC01_VC45,Estimate; ROOMS - 7 rooms
+HC02_VC45,Margin of Error; ROOMS - 7 rooms
+HC03_VC45,Percent; ROOMS - 7 rooms
+HC04_VC45,Percent Margin of Error; ROOMS - 7 rooms
+HC01_VC46,Estimate; ROOMS - 8 rooms
+HC02_VC46,Margin of Error; ROOMS - 8 rooms
+HC03_VC46,Percent; ROOMS - 8 rooms
+HC04_VC46,Percent Margin of Error; ROOMS - 8 rooms
+HC01_VC47,Estimate; ROOMS - 9 rooms or more
+HC02_VC47,Margin of Error; ROOMS - 9 rooms or more
+HC03_VC47,Percent; ROOMS - 9 rooms or more
+HC04_VC47,Percent Margin of Error; ROOMS - 9 rooms or more
+HC01_VC48,Estimate; ROOMS - Median rooms
+HC02_VC48,Margin of Error; ROOMS - Median rooms
+HC03_VC48,Percent; ROOMS - Median rooms
+HC04_VC48,Percent Margin of Error; ROOMS - Median rooms
+HC01_VC52,Estimate; BEDROOMS - Total housing units
+HC02_VC52,Margin of Error; BEDROOMS - Total housing units
+HC03_VC52,Percent; BEDROOMS - Total housing units
+HC04_VC52,Percent Margin of Error; BEDROOMS - Total housing units
+HC01_VC53,Estimate; BEDROOMS - No bedroom
+HC02_VC53,Margin of Error; BEDROOMS - No bedroom
+HC03_VC53,Percent; BEDROOMS - No bedroom
+HC04_VC53,Percent Margin of Error; BEDROOMS - No bedroom
+HC01_VC54,Estimate; BEDROOMS - 1 bedroom
+HC02_VC54,Margin of Error; BEDROOMS - 1 bedroom
+HC03_VC54,Percent; BEDROOMS - 1 bedroom
+HC04_VC54,Percent Margin of Error; BEDROOMS - 1 bedroom
+HC01_VC55,Estimate; BEDROOMS - 2 bedrooms
+HC02_VC55,Margin of Error; BEDROOMS - 2 bedrooms
+HC03_VC55,Percent; BEDROOMS - 2 bedrooms
+HC04_VC55,Percent Margin of Error; BEDROOMS - 2 bedrooms
+HC01_VC56,Estimate; BEDROOMS - 3 bedrooms
+HC02_VC56,Margin of Error; BEDROOMS - 3 bedrooms
+HC03_VC56,Percent; BEDROOMS - 3 bedrooms
+HC04_VC56,Percent Margin of Error; BEDROOMS - 3 bedrooms
+HC01_VC57,Estimate; BEDROOMS - 4 bedrooms
+HC02_VC57,Margin of Error; BEDROOMS - 4 bedrooms
+HC03_VC57,Percent; BEDROOMS - 4 bedrooms
+HC04_VC57,Percent Margin of Error; BEDROOMS - 4 bedrooms
+HC01_VC58,Estimate; BEDROOMS - 5 or more bedrooms
+HC02_VC58,Margin of Error; BEDROOMS - 5 or more bedrooms
+HC03_VC58,Percent; BEDROOMS - 5 or more bedrooms
+HC04_VC58,Percent Margin of Error; BEDROOMS - 5 or more bedrooms
+HC01_VC62,Estimate; HOUSING TENURE - Occupied housing units
+HC02_VC62,Margin of Error; HOUSING TENURE - Occupied housing units
+HC03_VC62,Percent; HOUSING TENURE - Occupied housing units
+HC04_VC62,Percent Margin of Error; HOUSING TENURE - Occupied housing units
+HC01_VC63,Estimate; HOUSING TENURE - Owner-occupied
+HC02_VC63,Margin of Error; HOUSING TENURE - Owner-occupied
+HC03_VC63,Percent; HOUSING TENURE - Owner-occupied
+HC04_VC63,Percent Margin of Error; HOUSING TENURE - Owner-occupied
+HC01_VC64,Estimate; HOUSING TENURE - Renter-occupied
+HC02_VC64,Margin of Error; HOUSING TENURE - Renter-occupied
+HC03_VC64,Percent; HOUSING TENURE - Renter-occupied
+HC04_VC64,Percent Margin of Error; HOUSING TENURE - Renter-occupied
+HC01_VC66,Estimate; HOUSING TENURE - Average household size of owner-occupied unit
+HC02_VC66,Margin of Error; HOUSING TENURE - Average household size of owner-occupied unit
+HC03_VC66,Percent; HOUSING TENURE - Average household size of owner-occupied unit
+HC04_VC66,Percent Margin of Error; HOUSING TENURE - Average household size of owner-occupied unit
+HC01_VC67,Estimate; HOUSING TENURE - Average household size of renter-occupied unit
+HC02_VC67,Margin of Error; HOUSING TENURE - Average household size of renter-occupied unit
+HC03_VC67,Percent; HOUSING TENURE - Average household size of renter-occupied unit
+HC04_VC67,Percent Margin of Error; HOUSING TENURE - Average household size of renter-occupied unit
+HC01_VC71,Estimate; YEAR HOUSEHOLDER MOVED INTO UNIT - Occupied housing units
+HC02_VC71,Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Occupied housing units
+HC03_VC71,Percent; YEAR HOUSEHOLDER MOVED INTO UNIT - Occupied housing units
+HC04_VC71,Percent Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Occupied housing units
+HC01_VC72,Estimate; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2005 or later
+HC02_VC72,Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2005 or later
+HC03_VC72,Percent; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2005 or later
+HC04_VC72,Percent Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2005 or later
+HC01_VC73,Estimate; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2000 to 2004
+HC02_VC73,Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2000 to 2004
+HC03_VC73,Percent; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2000 to 2004
+HC04_VC73,Percent Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 2000 to 2004
+HC01_VC74,Estimate; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1990 to 1999
+HC02_VC74,Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1990 to 1999
+HC03_VC74,Percent; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1990 to 1999
+HC04_VC74,Percent Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1990 to 1999
+HC01_VC75,Estimate; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1980 to 1989
+HC02_VC75,Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1980 to 1989
+HC03_VC75,Percent; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1980 to 1989
+HC04_VC75,Percent Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1980 to 1989
+HC01_VC76,Estimate; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1970 to 1979
+HC02_VC76,Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1970 to 1979
+HC03_VC76,Percent; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1970 to 1979
+HC04_VC76,Percent Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1970 to 1979
+HC01_VC77,Estimate; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1969 or earlier
+HC02_VC77,Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1969 or earlier
+HC03_VC77,Percent; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1969 or earlier
+HC04_VC77,Percent Margin of Error; YEAR HOUSEHOLDER MOVED INTO UNIT - Moved in 1969 or earlier
+HC01_VC81,Estimate; VEHICLES AVAILABLE - Occupied housing units
+HC02_VC81,Margin of Error; VEHICLES AVAILABLE - Occupied housing units
+HC03_VC81,Percent; VEHICLES AVAILABLE - Occupied housing units
+HC04_VC81,Percent Margin of Error; VEHICLES AVAILABLE - Occupied housing units
+HC01_VC82,Estimate; VEHICLES AVAILABLE - No vehicles available
+HC02_VC82,Margin of Error; VEHICLES AVAILABLE - No vehicles available
+HC03_VC82,Percent; VEHICLES AVAILABLE - No vehicles available
+HC04_VC82,Percent Margin of Error; VEHICLES AVAILABLE - No vehicles available
+HC01_VC83,Estimate; VEHICLES AVAILABLE - 1 vehicle available
+HC02_VC83,Margin of Error; VEHICLES AVAILABLE - 1 vehicle available
+HC03_VC83,Percent; VEHICLES AVAILABLE - 1 vehicle available
+HC04_VC83,Percent Margin of Error; VEHICLES AVAILABLE - 1 vehicle available
+HC01_VC84,Estimate; VEHICLES AVAILABLE - 2 vehicles available
+HC02_VC84,Margin of Error; VEHICLES AVAILABLE - 2 vehicles available
+HC03_VC84,Percent; VEHICLES AVAILABLE - 2 vehicles available
+HC04_VC84,Percent Margin of Error; VEHICLES AVAILABLE - 2 vehicles available
+HC01_VC85,Estimate; VEHICLES AVAILABLE - 3 or more vehicles available
+HC02_VC85,Margin of Error; VEHICLES AVAILABLE - 3 or more vehicles available
+HC03_VC85,Percent; VEHICLES AVAILABLE - 3 or more vehicles available
+HC04_VC85,Percent Margin of Error; VEHICLES AVAILABLE - 3 or more vehicles available
+HC01_VC89,Estimate; HOUSE HEATING FUEL - Occupied housing units
+HC02_VC89,Margin of Error; HOUSE HEATING FUEL - Occupied housing units
+HC03_VC89,Percent; HOUSE HEATING FUEL - Occupied housing units
+HC04_VC89,Percent Margin of Error; HOUSE HEATING FUEL - Occupied housing units
+HC01_VC90,Estimate; HOUSE HEATING FUEL - Utility gas
+HC02_VC90,Margin of Error; HOUSE HEATING FUEL - Utility gas
+HC03_VC90,Percent; HOUSE HEATING FUEL - Utility gas
+HC04_VC90,Percent Margin of Error; HOUSE HEATING FUEL - Utility gas
+HC01_VC91,"Estimate; HOUSE HEATING FUEL - Bottled, tank, or LP gas"
+HC02_VC91,"Margin of Error; HOUSE HEATING FUEL - Bottled, tank, or LP gas"
+HC03_VC91,"Percent; HOUSE HEATING FUEL - Bottled, tank, or LP gas"
+HC04_VC91,"Percent Margin of Error; HOUSE HEATING FUEL - Bottled, tank, or LP gas"
+HC01_VC92,Estimate; HOUSE HEATING FUEL - Electricity
+HC02_VC92,Margin of Error; HOUSE HEATING FUEL - Electricity
+HC03_VC92,Percent; HOUSE HEATING FUEL - Electricity
+HC04_VC92,Percent Margin of Error; HOUSE HEATING FUEL - Electricity
+HC01_VC93,"Estimate; HOUSE HEATING FUEL - Fuel oil, kerosene, etc."
+HC02_VC93,"Margin of Error; HOUSE HEATING FUEL - Fuel oil, kerosene, etc."
+HC03_VC93,"Percent; HOUSE HEATING FUEL - Fuel oil, kerosene, etc."
+HC04_VC93,"Percent Margin of Error; HOUSE HEATING FUEL - Fuel oil, kerosene, etc."
+HC01_VC94,Estimate; HOUSE HEATING FUEL - Coal or coke
+HC02_VC94,Margin of Error; HOUSE HEATING FUEL - Coal or coke
+HC03_VC94,Percent; HOUSE HEATING FUEL - Coal or coke
+HC04_VC94,Percent Margin of Error; HOUSE HEATING FUEL - Coal or coke
+HC01_VC95,Estimate; HOUSE HEATING FUEL - Wood
+HC02_VC95,Margin of Error; HOUSE HEATING FUEL - Wood
+HC03_VC95,Percent; HOUSE HEATING FUEL - Wood
+HC04_VC95,Percent Margin of Error; HOUSE HEATING FUEL - Wood
+HC01_VC96,Estimate; HOUSE HEATING FUEL - Solar energy
+HC02_VC96,Margin of Error; HOUSE HEATING FUEL - Solar energy
+HC03_VC96,Percent; HOUSE HEATING FUEL - Solar energy
+HC04_VC96,Percent Margin of Error; HOUSE HEATING FUEL - Solar energy
+HC01_VC97,Estimate; HOUSE HEATING FUEL - Other fuel
+HC02_VC97,Margin of Error; HOUSE HEATING FUEL - Other fuel
+HC03_VC97,Percent; HOUSE HEATING FUEL - Other fuel
+HC04_VC97,Percent Margin of Error; HOUSE HEATING FUEL - Other fuel
+HC01_VC98,Estimate; HOUSE HEATING FUEL - No fuel used
+HC02_VC98,Margin of Error; HOUSE HEATING FUEL - No fuel used
+HC03_VC98,Percent; HOUSE HEATING FUEL - No fuel used
+HC04_VC98,Percent Margin of Error; HOUSE HEATING FUEL - No fuel used
+HC01_VC102,Estimate; SELECTED CHARACTERISTICS - Occupied housing units
+HC02_VC102,Margin of Error; SELECTED CHARACTERISTICS - Occupied housing units
+HC03_VC102,Percent; SELECTED CHARACTERISTICS - Occupied housing units
+HC04_VC102,Percent Margin of Error; SELECTED CHARACTERISTICS - Occupied housing units
+HC01_VC103,Estimate; SELECTED CHARACTERISTICS - Lacking complete plumbing facilities
+HC02_VC103,Margin of Error; SELECTED CHARACTERISTICS - Lacking complete plumbing facilities
+HC03_VC103,Percent; SELECTED CHARACTERISTICS - Lacking complete plumbing facilities
+HC04_VC103,Percent Margin of Error; SELECTED CHARACTERISTICS - Lacking complete plumbing facilities
+HC01_VC104,Estimate; SELECTED CHARACTERISTICS - Lacking complete kitchen facilities
+HC02_VC104,Margin of Error; SELECTED CHARACTERISTICS - Lacking complete kitchen facilities
+HC03_VC104,Percent; SELECTED CHARACTERISTICS - Lacking complete kitchen facilities
+HC04_VC104,Percent Margin of Error; SELECTED CHARACTERISTICS - Lacking complete kitchen facilities
+HC01_VC105,Estimate; SELECTED CHARACTERISTICS - No telephone service available
+HC02_VC105,Margin of Error; SELECTED CHARACTERISTICS - No telephone service available
+HC03_VC105,Percent; SELECTED CHARACTERISTICS - No telephone service available
+HC04_VC105,Percent Margin of Error; SELECTED CHARACTERISTICS - No telephone service available
+HC01_VC109,Estimate; OCCUPANTS PER ROOM - Occupied housing units
+HC02_VC109,Margin of Error; OCCUPANTS PER ROOM - Occupied housing units
+HC03_VC109,Percent; OCCUPANTS PER ROOM - Occupied housing units
+HC04_VC109,Percent Margin of Error; OCCUPANTS PER ROOM - Occupied housing units
+HC01_VC110,Estimate; OCCUPANTS PER ROOM - 1.00 or less
+HC02_VC110,Margin of Error; OCCUPANTS PER ROOM - 1.00 or less
+HC03_VC110,Percent; OCCUPANTS PER ROOM - 1.00 or less
+HC04_VC110,Percent Margin of Error; OCCUPANTS PER ROOM - 1.00 or less
+HC01_VC111,Estimate; OCCUPANTS PER ROOM - 1.01 to 1.50
+HC02_VC111,Margin of Error; OCCUPANTS PER ROOM - 1.01 to 1.50
+HC03_VC111,Percent; OCCUPANTS PER ROOM - 1.01 to 1.50
+HC04_VC111,Percent Margin of Error; OCCUPANTS PER ROOM - 1.01 to 1.50
+HC01_VC112,Estimate; OCCUPANTS PER ROOM - 1.51 or more
+HC02_VC112,Margin of Error; OCCUPANTS PER ROOM - 1.51 or more
+HC03_VC112,Percent; OCCUPANTS PER ROOM - 1.51 or more
+HC04_VC112,Percent Margin of Error; OCCUPANTS PER ROOM - 1.51 or more
+HC01_VC116,Estimate; VALUE - Owner-occupied units
+HC02_VC116,Margin of Error; VALUE - Owner-occupied units
+HC03_VC116,Percent; VALUE - Owner-occupied units
+HC04_VC116,Percent Margin of Error; VALUE - Owner-occupied units
+HC01_VC117,"Estimate; VALUE - Less than $50,000"
+HC02_VC117,"Margin of Error; VALUE - Less than $50,000"
+HC03_VC117,"Percent; VALUE - Less than $50,000"
+HC04_VC117,"Percent Margin of Error; VALUE - Less than $50,000"
+HC01_VC118,"Estimate; VALUE - $50,000 to $99,999"
+HC02_VC118,"Margin of Error; VALUE - $50,000 to $99,999"
+HC03_VC118,"Percent; VALUE - $50,000 to $99,999"
+HC04_VC118,"Percent Margin of Error; VALUE - $50,000 to $99,999"
+HC01_VC119,"Estimate; VALUE - $100,000 to $149,999"
+HC02_VC119,"Margin of Error; VALUE - $100,000 to $149,999"
+HC03_VC119,"Percent; VALUE - $100,000 to $149,999"
+HC04_VC119,"Percent Margin of Error; VALUE - $100,000 to $149,999"
+HC01_VC120,"Estimate; VALUE - $150,000 to $199,999"
+HC02_VC120,"Margin of Error; VALUE - $150,000 to $199,999"
+HC03_VC120,"Percent; VALUE - $150,000 to $199,999"
+HC04_VC120,"Percent Margin of Error; VALUE - $150,000 to $199,999"
+HC01_VC121,"Estimate; VALUE - $200,000 to $299,999"
+HC02_VC121,"Margin of Error; VALUE - $200,000 to $299,999"
+HC03_VC121,"Percent; VALUE - $200,000 to $299,999"
+HC04_VC121,"Percent Margin of Error; VALUE - $200,000 to $299,999"
+HC01_VC122,"Estimate; VALUE - $300,000 to $499,999"
+HC02_VC122,"Margin of Error; VALUE - $300,000 to $499,999"
+HC03_VC122,"Percent; VALUE - $300,000 to $499,999"
+HC04_VC122,"Percent Margin of Error; VALUE - $300,000 to $499,999"
+HC01_VC123,"Estimate; VALUE - $500,000 to $999,999"
+HC02_VC123,"Margin of Error; VALUE - $500,000 to $999,999"
+HC03_VC123,"Percent; VALUE - $500,000 to $999,999"
+HC04_VC123,"Percent Margin of Error; VALUE - $500,000 to $999,999"
+HC01_VC124,"Estimate; VALUE - $1,000,000 or more"
+HC02_VC124,"Margin of Error; VALUE - $1,000,000 or more"
+HC03_VC124,"Percent; VALUE - $1,000,000 or more"
+HC04_VC124,"Percent Margin of Error; VALUE - $1,000,000 or more"
+HC01_VC125,Estimate; VALUE - Median (dollars)
+HC02_VC125,Margin of Error; VALUE - Median (dollars)
+HC03_VC125,Percent; VALUE - Median (dollars)
+HC04_VC125,Percent Margin of Error; VALUE - Median (dollars)
+HC01_VC129,Estimate; MORTGAGE STATUS - Owner-occupied units
+HC02_VC129,Margin of Error; MORTGAGE STATUS - Owner-occupied units
+HC03_VC129,Percent; MORTGAGE STATUS - Owner-occupied units
+HC04_VC129,Percent Margin of Error; MORTGAGE STATUS - Owner-occupied units
+HC01_VC130,Estimate; MORTGAGE STATUS - Housing units with a mortgage
+HC02_VC130,Margin of Error; MORTGAGE STATUS - Housing units with a mortgage
+HC03_VC130,Percent; MORTGAGE STATUS - Housing units with a mortgage
+HC04_VC130,Percent Margin of Error; MORTGAGE STATUS - Housing units with a mortgage
+HC01_VC131,Estimate; MORTGAGE STATUS - Housing units without a mortgage
+HC02_VC131,Margin of Error; MORTGAGE STATUS - Housing units without a mortgage
+HC03_VC131,Percent; MORTGAGE STATUS - Housing units without a mortgage
+HC04_VC131,Percent Margin of Error; MORTGAGE STATUS - Housing units without a mortgage
+HC01_VC135,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units with a mortgage
+HC02_VC135,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units with a mortgage
+HC03_VC135,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units with a mortgage
+HC04_VC135,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units with a mortgage
+HC01_VC136,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $300
+HC02_VC136,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $300
+HC03_VC136,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $300
+HC04_VC136,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $300
+HC01_VC137,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $499
+HC02_VC137,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $499
+HC03_VC137,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $499
+HC04_VC137,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $499
+HC01_VC138,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $500 to $699
+HC02_VC138,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $500 to $699
+HC03_VC138,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $500 to $699
+HC04_VC138,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $500 to $699
+HC01_VC139,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $700 to $999
+HC02_VC139,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $700 to $999
+HC03_VC139,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $700 to $999
+HC04_VC139,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $700 to $999
+HC01_VC140,"Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,000 to $1,499"
+HC02_VC140,"Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,000 to $1,499"
+HC03_VC140,"Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,000 to $1,499"
+HC04_VC140,"Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,000 to $1,499"
+HC01_VC141,"Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,500 to $1,999"
+HC02_VC141,"Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,500 to $1,999"
+HC03_VC141,"Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,500 to $1,999"
+HC04_VC141,"Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $1,500 to $1,999"
+HC01_VC142,"Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $2,000 or more"
+HC02_VC142,"Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $2,000 or more"
+HC03_VC142,"Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $2,000 or more"
+HC04_VC142,"Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $2,000 or more"
+HC01_VC143,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC02_VC143,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC03_VC143,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC04_VC143,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC01_VC145,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units without a mortgage
+HC02_VC145,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units without a mortgage
+HC03_VC145,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units without a mortgage
+HC04_VC145,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Housing units without a mortgage
+HC01_VC146,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $100
+HC02_VC146,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $100
+HC03_VC146,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $100
+HC04_VC146,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Less than $100
+HC01_VC147,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $100 to $199
+HC02_VC147,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $100 to $199
+HC03_VC147,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $100 to $199
+HC04_VC147,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $100 to $199
+HC01_VC148,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $200 to $299
+HC02_VC148,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $200 to $299
+HC03_VC148,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $200 to $299
+HC04_VC148,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $200 to $299
+HC01_VC149,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $399
+HC02_VC149,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $399
+HC03_VC149,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $399
+HC04_VC149,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $300 to $399
+HC01_VC150,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - $400 or more
+HC02_VC150,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $400 or more
+HC03_VC150,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - $400 or more
+HC04_VC150,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - $400 or more
+HC01_VC151,Estimate; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC02_VC151,Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC03_VC151,Percent; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC04_VC151,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS (SMOC) - Median (dollars)
+HC01_VC155,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing units with a mortgage (excluding units where SMOCAPI cannot be computed)
+HC02_VC155,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing units with a mortgage (excluding units where SMOCAPI cannot be computed)
+HC03_VC155,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing units with a mortgage (excluding units where SMOCAPI cannot be computed)
+HC04_VC155,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing units with a mortgage (excluding units where SMOCAPI cannot be computed)
+HC01_VC156,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 20.0 percent
+HC02_VC156,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 20.0 percent
+HC03_VC156,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 20.0 percent
+HC04_VC156,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 20.0 percent
+HC01_VC157,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC02_VC157,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC03_VC157,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC04_VC157,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC01_VC158,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC02_VC158,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC03_VC158,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC04_VC158,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC01_VC159,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC02_VC159,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC03_VC159,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC04_VC159,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC01_VC160,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC02_VC160,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC03_VC160,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC04_VC160,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC01_VC162,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC02_VC162,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC03_VC162,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC04_VC162,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC01_VC164,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing unit without a mortgage (excluding units where SMOCAPI cannot be computed)
+HC02_VC164,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing unit without a mortgage (excluding units where SMOCAPI cannot be computed)
+HC03_VC164,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing unit without a mortgage (excluding units where SMOCAPI cannot be computed)
+HC04_VC164,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Housing unit without a mortgage (excluding units where SMOCAPI cannot be computed)
+HC01_VC165,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 10.0 percent
+HC02_VC165,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 10.0 percent
+HC03_VC165,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 10.0 percent
+HC04_VC165,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Less than 10.0 percent
+HC01_VC166,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 10.0 to 14.9 percent
+HC02_VC166,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 10.0 to 14.9 percent
+HC03_VC166,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 10.0 to 14.9 percent
+HC04_VC166,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 10.0 to 14.9 percent
+HC01_VC167,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 15.0 to 19.9 percent
+HC02_VC167,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 15.0 to 19.9 percent
+HC03_VC167,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 15.0 to 19.9 percent
+HC04_VC167,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 15.0 to 19.9 percent
+HC01_VC168,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC02_VC168,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC03_VC168,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC04_VC168,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 20.0 to 24.9 percent
+HC01_VC169,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC02_VC169,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC03_VC169,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC04_VC169,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 25.0 to 29.9 percent
+HC01_VC170,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC02_VC170,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC03_VC170,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC04_VC170,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 30.0 to 34.9 percent
+HC01_VC171,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC02_VC171,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC03_VC171,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC04_VC171,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - 35.0 percent or more
+HC01_VC173,Estimate; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC02_VC173,Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC03_VC173,Percent; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC04_VC173,Percent Margin of Error; SELECTED MONTHLY OWNER COSTS AS A PERCENTAGE OF HOUSEHOLD INCOME (SMOCAPI) - Not computed
+HC01_VC177,Estimate; GROSS RENT - Occupied units paying rent
+HC02_VC177,Margin of Error; GROSS RENT - Occupied units paying rent
+HC03_VC177,Percent; GROSS RENT - Occupied units paying rent
+HC04_VC177,Percent Margin of Error; GROSS RENT - Occupied units paying rent
+HC01_VC178,Estimate; GROSS RENT - Less than $200
+HC02_VC178,Margin of Error; GROSS RENT - Less than $200
+HC03_VC178,Percent; GROSS RENT - Less than $200
+HC04_VC178,Percent Margin of Error; GROSS RENT - Less than $200
+HC01_VC179,Estimate; GROSS RENT - $200 to $299
+HC02_VC179,Margin of Error; GROSS RENT - $200 to $299
+HC03_VC179,Percent; GROSS RENT - $200 to $299
+HC04_VC179,Percent Margin of Error; GROSS RENT - $200 to $299
+HC01_VC180,Estimate; GROSS RENT - $300 to $499
+HC02_VC180,Margin of Error; GROSS RENT - $300 to $499
+HC03_VC180,Percent; GROSS RENT - $300 to $499
+HC04_VC180,Percent Margin of Error; GROSS RENT - $300 to $499
+HC01_VC181,Estimate; GROSS RENT - $500 to $749
+HC02_VC181,Margin of Error; GROSS RENT - $500 to $749
+HC03_VC181,Percent; GROSS RENT - $500 to $749
+HC04_VC181,Percent Margin of Error; GROSS RENT - $500 to $749
+HC01_VC182,Estimate; GROSS RENT - $750 to $999
+HC02_VC182,Margin of Error; GROSS RENT - $750 to $999
+HC03_VC182,Percent; GROSS RENT - $750 to $999
+HC04_VC182,Percent Margin of Error; GROSS RENT - $750 to $999
+HC01_VC183,"Estimate; GROSS RENT - $1,000 to $1,499"
+HC02_VC183,"Margin of Error; GROSS RENT - $1,000 to $1,499"
+HC03_VC183,"Percent; GROSS RENT - $1,000 to $1,499"
+HC04_VC183,"Percent Margin of Error; GROSS RENT - $1,000 to $1,499"
+HC01_VC184,"Estimate; GROSS RENT - $1,500 or more"
+HC02_VC184,"Margin of Error; GROSS RENT - $1,500 or more"
+HC03_VC184,"Percent; GROSS RENT - $1,500 or more"
+HC04_VC184,"Percent Margin of Error; GROSS RENT - $1,500 or more"
+HC01_VC185,Estimate; GROSS RENT - Median (dollars)
+HC02_VC185,Margin of Error; GROSS RENT - Median (dollars)
+HC03_VC185,Percent; GROSS RENT - Median (dollars)
+HC04_VC185,Percent Margin of Error; GROSS RENT - Median (dollars)
+HC01_VC187,Estimate; GROSS RENT - No rent paid
+HC02_VC187,Margin of Error; GROSS RENT - No rent paid
+HC03_VC187,Percent; GROSS RENT - No rent paid
+HC04_VC187,Percent Margin of Error; GROSS RENT - No rent paid
+HC01_VC191,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Occupied units paying rent (excluding units where GRAPI cannot be computed)
+HC02_VC191,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Occupied units paying rent (excluding units where GRAPI cannot be computed)
+HC03_VC191,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Occupied units paying rent (excluding units where GRAPI cannot be computed)
+HC04_VC191,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Occupied units paying rent (excluding units where GRAPI cannot be computed)
+HC01_VC192,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Less than 15.0 percent
+HC02_VC192,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Less than 15.0 percent
+HC03_VC192,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Less than 15.0 percent
+HC04_VC192,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Less than 15.0 percent
+HC01_VC193,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 15.0 to 19.9 percent
+HC02_VC193,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 15.0 to 19.9 percent
+HC03_VC193,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 15.0 to 19.9 percent
+HC04_VC193,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 15.0 to 19.9 percent
+HC01_VC194,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 20.0 to 24.9 percent
+HC02_VC194,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 20.0 to 24.9 percent
+HC03_VC194,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 20.0 to 24.9 percent
+HC04_VC194,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 20.0 to 24.9 percent
+HC01_VC195,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 25.0 to 29.9 percent
+HC02_VC195,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 25.0 to 29.9 percent
+HC03_VC195,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 25.0 to 29.9 percent
+HC04_VC195,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 25.0 to 29.9 percent
+HC01_VC196,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 30.0 to 34.9 percent
+HC02_VC196,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 30.0 to 34.9 percent
+HC03_VC196,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 30.0 to 34.9 percent
+HC04_VC196,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 30.0 to 34.9 percent
+HC01_VC197,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 35.0 percent or more
+HC02_VC197,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 35.0 percent or more
+HC03_VC197,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 35.0 percent or more
+HC04_VC197,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - 35.0 percent or more
+HC01_VC199,Estimate; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Not computed
+HC02_VC199,Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Not computed
+HC03_VC199,Percent; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Not computed
+HC04_VC199,Percent Margin of Error; GROSS RENT AS A PERCENTAGE OF HOUSEHOLD INCOME (GRAPI) - Not computed

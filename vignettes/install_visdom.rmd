@@ -1,0 +1,87 @@
+---
+title: "Installing VISDOM"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Installing VISDOM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+#Simplest approach
+
+There is support in R for installing and updating packages directly from their version control repositories. If you plan to use VISDOM without altering any of its soruce code, this is the preferred method of installation.
+
+##Install VISDOM directly from GitHub source
+
+Currently, the VISDOM R module is private, so you will need an account on GitHub and then you need to be added to the list of collaborators. Once you are a collaborator, go to https://github.com/settings/tokens and generate a Personal Access Token (PAT) for repo access. This means that you will check the "repo" box for the scope of your new token.
+
+One useful feature of R documentation is its ability to present formatted examples of code usage and outputs, called vignettes. When installing from github, these vignettes are not built by default, largely due to their additional R module dependencies (and their runtimes in some cases). Still, it is highly recommended that you do build and refer to the vignettes. Note that any missing packages that R warns you about can likely be installed using the `install.packages` command. For example, if a package called `plyr` is not installed and you try to run code that depends on it, you will get a message like: `there is no package called ‘plyr’`. You can address this by calling `install.packages('plyr')` and repeat until your dependencies are all loading correctly.
+
+```{r eval=F}
+install.packages(c("devtools"))
+
+myPAT = 'get_this_from_your_github_account'
+
+# build_vignettes=T will build vignettes that serve as examples of usage
+# however, this will invoke other dependencies that might complicate things.
+# It can be set to F to just get the core code installed, but much of the documentation
+# effort to date has been in the form of vignettes.
+devtools::install_github("sborgeson/visdom", auth_token=myPAT, build_vignettes=T )
+```
+
+##Install VISDOM directly from local source
+
+If you are planning to read through, experiment with, or update the VISDOM source code itself, you will want a local copy of the reopsitory on your machine. 
+
+First ensure that you have cloned the repository into working version only your local machine, choosing one of:
+
+```{bash eval=F}
+cd /dev
+git clone git@github.com:sborgeson/visdom.git
+git clone https://github.com/sborgeson/visdom.git
+```
+
+If you are working within a corporate firewall, it may be necessary to use a proxy server account to connect to GitHub. Here you will need to replace the user and pass with your usernam and password and `proxy.server` with either the name or ip address of your proxy server. The port `8080` may also be different for your specific configuration.
+
+```{bash eval=F}
+git config --global http.proxy http://user:pass@proxy.server:8080
+git config --global https.proxy https://user:pass@proxy.server:8080
+```
+
+Then using that location as as your working directory (here we assume `/dev/visdom`), load requirements for package development and install from source.
+
+
+```{r eval=F}
+
+install.packages(c("devtools"))
+
+setwd('/dev/visdom')
+
+devtools::install(build_vignettes = T)
+
+```
+
+##Confirming that the package and documentation is in place
+Now check that you can load VISDOM and use it.
+
+```{r eval=F}
+library(visdom)
+```
+
+Browse through the available vignettes.
+
+```{r eval=F}
+# if you built them above, you can browse well formatted 
+# code vignettes that provide example usage.
+browseVignettes('visdom')
+```
+
+Or the original/old school way.
+```{r eval=F}
+# to list
+vignette(package='visdom')
+# to display a specific one as help
+vignette('example_feature_extraction',package='visdom')
+```

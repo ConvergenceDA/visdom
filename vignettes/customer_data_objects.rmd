@@ -1,0 +1,12 @@
+---
+title: "Working With Meter Data"
+author: "Sam Borgeson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Working With Meter Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Documentation on loading MEterDataClass objects and exploring their data, functions and built-in features.
