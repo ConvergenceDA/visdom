@@ -4,8 +4,10 @@ Title: R package for energy data analytics
 Version: 0.9
 Date: 2015-09-18
 Authors@R: c(
-    person("Sam", "Borgeson", email = "samb@speakeasy.net", role = c("aut","cre")),
-    person("Jungsuk", "Kwac", email = "kwjusu1@gmail.com", role = "aut"))
+    person("Sam", "Borgeson", email = "sam@convergenceda.com", role = c("aut","cre")),
+    person("Jungsuk", "Kwac", email = "kwjusu1@gmail.com", role = "aut"),
+    person("Ram", "Rajagopal", email = "ramr@stanford.edu", role = "aut")
+    )
 Depends:
     R (>= 3.1.0)
 Imports:
