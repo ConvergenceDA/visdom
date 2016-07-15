@@ -1,7 +1,7 @@
 # VISDOM (Visualization and Insight System for Demand Operations and Management) 
 This module supports bulk time series analysis and related modeling tools for utility interval meter data.
 
-To get started, ensure that you can access the repository here: https://github.com/sborgeson/visdom
+To get started, ensure that you can access the repository here: https://github.com/convergenceda/visdom
 
 See the code in the vignettes directory, especially the R markdown file [example_feature_extraction.rmd](./vignettes/example_feature_extraction.rmd). Note: rmd's mix commentary and code and this one will give you a sense of what is required to run features on a given sample of meter data. Cleaning them up is still on our todo list, but the raw source will provide a sense of usage for other tasks.
 
@@ -12,15 +12,15 @@ You steps will be:
    # install devtools if you don't have it.
    install.packages(c("devtools"))
 
-   myPAT = 'get_this_from_your_github_account'
-   devtools::install_github("sborgeson/visdom", auth_token=myPAT, build_vignettes=T )
+   devtools::install_github("convergenceda/visdom", build_vignettes=T )
    
    # check if it works!
    library(visdom)
+   ?visdom
    ```
 2. If you will be contributing code or documentation, follow Hadley Wickham's excellent "Getting Started" introduction to get devtools and documentation generation support: http://r-pkgs.had.co.nz/intro.html#intro-get, or you can follow the same steps and see related notes and caveats in [bootstrap_devel_environment.rmd](./vignettes/bootstrap_devel_environment.rmd) in vignettes.
   *Familiarize yourself with the rest of the R package background reading available here: http://r-pkgs.had.co.nz/
-  * Clone the project from GitHub `git clone git@github.com:sborgeson/visdom.git` so you can work on it and contribute changes locally.
+  * Get added as a collaborator and clone the project from GitHub `git clone git@github.com:convergenceda/visdom.git` so you can work on it and contribute changes locally.
   * You can generate documentation and/or install from your local source as a module with the commands `devtools::document()` and `devtools::install()`
 3. To use VISDOM with your own data, you will need to author a DataSource object that maps between the formatting of your data and the data structures used by VISDOM by implementing all the relevant functions stubbed out by DataSource in [util-dataSource.R](./R/util-dataSource.R). This is the key step to using VISDOM and the implementation and usage of a typical data source is detailed in [authoring_data_source.rmd](./vignettes/authoring_data_source.rmd). You will typically need to set up data access (i.e. to a SQL database if applicable - see [util-dbUtil.R](./R/util-dbUtil.R) - or figure out how you will be loading your data from disk or elsewhere), and write the code to perform the queries or other data access steps as appropriate to load, format, and return your data in the VISDOM standard format expected to come out of a data source. You can see the DataSource implemented for testing purposes in the file [testDataSource.R](./R/testDataSource.R) in the R directory of the package. 
 5. Call `DATA_SOURCE = YourDataSource()` to setup your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE)

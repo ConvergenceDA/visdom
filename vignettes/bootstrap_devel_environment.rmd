@@ -13,8 +13,8 @@ First ensure that you have cloned the repository into working version only your 
 
 ```{bash eval=F}
 cd /dev
-git clone git@github.com:sborgeson/visdom.git
-git clone https://github.com/sborgeson/visdom.git
+git clone git@github.com:convergenceda/visdom.git
+git clone https://github.com/convergenceda/visdom.git
 ```
 
 Then using that location as as your working directory (here we assume `/dev/visdom`), load requirements for package development and install from source.
