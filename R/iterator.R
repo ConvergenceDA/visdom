@@ -117,7 +117,7 @@ iternator.rbind.scalars = function(a,b) {
 #' @param ... Arguments to be passed into the feature function(s).
 #' 
 #' @export
-iterator.iterateZip = function(zipList,custFn,ctx=NULL,...) {
+iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,...) {
   tic(name='full run')
   if(is.null(ctx)) { ctx = list() }
   out = list()
@@ -127,33 +127,90 @@ iterator.iterateZip = function(zipList,custFn,ctx=NULL,...) {
     i = i + 1
     print( paste('Processing zip ',z,' (',i,'/',n,')',sep='') )
     tic(name='zip')
-    ctx$zip = z
-    if ( ! is.null(ctx$CLIMATE_ZIP) ) { # if there is a climate zip map, use it add the climate zone
-      zone = ctx$CLIMATE_ZIP[ctx$CLIMATE_ZIP[,1] == ctx$zip,2]
-      ctx$cz = paste('Z',zone,sep='')
-    }
-    tryCatch( expr= {
-        ctx$weather = getWeather(z)
-        tryCatch( expr = { ctx$weather.features = weatherFeatures(ctx$weather) },
-                  error = function(e) {
-                    print(paste('  WARNING: Could not load weather features for zipcode:',z))
-                    print(e)
-                  })
-        print('[iterator$iterateZip] weather data loaded')
-        ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
-        print('[iterator$iterateZip] raw zip code usage data loaded')
-        out = c(out,iterator.iterateMeters(DATA_SOURCE$getIds(ctx$zip),custFn,ctx,...))
-        toc( name='zip',prefixStr=paste('Processed',n,'entries in zipcode',z) )
-      },
-      error = function(e) {
-        print(paste('  WARNING: Could not load data for zipcode:',z))
-        print(e)
-      },
-      finally = function() {  }
-    )
+    out = c(out,iterator.runZip(z,custFn,cacheResults=cacheResults,ctx=ctx,...))
+    # ctx$zip = z
+    # if ( ! is.null(ctx$CLIMATE_ZIP) ) { # if there is a climate zip map, use it add the climate zone
+    #   zone = ctx$CLIMATE_ZIP[ctx$CLIMATE_ZIP[,1] == ctx$zip,2]
+    #   ctx$cz = paste('Z',zone,sep='')
+    # }
+    # tryCatch( expr= {
+    #     ctx$weather = getWeather(z)
+    #     tryCatch( expr = { ctx$weather.features = weatherFeatures(ctx$weather) },
+    #               error = function(e) {
+    #                 print(paste('  WARNING: Could not load weather features for zipcode:',z))
+    #                 print(e)
+    #               })
+    #     print('[iterator$iterateZip] weather data loaded')
+    #     ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
+    #     idx = iterator.build.idx(ctx)
+    #     print('[iterator$iterateZip] raw zip code usage data loaded')
+    #     out = c(out,iterator.iterateMeters(DATA_SOURCE$getIds(ctx$zip,useCache=T),custFn,ctx,...))
+    #     toc( name='zip',prefixStr=paste('Processed',n,'entries in zipcode',z) )
+    #   },
+    #   error = function(e) {
+    #     print(paste('  WARNING: Could not load data for zipcode:',z))
+    #     print(e)
+    #   },
+    #   finally = function() {  }
+    # )
   }
   toc( name='full run' )
   return(out)
+}
+
+iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
+  featureList = NULL
+  weatherFeatures = NULL
+  if(is.null(ctx$weatherFeatures)) { ctx$weatherFeatures = list() }
+  cacheFile = paste(ctx$resultsCache,'/results',zip,'.RData',sep='')
+  ctx$zip = zip
+  if ( ! is.null(ctx$CLIMATE_ZIP) ) { # if there is a climate zip map, use it add the climate zone
+    zone = ctx$CLIMATE_ZIP[ctx$CLIMATE_ZIP[,1] == ctx$zip,2]
+    ctx$cz = paste('Z',zone,sep='')
+  }
+  
+  if(cacheResults) {
+    tryCatch( expr =  {  
+                print(paste('Loading cache file',cacheFile))
+                load(file=cacheFile) 
+                featureList = featureList.saved
+                weatherFeatures = weatherFeatures.saved
+                print(paste( length(featureList), 'features retrieved from cache for',zip))
+              }, 
+              error = function(e) { print(e) } ) # pass. If the load fails, we will run the features.
+  }
+  if( ! is.null(weatherFeatures) & ! is.null(featureList) ) { # if the data load from the cache was successful
+    print(paste('Features and weather features for',zip,'loaded from cache',cacheFile))
+    ctx$weatherFeatures[[zip]] = weatherFeatures
+  } else {
+    tryCatch( expr= {
+      ctx$weather = getWeather(zip)
+      tryCatch( expr = { 
+                  weatherFeatures = weatherFeatures(ctx$weather)
+                  ctx$weatherFeatures[[zip]] = weatherFeatures },
+                error = function(e) {
+                  print(paste('  WARNING: Could not load weather features for zipcode:',zip))
+                  print(e)
+                })
+      print('[iterator$iterateZip] weather data loaded')
+      ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
+      idx = iterator.build.idx(ctx)
+      print('[iterator$iterateZip] raw zip code usage data loaded')
+      featureList = iterator.iterateMeters(DATA_SOURCE$getIds(ctx$zip,useCache=T),custFn,ctx,...)
+      toc( name='zip',prefixStr=paste('Processed',n,'entries in zipcode',zip) )
+      if(cacheResults) {
+        featureList.saved = featureList
+        weatherFeatures.saved = weatherFeatures
+        save(list=c('featureList.saved','weatherFeatures.saved'),file=cacheFile)
+      }
+    },
+    error = function(e) {
+        print(paste('  WARNING: Could not load data for zipcode:',zip))
+        print(e)
+      },
+    finally = function() {  } )
+  }
+  return(featureList)
 }
 
 #' @title Run features for a single meterId
@@ -270,7 +327,8 @@ getMeterDataClass = function(meterId,ctx) {
   if(!is.null(ctx$idxLookup)) {
     tic('fast id lookup')
     idxVals = ctx$idxLookup[match(meterId,ctx$idxLookup$ids),]
-    custData = ctx$RAW_DATA[idxVals$first:idxVals$last,]
+    meterData = ctx$RAW_DATA[idxVals$first:idxVals$last,]
+    
     toc('fast id lookup')
   }
   else {
@@ -278,7 +336,7 @@ getMeterDataClass = function(meterId,ctx) {
     if (!is.null(rawData)) {
       tic('id subrows')
       subrows = which(rawData$id == meterId)
-      custData = rawData[subrows,]
+      meterData = rawData[subrows,]
       toc('id subrows')
     }
   }

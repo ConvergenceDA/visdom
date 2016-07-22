@@ -133,8 +133,11 @@ MeterDataClass = function(id,geocode=NULL,weather=NULL,data=NULL,gasData=NULL,us
   # reshape the kW readings into a vector matching the dates
   kw    = as.vector(t(kwMat))
 
-  if (is.null(weather)) weather = WeatherClass(geocode,doSG=doSG,doMeans=T,useCache=useCache)
-
+  if (is.null(weather)) {
+    tic('weather')
+    weather = WeatherClass(geocode,doSG=doSG,doMeans=T,useCache=useCache)
+    toc('weather')
+  }
   # Normalize dates to day + 0:23 hrs add 1 hour 24 times using lubridate to get datetimes
   # note that this skips the fall back hour and has an NA for the spring forward hour
   #hod = lubridate::hours(1) * (0:23) # there is some sort of lubridate bug with hour()
