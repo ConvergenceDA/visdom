@@ -199,7 +199,7 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
     ctx$cz = paste('Z',zone,sep='')
   }
   
-  if(cacheResults) {
+  if(cacheResults & file.exists(cacheFile)) {
     tryCatch( expr =  {  
                 print(paste('Loading cache file',cacheFile))
                 load(file=cacheFile) 
@@ -226,8 +226,9 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
       ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
       idx = iterator.build.idx(ctx)
       print('[iterator$iterateZip] raw zip code usage data loaded')
-      featureList = iterator.iterateMeters(DATA_SOURCE$getIds(ctx$zip,useCache=T),custFn,ctx,...)
-      toc( name='zip',prefixStr=paste('Processed',n,'entries in zipcode',zip) )
+      zipIds = DATA_SOURCE$getIds(ctx$zip,useCache=T)
+      featureList = iterator.iterateMeters(zipIds,custFn,ctx,...)
+      toc( name='zip',prefixStr=paste('Processed',length(zipIds),'entries in zipcode',zip) )
       if(cacheResults) {
         featureList.saved = featureList
         weatherFeatures.saved = weatherFeatures
