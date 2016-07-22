@@ -4,12 +4,18 @@
 \alias{iterator.iterateZip}
 \title{Iterate over zip codes, extracting features for meters in each}
 \usage{
-iterator.iterateZip(zipList, custFn, ctx = NULL, ...)
+iterator.iterateZip(zipList, custFn, cacheResults = F, ctx = NULL, ...)
 }
 \arguments{
 \item{zipList}{List of all zip codes to iterate over}
 
 \item{custFn}{The feature function to call on \code{MeterDataClass} instances from within each zip code}
+
+\item{cacheResults}{A boolean flag that indicates whether feature results should be cached as RData. 
+If true, the cached data will be looked up prior to feature extraction to bypass running 
+features for the given zip code while returning the cached results. This can prevent duplicate processing
+and allow an interrupted batch process to resume processing where it left off.
+The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.}
 
 \item{ctx}{The ctx environment that configures the feature run.}
 

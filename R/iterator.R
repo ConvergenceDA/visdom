@@ -112,6 +112,12 @@ iternator.rbind.scalars = function(a,b) {
 #' 
 #' @param custFn The feature function to call on \code{MeterDataClass} instances from within each zip code
 #' 
+#' @param cacheResults A boolean flag that indicates whether feature results should be cached as RData. 
+#' If true, the cached data will be looked up prior to feature extraction to bypass running 
+#' features for the given zip code while returning the cached results. This can prevent duplicate processing
+#' and allow an interrupted batch process to resume processing where it left off.
+#' The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.
+#' 
 #' @param ctx The ctx environment that configures the feature run.
 #' 
 #' @param ... Arguments to be passed into the feature function(s).
@@ -158,6 +164,30 @@ iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,...) {
   return(out)
 }
 
+#' @title Iterate over all meters in a zip code, extracting features for each in a performance optimized manner
+#' 
+#' @description
+#' Function that looks up local weather and all meter data for the passed zip code
+#' (once) and caches them and then looks up all meter ids in the passed zip code
+#' calls iterator.iterateMeters with those meter ids and the pre-loaded weather and meter data. 
+#' This runs faster than calling ids individually, which load individual meter data and similar 
+#' weather data over and over.
+#' 
+#' @param zip The zip code to use for the weather, meter ids, and meter data lookups
+#' 
+#' @param custFn The feature function(s) to call on \code{MeterDataClass} instances from within the zip code
+#' 
+#' @param cacheResults A boolean flag that indicates whether results should be cached as RData. 
+#' If true, the cached data will be looked up prior to feature extraction to bypass running 
+#' features for the given zip code while returning the cached results. This can prevent duplicate processing
+#' and allow an interrupted batch process to resume processing where it left off.
+#' The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.
+#' 
+#' @param ctx The ctx environment that configures the feature run.
+#' 
+#' @param ... Arguments to be passed into the feature function(s).
+#' 
+#' @export
 iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
   featureList = NULL
   weatherFeatures = NULL
