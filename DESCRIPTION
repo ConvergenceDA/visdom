@@ -13,6 +13,7 @@ Depends:
 Imports:
     akmeans (>= 1.1),
     plyr,
+    dplyr,
     lubridate,
     timeDate,
     cvTools,

@@ -31,7 +31,7 @@ diff2 = function(v,n=1) { return(c(rep(NA,n),diff(v, n))) } # prepend NAs to pre
 #' @export
 ma = function(v,n=5,weights=NULL) {
   if(length(weights) == 0) { weights = rep(1/n,n) } # standard moving window average
-  as.numeric(filter(v, weights, sides=1))
+  as.numeric(stats::filter(v, weights, sides=1))
 }
 
 

@@ -54,10 +54,18 @@ iterator.callAllFromCtx = function(meterId,ctx,...) {
 iterator.todf = function(lofl) {
   tic('list of lists to data.frame')
   #print(length(lofl))
-  lofdf = plyr::llply(lofl,function(x) {
-    data.frame(x[plyr::laply(x,length)==1]) # remove non-scalars before creating the data frame
-  })
-  fulldf = plyr::rbind.fill(lofdf)
+  print('Removing non-scalars')
+  lofdf = plyr::llply( lofl,function(x) {
+    data.frame(x[plyr::laply(x,length)==1]) }, # remove non-scalars before creating the data frame
+    .progress='text')
+  
+  if("dplyr" %in% rownames(installed.packages())) {
+    print('Running dplyr::bind_rows on the remaining data (fast)')
+    fulldf = dplyr::bind_rows(lofdf)
+  } else {
+    print('Running plyr::rbind.fill on the remaining data (slow)')
+    fulldf = plyr::rbind.fill(lofdf)
+  }
   toc('list of lists to data.frame')
   return(fulldf)
 }
