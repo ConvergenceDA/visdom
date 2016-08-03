@@ -124,6 +124,8 @@ loadACSTable = function(table='DP02',colList=NULL,colNames=NULL,filterErr=T){
   name = c(paste('ACS_11_5YR_',table,sep=''))
   data(list = name)
   ACS = globalenv()[[name]]
+  print(name)
+  print(dim(ACS))
 
   if(filterErr) {
     valCols = grep('^HC01',colnames(ACS))
