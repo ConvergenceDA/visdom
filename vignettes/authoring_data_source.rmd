@@ -13,7 +13,7 @@ vignette: >
 
 In VISDOM, a data source is an adapter between your customer and meter data and the internal data formats used by VISDOM functions. To use VISDOM with your own data, you will need to author a DataSource object that maps between the formatting of your data and the data structures used by VISDOM by implementing all the relevant functions stubbed out by `DataSource()` in `util-dataSource.R`. This is the key step and main pre-requsite for using VISDOM. You will typically need to set up data access (i.e. to a SQL database if applicable - see `util-dbUtil.R` - or figure out how you will be loading your data from disk or elsewhere), and write the code to perform the queries or other data access steps as appropriate to load, format, and return your data in the VISDOM standard format expected to come out of a data source. You can see the DataSource implemented for testing purposes in the file `testDataSource.R` in the R directory of the package.
 
-Setting the global varaible `DATA_SOURCE = YourDataSource()` configures your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE).
+Setting the global variable `DATA_SOURCE = YourDataSource()` configures your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE).
 
 See the entry for the data parameter in the help for MeterDataClass:
 
@@ -32,13 +32,25 @@ library(visdom)
 DATA_SOURCE = TestData(100)
 ```
 
-1. Meter data for a single customer. Note that id (i.e. the VISDOM internal identifier for the meter), geocode, and dates (of type Date - without time) are required, as are 24 hourly or 96 15 minute meter observations per day. customerID (i.e. the owner of the meter) and other fields can be added, but are not required.
+The following describe the functions and output formats that should be created in your data source (e.g., here it is `TestData()`).
+
+1. Meter data for a single customer.
 
 ```{r}
 custdata = DATA_SOURCE$getMeterData(id=1)
 head(custdata,2)
 dim(custdata)
 ```
+
+Columns for output dataframe are as follows:
+ 
+     Name      |      Type     |     Example    |     Description
+------------------------------------------------------------------------
+    `id`       |               |        1        |    
+
+
+Note that id (i.e. the VISDOM internal identifier for the meter), geocode, and dates (of type Date - without time) are required, as are 24 hourly or 96 15 minute meter observations per day. customerID (i.e. the owner of the meter) and other fields can be added, but are not required.
+
 
 2. Meter data from multiple customers.
 
