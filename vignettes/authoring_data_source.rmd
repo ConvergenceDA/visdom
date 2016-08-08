@@ -42,15 +42,19 @@ head(custdata,2)
 dim(custdata)
 ```
 
-Columns for output dataframe are as follows:
+Returns a date.frame with variables (columns) as below:
  
-     Name      |      Type     |     Example    |     Description
-------------------------------------------------------------------------
-    `id`       |               |        1        |    
+     Name        |    Type       |     Example    |   Required?   |    Description
+-----------------|---------------|----------------|---------------|-------
+    `id`         |  `character`  |   `meter_1`    |   Required    |          Meter ID   
+    `geocode`    |  `character`  |   `94305`      |   Required    |     Geography code (here zip code)  
+    `dates`      |  `Date`       |  `2013-01-01`  |   Required    |     Date without time 
+    `H1`         |  `numeric`    |    12.19631    |   Required    |   Electricity usage in kWh over given interval H1
+    ...          |               |                |   Required    |   other interval readings
+    `customerID` |  `character`  |  `cust_1001`   |   Optional    |     Customer ID        
+    ...          |               |                |   Optional    |     Additional optional variables 
 
-
-Note that id (i.e. the VISDOM internal identifier for the meter), geocode, and dates (of type Date - without time) are required, as are 24 hourly or 96 15 minute meter observations per day. customerID (i.e. the owner of the meter) and other fields can be added, but are not required.
-
+The above description is for hourly meter data, though could do analogously for 15-minute data.  In that case, perhaps interval names like `Q1` to `Q96` (Q for quarterly).
 
 2. Meter data from multiple customers.
 
@@ -62,13 +66,32 @@ dim(geosample)
 unique(geosample$id)
 ```
 
-3. Weather data: dates (required of type POSIXct, with time at whatever intervals observations are available in, ideally with hourly or less intervals), temperaturef (required), pressure, hourlyprecip, dewpoint.
+Returns data.frame with similar format to `getMeterData`, where here data for individual meters are stacked into one big data.frame for all meters in the given `geocode`.
+
+3. Weather data: 
 
 ```{r}
 weather = DATA_SOURCE$getWeatherData(geocode='94305')
 head(weather,2)
 dim(weather)
 ```
+
+Returns a data.frame for the weather in the specified zip code, where each row is an instance of weather variables (e.g., each hour).  Columns are:
+
+     Name          |    Type               |     Example                  |     Description
+-------------------|-----------------------|------------------------------|--------------------------------------
+    `dates`        |  "POSIXct" "POSIXt"   |   `2013-01-01 01:00:00 PST`  |   Time instance   
+    `temperaturef` |  `numeric`            |   65                         |   Temperature in degrees F at given time  
+    `pressure`     |  `numeric`            |   30                         |   inches Hg (mercury) 
+    `hourlyprecip` |  `numeric`            |  12.19631                  |   
+    `dewpointf`    |    |     |              
+
+
+dates (required of type POSIXct, with time at whatever intervals observations are available in, ideally with hourly or less intervals), temperaturef (required), pressure, hourlyprecip, dewpoint.
+
+QUESTIONS:
+-Pressure: inches Mercury?  If so should be closer to 30, where example is 19
+-Hourly Precip: values here are indicator 0 or 1, whereas in my weather data they are postive real values that can go above 1?  I summed a few yearly for zip code and they turned out in the 15-20 range.
 
 4. Misc capabilites
 
