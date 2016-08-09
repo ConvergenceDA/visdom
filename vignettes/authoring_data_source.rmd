@@ -42,7 +42,7 @@ head(custdata,2)
 dim(custdata)
 ```
 
-Returns a date.frame with variables (columns) as below:
+Returns a date.frame where each row corresponds to a day.  Variables (columns) as below:
  
      Name        |    Type       |     Example    |   Required?   |    Description
 -----------------|---------------|----------------|---------------|-------
@@ -54,7 +54,11 @@ Returns a date.frame with variables (columns) as below:
     `customerID` |  `character`  |  `cust_1001`   |   Optional    |     Customer ID        
     ...          |               |                |   Optional    |     Additional optional variables 
 
-The above description is for hourly meter data, though could do analogously for 15-minute data.  In that case, perhaps interval names like `Q1` to `Q96` (Q for quarterly).
+The above description is for hourly meter data, though could do analogously for 15-minute data.  In that case, perhaps use interval names like `Q1` to `Q96` (Q for quarterly).
+
+QUESTION:
+
+* `id`, `geocode`, `customerID`, etc could also be something like integer
 
 2. Meter data from multiple customers.
 
@@ -76,22 +80,20 @@ head(weather,2)
 dim(weather)
 ```
 
-Returns a data.frame for the weather in the specified zip code, where each row is an instance of weather variables (e.g., each hour).  Columns are:
+Returns a data.frame for the weather in the specified zip code, where each row is an instance of weather variables (e.g., hourly or less).  Columns are:
 
-     Name          |    Type               |     Example                  |     Description
--------------------|-----------------------|------------------------------|--------------------------------------
-    `dates`        |  "POSIXct" "POSIXt"   |   `2013-01-01 01:00:00 PST`  |   Time instance   
-    `temperaturef` |  `numeric`            |   65                         |   Temperature in degrees F at given time  
-    `pressure`     |  `numeric`            |   30                         |   inches Hg (mercury) 
-    `hourlyprecip` |  `numeric`            |  12.19631                  |   
-    `dewpointf`    |    |     |              
-
-
-dates (required of type POSIXct, with time at whatever intervals observations are available in, ideally with hourly or less intervals), temperaturef (required), pressure, hourlyprecip, dewpoint.
+     Name          |    Type              |     Example                  |  Required?  |    Description
+-------------------|----------------------|------------------------------|-------------|-------------------------
+    `dates`        |  "POSIXct" "POSIXt"  |   `2013-01-01 01:00:00 PST`  |  Required   | Time instance   
+    `temperaturef` |  `numeric`           |   65                         |  Required   | Temperature in deg F  
+    `pressure`     |  `numeric`           |   30                         |  Optional   |  inches Hg (mercury) ??
+    `hourlyprecip` |  `numeric`           |  0.53                        |  Optional   |  ??
+    `dewpointf`    |  `numeric`           |   53.3                       |  Optional   | Dew point temp in deg F          
 
 QUESTIONS:
--Pressure: inches Mercury?  If so should be closer to 30, where example is 19
--Hourly Precip: values here are indicator 0 or 1, whereas in my weather data they are postive real values that can go above 1?  I summed a few yearly for zip code and they turned out in the 15-20 range.
+
+* pressure units: inches Mercury?  If so should be closer to 30, where example in TestDatasource 19.
+* Hourly Precip: unsure what value means.  Values in test data are 0 or 1, whereas in weather data in mysql table they are postive real values that can go above 1.  To test if something like inches of rain in the given time interval, I summed up the quantities for the year for a few random zip code and they turned out in the 15 - 60 range.
 
 4. Misc capabilites
 
