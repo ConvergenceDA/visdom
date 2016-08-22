@@ -34,7 +34,28 @@ ma = function(v,n=5,weights=NULL) {
   as.numeric(stats::filter(v, weights, sides=1))
 }
 
+# remove named, index, or logical columns, if present, from a data.frame
+#' @export
+rm.col = function(df, cols) {
+  cls = class(cols)
+  subdf = NULL
+  if(        cls == 'character') { 
+    keepers = setdiff(names(df),cols) #! names(df) %in% cols
+  } else if (cls %in% c('numeric','integer') ) {
+    keepers = setdiff(1:ncol(df),cols) #! 1:ncol(df) %in% cols
+  } else if (cls == 'logical'  ) {
+    keepers = ! cols
+  } else {
+    stop( paste( 'Unrecognized class for columns', cls ) )
+  }
+  return( df[,keepers] )
+}
 
+# return only the complete cases of a data.frame
+#' @export
+cmplt = function(df) {
+  return( df[complete.cases(df),])
+}
 
 
 # utility fn to clear all active variables -

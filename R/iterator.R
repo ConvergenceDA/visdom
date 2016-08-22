@@ -132,7 +132,7 @@ iternator.rbind.scalars = function(a,b) {
 #' 
 #' @export
 iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,...) {
-  tic(name='full run')
+  tic(name='zip code run')
   if(is.null(ctx)) { ctx = list() }
   out = list()
   n = length(zipList)
@@ -142,33 +142,8 @@ iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,...) {
     print( paste('Processing zip ',z,' (',i,'/',n,')',sep='') )
     tic(name='zip')
     out = c(out,iterator.runZip(z,custFn,cacheResults=cacheResults,ctx=ctx,...))
-    # ctx$zip = z
-    # if ( ! is.null(ctx$CLIMATE_ZIP) ) { # if there is a climate zip map, use it add the climate zone
-    #   zone = ctx$CLIMATE_ZIP[ctx$CLIMATE_ZIP[,1] == ctx$zip,2]
-    #   ctx$cz = paste('Z',zone,sep='')
-    # }
-    # tryCatch( expr= {
-    #     ctx$weather = getWeather(z)
-    #     tryCatch( expr = { ctx$weather.features = weatherFeatures(ctx$weather) },
-    #               error = function(e) {
-    #                 print(paste('  WARNING: Could not load weather features for zipcode:',z))
-    #                 print(e)
-    #               })
-    #     print('[iterator$iterateZip] weather data loaded')
-    #     ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
-    #     idx = iterator.build.idx(ctx)
-    #     print('[iterator$iterateZip] raw zip code usage data loaded')
-    #     out = c(out,iterator.iterateMeters(DATA_SOURCE$getIds(ctx$zip,useCache=T),custFn,ctx,...))
-    #     toc( name='zip',prefixStr=paste('Processed',n,'entries in zipcode',z) )
-    #   },
-    #   error = function(e) {
-    #     print(paste('  WARNING: Could not load data for zipcode:',z))
-    #     print(e)
-    #   },
-    #   finally = function() {  }
-    # )
   }
-  toc( name='full run' )
+  toc( name='zip code run' )
   return(out)
 }
 
