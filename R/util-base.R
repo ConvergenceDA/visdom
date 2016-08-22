@@ -34,7 +34,7 @@ ma = function(v,n=5,weights=NULL) {
   as.numeric(stats::filter(v, weights, sides=1))
 }
 
-# remove named, index, or logical columns, if present, from a data.frame
+#' @title remove named, index, or logical columns, if present, from a data.frame
 #' @export
 rm.col = function(df, cols) {
   cls = class(cols)
