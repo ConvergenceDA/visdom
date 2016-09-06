@@ -10,7 +10,7 @@ fixNames = function(df,prefix='') {
   } else if ('character' %in% class(df) ) {
     nms = df
   } else {
-    stop(paste("Unrecognized class. Can't figure out names to be fixed:",class(df))
+    stop(paste("Unrecognized class. Can't figure out names to be fixed:",class(df)))
   }
   fixed = gsub('[[[:punct:] ]','_',nms) # change ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~ to underscores
   fixed = gsub('__+','_',fixed) # remove double or more underscores
