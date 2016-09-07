@@ -48,26 +48,38 @@ basicFeatures = function(meterData){ # r is an instance of MeterDataClass
   t90Idx   <- which(tMean > quantile(tMean,0.9,na.rm=T))
   # index (hour) of the max demand on the hottest days
   t90kwhr = apply(data[t90Idx,],1,FUN=which.max)
+  # index (hour) of the min demand on the hottest days
+  t90kwhr_min = apply(data[t90Idx,],1,FUN=which.min)
   # index (hour) of the max temperature on the hottest days
   t90thr = apply(meterData$toutMat[t90Idx,],1,FUN=which.max)
+  # index (hour) of the min temperature on the hottest days
+  t90thr_min = apply(meterData$toutMat[t90Idx,],1,FUN=which.min)
 
   # index of the coldest 10% of days
   t10Idx   <- which(tMean < quantile(tMean,0.1,na.rm=T))
   # index (hour) of the max demand on the coldest days
   t10kwhr = apply(data[t10Idx,],1,FUN=which.max)
+  # index (hour) of the max demand on the coldest days
+  t10kwhr_min = apply(data[t10Idx,],1,FUN=which.min)
   # index (hour) of the max temperature on the coldest days
   t10thr = apply(meterData$toutMat[t10Idx,],1,FUN=which.max)
+  # index (hour) of the min temperature on the coldest days
+  t10thr_min = apply(meterData$toutMat[t10Idx,],1,FUN=which.min)
 
   # index of the top hours of consumption
   kw90Idx = which(meterData$kw > quantile(meterData$kw,0.9,na.rm=T))
   kw90hr = meterData$dates[kw90Idx]$hour
 
-  maxHOD <- as.numeric(which.max(hMean))
-  kw90   <- Mode(kw90hr)
-  t90kw  <- Mode(t90kwhr)
-  t90t   <- Mode(t90thr)
-  t10kw  <- Mode(t10kwhr)
-  t10t   <- Mode(t10thr)
+  maxHOD    <- as.numeric(which.max(hMean))
+  kw90      <- Mode(kw90hr)
+  t90kw     <- Mode(t90kwhr)
+  t90kw_min <- Mode(t90kwhr_min)
+  t90t      <- Mode(t90thr)
+  t90t_min  <- Mode(t90thr_min)
+  t10kw     <- Mode(t10kwhr)
+  t10kw_min <- Mode(t10kwhr_min)
+  t10t      <- Mode(t10thr)
+  t10t_min  <- Mode(t10thr_min)
 
   dRange   <- dMax - dMin
   dHalfway <- dMin + (dMax - dMin) / 2
@@ -222,9 +234,13 @@ basicFeatures = function(meterData){ # r is an instance of MeterDataClass
              max.day.pct=max.day.pct,
              min.day.pct=min.day.pct,
              t90kw=t90kw,
+             t90kw_min=t90kw_min,
              t90t=t90t,
+             t90t_min=t90t_min,
              t10kw=t10kw,
+             t10kw_min=t10kw_min,
              t10t=t10t,
+             t10t_min=t10t_min,
              maxHOD=maxHOD,
              kw90=kw90,
              daily.kw.var=daily.kw.var,
