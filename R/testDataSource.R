@@ -52,19 +52,25 @@ TestData = function( n=100 ) {
     return(data)
   }
 
-  obj$getAllData = function(geocode,useCache=T) {
+  obj$getAllData = function(geocode,useCache=TRUE) {
     return( obj$getHourlyAlignedData( ) )
   }
 
-  obj$getMeterData = function(id, geo=NULL) {
+  obj$getMeterData = function(id, geo=NULL,useCache=TRUE) {
     return( obj$getHourlyAlignedData( n=1 ) )
   }
 
-  obj$getIds = function(geocode,useCache=T) {
+  obj$getIds = function(geocode=NULL, useCache=TRUE) {
+    # here we ignore the geo code, but a real data source would return 
+    # just the ids associated with the passed geocode (if applicable) 
     return( unique(obj$getHourlyAlignedData()$id ) )
   }
+  
+  obj$getGeocodes = function( useCache=TRUE ) {
+    return(c('94305'))
+  }
 
-  obj$getGeoForId = function(id) {
+  obj$getGeoForId = function(id, useCache=TRUE) {
     return('94305')
   }
 

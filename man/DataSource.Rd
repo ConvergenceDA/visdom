@@ -18,6 +18,6 @@ all data source functions. It is good practice to have custom data sources exten
 it provides default implementations for all functions and a handfull of useful utility functions.
 }
 \seealso{
-\code{\link{TestData}}
+\code{\link{TestData}}, \code{\link{sanityCheckDataSource}}
 }
 

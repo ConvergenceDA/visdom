@@ -206,7 +206,11 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
                   print(e)
                 })
       print('[iterator$iterateZip] weather data loaded')
+      # load all raw data for the zip code and indicate that it has not yet been date filtered
       ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
+      ctx$ALREADY_DATE_FILTERED = F
+      
+      # it is important that this happens after any filtering ocurrs
       idx = iterator.build.idx(ctx)
       print('[iterator$iterateZip] raw zip code usage data loaded')
       zipIds = DATA_SOURCE$getIds(ctx$zip,useCache=T)
@@ -330,6 +334,30 @@ getMeterIds = function(zip) {
   return( DATA_SOURCE$getSPs(zip, useCache=T) )
 }
 
+#' runs applyDateFilter if the appropriate values are found in the ctx and the data is not yet
+#' flagged as filtered.
+runDateFilterIfNeeded = function(ctx) {
+  # filters only apply to RAW_DATA
+  if(is.null( ctx$RAW_DATA) ) {
+    return()
+  }
+  # to ensure that date filtering can be applied to the raw data once and only once
+  # we track whether it has been applied with a boolean flag
+  if( ! is.null(ctx$ALREADY_DATE_FILTERED)) {
+    if (! ctx$ALREADY_DATE_FILTERED) {
+      flt = ctx$dateFilter
+      print('Applying date filter')
+      norig = nrow(ctx$RAW_DATA)
+      ctx$RAW_DATA = applyDateFilters( ctx$RAW_DATA, flt ) # if flt is NULL, this will just return the original data
+      print( sprintf('Filtered from %d -> %d', norig, nrow(ctx$RAW_DATA) ) )
+      ctx$ALREADY_DATE_FILTERED = T
+      # it is important that this happens after any filtering ocurrs
+      idx = iterator.build.idx(ctx)
+    }
+  }
+  return()
+}
+
 # returns a meter's populated data class, using the unique identifier meterId
 # which should be returned by getMeterIds and other related functions.
 # Supports optional data from the ctx for speeding up access to zip code, weather
@@ -338,6 +366,9 @@ getMeterDataClass = function(meterId,ctx) {
   meterData = NULL
   # if the data was already looked up in advance and passed into the context
   # use the subset belonging to the specified meter
+  
+  runDateFilterIfNeeded(ctx)
+  
   if(!is.null(ctx$idxLookup)) {
     tic('fast id lookup')
     idxVals = ctx$idxLookup[match(meterId,ctx$idxLookup$ids),]
@@ -354,7 +385,6 @@ getMeterDataClass = function(meterId,ctx) {
       toc('id subrows')
     }
   }
-  if (!is.null(ctx$DATE_FILTER)) { meterData = ctx$DATE_FILTER(meterData) }
   md = DATA_SOURCE$getMeterDataClass(  id       = meterId,
                                        geo      = ctx$zip,
                                        weather  = ctx$weather,

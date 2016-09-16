@@ -16,7 +16,7 @@
 #' all data source functions. It is good practice to have custom data sources extend this one because
 #' it provides default implementations for all functions and a handfull of useful utility functions.
 #' 
-#' @seealso \code{\link{TestData}}
+#' @seealso \code{\link{TestData}}, \code{\link{sanityCheckDataSource}}
 #' @export
 DataSource = function() {
   obj = list (
@@ -35,27 +35,28 @@ DataSource = function() {
   obj$dateFormat = '%Y-%m-%d %H:%M'
   
   # utility function that returns a list of all the geographic code (ie zipcodes or census tracts) in the data set
-  obj$getGeocodes     = function( )      { return(data.frame(c())) }
-  obj$getIds          = function(geo=NA) { return(data.frame(c())) }
-  obj$getGeoCounts    = function( )      { return(data.frame(c())) }
-  obj$getAllData      = function(geo=NA) { return(data.frame(c())) }
-  obj$getMeterData    = function(id,geo) { return(data.frame(c())) }
-  obj$getGeoMetaData  = function(geo)    { return(data.frame(c())) }
-  obj$getGeoForId     = function(id)     { return('badGEO') }
+  obj$getGeocodes     = function( useCache=FALSE )          { return( c('default_geocode') ) }
+  obj$getIds          = function(geo=NULL, useCache=FALSE ) { return( c() ) }
+  obj$getGeoCounts    = function( useCache=FALSE )          { return( data.frame(c()) ) }
+  obj$getAllData      = function(geo=NULL, useCache=FALSE)  { return( data.frame(c()) ) }
+  obj$getMeterData    = function(id,geo, useCache=FALSE)    { return( data.frame(c()) ) }
+  obj$getGeoMetaData  = function(geo=NULL, useCache=FALSE)  { return( data.frame(c()) ) }
+  obj$getIdMetaData   = function(id=NULL, useCache=FALSE)   { return( data.frame(c()) ) }
+  obj$getGeoForId     = function(id, useCache=FALSE)        { return( 'default_geocode' ) }
 
-  obj$getAllGasData   = function()       { return(data.frame(c())) }
-  obj$getGasMeterData = function(id,geo) { return(data.frame(c())) }
-  obj$getWeatherData  = function(geo)    { return(data.frame(c())) }
+  obj$getAllGasData   = function(geo=NULL, useCache=FALSE)     { return(data.frame( c()) ) }
+  obj$getGasMeterData = function(id, geo=NULL, useCache=FALSE) { return(data.frame( c()) ) }
+  obj$getWeatherData  = function(geo, useCache=FALSE)          { return(data.frame( c()) ) }
 
-  obj$getMeterDataClass = function(id, geocode=NULL, weather=NULL, data=NULL, rawData=NULL ) {
+  obj$getMeterDataClass = function(id, geocode=NULL, weather=NULL, data=NULL, rawData=NULL, useCache=FALSE ) {
 
     r = MeterDataClass(  id       = id,
                          geocode  = geocode,
                          weather  = weather,
                          data     = data,
                          rawData  = rawData,
-                         useCache = T,
-                         doSG     = F  )
+                         useCache = useCache,
+                         doSG     = FALSE  )
     return(r)
   }
 
@@ -92,7 +93,7 @@ DataSource = function() {
 #' 
 #' @seealso \code{\link{DataSource}}
 #' @export
-sanityCheckDataSource = function(DATA_SOURCE, useCache=F) {
+sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   print('DATA_SOURCE summary:')
   print( paste('providesGas:',  DATA_SOURCE$providesGas))
   print( paste('geoColumnName:',DATA_SOURCE$geoColumnName))
@@ -101,18 +102,28 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=F) {
   # array of all known ids. These are typically meter ids but can also be 
   # account id if the time series meter data includes the time varying account
   # assignments.
-  ids = DATA_SOURCE$getIds(useCache=useCache)
+  print('Running getIds()')
+  ids = DATA_SOURCE$getIds(geocode=NULL, useCache=useCache)
+  
+  print('Running getMeterDataClass() - loadas a meter data class object by id')
+  mdc = DATA_SOURCE$getMeterDataClass(id=ids[1], useCache = useCache)
+  
+  print('Running plot.MeterDataClass() on loaded meter data')
+  plot(mdc)
   
   # Array of all geo codes in the data set.
   # These is typically zip codes, but can be other geographies
   # as long as they are consistent. 
   # Note that the census data matching and the mapping functionality of 
   # the feature browser web interface rely on geo code being zip code.
+  print('Running getGeocodes()')
   geos = DATA_SOURCE$getGeocodes(useCache=useCache)
   
   # Arrays of the subsets of ids found in each geo code location
+  print('Running getIds() for each geocode')
   for(geo in geos) {
-    ids = DATA_SOURCE$getIds(geo,useCache = useCache)
+    geoids = DATA_SOURCE$getIds(geo,useCache = useCache)
+    sprintf('  %s (%d ids)', geo, length(geoids))
   }
   
   # Customer account data associated with the meter ids, will typically have custom columns
@@ -120,23 +131,31 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=F) {
   # generic feature extraction process. This supplemental customer data, such as demographics,
   # customer types, rate plans, program participation flags, etc. will often become 
   # pass-through features that are added to the feature data frame prior to saving it.
-  accounts = DATA_SOURCE$getAccountData(useCache=useCache)
+  print('Running getIdMetaData() - meta data available at the id level, for example rate type or NAICS code')
+  accounts = DATA_SOURCE$getIdMetaData(useCache=useCache)
+  print(dim(accounts))
   
   # Reverse lookup of goe code given an id
+  print('Running getGeoForId() - reverse lookup of geo code by id')
   geo = DATA_SOURCE$getGeoForId(ids[1],useCache=useCache)
   
   # data frame of meter data for an indiividual customer
+  print('Running getMeterData() - loading meter data for a single id')
   mData = DATA_SOURCE$getMeterData(id = ids[1])
   
   # assert some things about the structure of the meter data here,...
   # must have an id column
+  print('test that meter data has an id column')
   testthat::expect_true('id' %in% names(mData))
   # must have a geo code column
+  print('test that meter data has a geo code column')
   testthat::expect_true(DATA_SOURCE$geoColumnName %in% names(mData),info = DATA_SOURCE$geoColumnName)
   # must have a dates column
+  print('test that meter data has a dates column')
   testthat::expect_true('dates' %in% names(mData))
   
   # check parsing behavior
+  print('test that date format is parsable')
   day = as.POSIXct(paste(mData[1,'dates'],'00:00'),tz="America/Los_Angeles", DATA_SOURCE$dateFormat)
   print(paste('First day:',day))
   
@@ -155,15 +174,22 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=F) {
   }
   print('First day of readings')
   print(readings)
+  print('test that meter readings are numeric')
   testthat::expect_true( all( sapply(readings,class) %in% c('numeric','integer') ) )
   
   
   # data frame of all meter data for a given geo code location
+  print('Running getAllData() - loads data for all ids assocaited with an optional geo code, or all available data when geo code is not specified.')
   allGeoData = DATA_SOURCE$getAllData(geocode = geos[1],useCache = useCache)
+  
+  # data frame of all weather data for a given geo code location
+  print('Running getWeather() - loads weather data assocaited with an optional geo code, or all available weather data when geo code is not specified.')
+  geoWeatherData = DATA_SOURCE$getWeather(geocode = geos[1], useCache = useCache)
   
   # loop over all geo codes to load the meter data for each.
   # The is a full data sample check that things are working and 
   # can be used to populate data caches.
+  print('Sanity checking data loading for all geo codes')
   n = length(geos)
   i = 0
   for (geo in geos) {
@@ -178,13 +204,14 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=F) {
   # loop over all geo codes to load the weather data for each.
   # The is a full data sample check that things are working and 
   # can be used to populate data caches.
+  print('Sanity checking weather data loading for all geo codes')
   n = length(geos)
   i = 0
   for (geo in geos) {
     i = i+1
     print(paste('Working on weather for',geo,'(',i,'/',n,')'))
     tic('geo load')
-    geoData = DATA_SOURCE$getWeather(geocode = geo,useCache = T)
+    geoData = DATA_SOURCE$getWeather(geocode = geo,useCache = useCache)
     print(paste(nrow(geoData),'weather observations.'))
     toc('geo load')
   }

@@ -75,12 +75,15 @@ head(DATA_SOURCE$getIds())
 
 You can call `DATA_SOURCE$getMeterDataClass(id=123)` on your DataSource, replacing 123 with an appropriate id from your data set (i.e. using the provided default implementation of `getMeterDataClass()` and it will hit your data source for all relevant data and instantiate a MeterDataClass object with associated weather data and WeatherData class. Until that call succeeds, you will be getting errors that related to deficiencies in your DataSource, so it is a good guide to what else you need to implement.
 
-you can also exercise your data source with calls like these:
+You can also exercise your data source with the function `sanityCheckDataSource()` of with test code like this:
 
 ```{r eval=F}
 library(visdom)
 
 DATA_SOURCE = YourDataSource()
+
+# runs a standard set of data checks
+sanityCheckDataSource(DATA_SOURCE)
 
 
 # if your data source in configured to access a database
