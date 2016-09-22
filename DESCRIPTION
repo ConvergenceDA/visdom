@@ -32,7 +32,6 @@ Suggests:
     foreach,
     doParallel,
     foreign,
-    testthat,
     knitr
 Description: R package for energy data analytics. VISDOM stands for Visialization
     and Insight System for Demand Operations and Management.

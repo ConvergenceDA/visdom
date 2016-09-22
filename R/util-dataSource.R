@@ -50,13 +50,13 @@ DataSource = function() {
 
   obj$getMeterDataClass = function(id, geocode=NULL, weather=NULL, data=NULL, rawData=NULL, useCache=FALSE ) {
 
-    r = MeterDataClass(  id       = id,
-                         geocode  = geocode,
-                         weather  = weather,
-                         data     = data,
-                         rawData  = rawData,
-                         useCache = useCache,
-                         doSG     = FALSE  )
+    r = visdom::MeterDataClass(  id       = id,
+                                 geocode  = geocode,
+                                 weather  = weather,
+                                 data     = data,
+                                 rawData  = rawData,
+                                 useCache = useCache,
+                                 doSG     = FALSE  )
     return(r)
   }
 

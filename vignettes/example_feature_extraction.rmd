@@ -30,12 +30,10 @@ DATA_SOURCE = TestData(n=100) # Use random/fake test data for analysis
 
 ## Implement feature extraction methods
 
-Next you must provide implementation of your feature extraction algorithms. First, we wrap the return values of the VISDOM internal function `basicFeatures()` with a named list, the required output format of any feature function. Basic features include max/min/mean, range, variance, hour-of-day, peak timing, and other basic statistical extracts from the passed meter data `meterData`. Note that it relies on the presence of weather data in the meter data object.
+Next you must provide implementation of your feature extraction algorithms. The required output format of any feature function is a named list of values. First, we assign the VISDOM internal function `basicFeatures()` the name `basicFeaturesfn`, just to demonstrate that functions can be referenced and called through variable names.  Basic features include max/min/mean, range, variance, hour-of-day, peak timing, and other basic statistical extracts from the passed meter data `meterData`. Note that it relies on the presence of weather data in the meter data object.
 
 ```{r}
-basicFeaturesfn = function(meterData,ctx,...) {
-  return( as.list(basicFeatures(meterData)) )
-}
+basicFeaturesfn = visdom::basicFeatures
 ```
 
 Here are some other examples of meter data feature functions. The first simply returns the zip code of the meter. The second calculates the mean of the daily peak hour of day by gaining a reference to the kWMat 24 (or 96) x N matrix of meter observations, where N is the number of days covered by each meter's data, calculating the maximum column for each day and averaging that value across all days.

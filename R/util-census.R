@@ -72,8 +72,11 @@ ACS_DIR = file.path('data/census/ACS_11')
 # the filterErr boolean determines whether or not to filter the columns that contain error metrics
 # from the data frame returned.
 loadACS = function(filterErr=T) {
+  #print('Load acs')
   ACS = acsSocial(filterErr=filterErr)
+  print(dim(ACS))
   ACS = merge(ACS,acsEcon(filterErr=filterErr))     # will merge on both GEO.id and ZCTA
+  print(dim(ACS))
   ACS = merge(ACS,acsHousing(filterErr=filterErr))  # will merge on both GEO.id and ZCTA
   ACS = merge(ACS,acsDemo(filterErr=filterErr))     # will merge on both GEO.id and ZCTA
   return(ACS)
@@ -122,10 +125,12 @@ acsDemo = function(filterErr=T) {
 loadACSTable = function(table='DP02',colList=NULL,colNames=NULL,filterErr=T){
   # data only loads string literal names, so the dynamic name must be placed in a list
   name = c(paste('ACS_11_5YR_',table,sep=''))
-  data(list = name)
-  ACS = globalenv()[[name]]
-  print(name)
-  print(dim(ACS))
+  curEnv = environment()
+  data(list = name, package='visdom', envir=curEnv)
+  
+  ACS = curEnv[[name]]
+  #print(name)
+  #print(dim(ACS))
 
   if(filterErr) {
     valCols = grep('^HC01',colnames(ACS))
@@ -185,11 +190,8 @@ loadACSTable = function(table='DP02',colList=NULL,colNames=NULL,filterErr=T){
 
 # Load a data frame that maps from "ZIP" to "ZCTA" using a crosswalk file from http://udsmapper.org/ziptozctacrosswalk.cfm (now http://udsmapper.org/docs/zip_to_zcta_2015.xlsx)
 # usage: df = zipToZCTA()
-ZIP_TO_ZCTA = NULL
 zipToZCTA = function() {
-  if(is.null(ZIP_TO_ZCTA)) {
-    data('ZIP_TO_ZCTA') # loads ZIP_TO_ZCTA
-  }
+  data('ZIP_TO_ZCTA', package='visdom') # loads ZIP_TO_ZCTA
   return(ZIP_TO_ZCTA)
 }
 
@@ -198,7 +200,7 @@ zipToZCTA = function() {
 CENSUS_GAZ = NULL
 censusGaz = function() {
   if(is.null(CENSUS_GAZ)) {
-    data('CENSUS_GAZ') # loads CENSUS_GAZ
+    data('CENSUS_GAZ',package='visdom') # loads CENSUS_GAZ
   }
   return(CENSUS_GAZ)
 }
@@ -206,7 +208,7 @@ censusGaz = function() {
 # add a ZCTA column to an arbitrary dataframe with zip codes in a column specified by zipCol
 #' @export
 addZCTA = function(df,zipCol='zip5') {
-  print(names(zipToZCTA()))
+  #print(names(zipToZCTA()))
   return( merge(df,zipToZCTA()[,c('ZIP','ZCTA')],by.x=zipCol,by.y='ZIP',all.x=T))
 }
 

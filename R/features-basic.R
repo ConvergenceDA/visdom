@@ -23,6 +23,7 @@
 #' meterData = DATA_SOURCE$getMeterDataClass(DATA_SOURCE$getIds()[1])
 #' features = basicFeatures(meterData)
 #' names(features)
+#' class(features)
 #' }
 #' @export
 basicFeatures = function(meterData){ # r is an instance of MeterDataClass
@@ -31,6 +32,7 @@ basicFeatures = function(meterData){ # r is an instance of MeterDataClass
 
   monthTotals = sapply(split(meterData$kw,factor(format(meterData$dates,'%b'),levels=month.abb)),mean,na.rm=T) * 30 * 24
   names(monthTotals) <- paste('kw.total.',names(monthTotals),sep='')
+  monthTotals = as.list(monthTotals) # needs to be a list ofr concatenation to work
 
   summerMon = 4:8 # May through Sept - zero based
   summerSubset = as.POSIXlt(meterData$dates)$mon %in% summerMon
@@ -194,13 +196,17 @@ basicFeatures = function(meterData){ # r is an instance of MeterDataClass
   daily.kw.max.var   = var(dMax/kw.mean,                use='complete.obs') # normed by mean of kW
 
   lags = 0:24
-  #lag.cor = apply(as.matrix(lags),  1,function(x) cor(meterData$kw,lag(meterData$tout,x),use='complete.obs'))
+  lag.cor = apply(as.matrix(lags),  1,function(x) cor(meterData$kw,lag(meterData$tout,x),use='complete.obs'))
   lag.ma  = apply(as.matrix(lags[-1]),1,function(x) cor(meterData$kw,ma(meterData$tout,x), use='complete.obs')) # no width 0
-  #names(lag.cor) <- c(paste('lag',lags,  sep=''))
-  #names(lag.ma)  <- c(paste('ma', lags[-1],sep=''))
+  names(lag.cor) <- c(paste('lag',lags,  sep=''))
+  lag.cor = as.list(lag.cor)
+  
   max.MA = which.max(lag.ma)
+  
+  names(lag.ma)  <- c(paste('ma', lags[-1],sep=''))
+  lag.ma = as.list(lag.ma)
 
-  basics = c(id=id,
+  basics = list(id=id,
              nObs=nObs,
              nObs.gas=nObs.gas,
              kw.mean=kw.mean,
@@ -249,15 +255,11 @@ basicFeatures = function(meterData){ # r is an instance of MeterDataClass
              kw.pout.cor=kw.pout.cor,
              kw.tout.cor=kw.tout.cor,
              max.MA=max.MA,
-             monthTotals,
-             hMean,
              nv2dv=nv2dv,
              date.first=date.first,
              date.last=date.last,
              date.first.gas=date.first.gas,
              date.last.gas=date.last.gas
-             #lag.cor,
-             #lag.ma
              )
   #print(class(basics))
   dailyFeatures <- cbind(dMax,dMin,dMean,dRange,dHighD,dMn2mx,dN2d)
@@ -269,7 +271,8 @@ basicFeatures = function(meterData){ # r is an instance of MeterDataClass
   names(augF) <- paste('Aug_',names(augF),sep='')
   janF = monthFeatures[c('Jan'),]
   names(janF) <- paste('Jan_',names(janF),sep='')
-  featureList <- c(basics,apply(dailyFeatures,2,FUN=mean,na.rm=T),augF,janF)
+  meanDailyFeatures = as.list(apply(dailyFeatures,2,FUN=mean,na.rm=T))
+  featureList <- c(basics, meanDailyFeatures, monthTotals, hMean, lag.cor, lag.ma, augF, janF)
   #print(featureList)
   return(featureList)
 }
