@@ -1,18 +1,18 @@
-VISDOM_R_PATH = 'C:/dev/VISDOM-R/eneRgy/R'
+#VISDOM_R_PATH = 'C:/dev/VISDOM-R/eneRgy/R'
 
-DATASOURCE_PATH = '../../../SSSL_datasources/'
+#DATASOURCE_PATH = '../../../SSSL_datasources/'
 
-setwd( file.path(VISDOM_R_PATH) )
+#setwd( file.path(VISDOM_R_PATH) )
 
 source('util-timer.R')               # adds tic() and toc() functions
 source('iterator.R')                 # functions to iterate through collections of meters
 source('classes-customer.R')         # loads MeterDataClass and WeatherDataClass
 
 
-source(file.path(DATASOURCE_PATH,'/pgeResDataAccess.R'))    # provides data source implementation for pge_res data
+#source(file.path(DATASOURCE_PATH,'/pgeResDataAccess.R'))    # provides data source implementation for pge_res data
 
-QUERY_CACHE = 'e:/dev/pge_collab/EnergyAnalytics/batch/QUERY_CACHE_STANFORD/'
-DATA_SOURCE = PgeResData(dbConfig=file.path(DATASOURCE_PATH,'pge_res_DB.cfg'), queryCache=QUERY_CACHE) # Use PGE res data for analysis
+#QUERY_CACHE = 'e:/dev/pge_collab/EnergyAnalytics/batch/QUERY_CACHE_STANFORD/'
+#DATA_SOURCE = PgeResData(dbConfig=file.path(DATASOURCE_PATH,'pge_res_DB.cfg'), queryCache=QUERY_CACHE) # Use PGE res data for analysis
 #DATA_SOURCE = PgeSmbData(dbConfig=file.path(DATASOURCE_PATH,'pge_smb_DB.cfg'), queryCache=QUERY_CACHE) # Use PGE res data for analysis
 
 

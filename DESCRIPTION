@@ -25,14 +25,15 @@ Imports:
     solaR,
     gridExtra,
     testthat,
-    digest
+    digest,
+    DBI
 Suggests:
-    RPostgreSQL,
-    RMySQL,
     foreach,
     doParallel,
     foreign,
-    knitr
+    knitr,
+    roxygen,
+    rmarkdown
 Description: R package for energy data analytics. VISDOM stands for Visialization
     and Insight System for Demand Operations and Management.
 License: GPL-3

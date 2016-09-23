@@ -9,4 +9,4 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Documentation on loading MEterDataClass objects and exploring their data, functions and built-in features.
+Documentation on loading MeterDataClass objects and exploring their data, functions and built-in features.
