@@ -26,7 +26,7 @@
 #' class(features)
 #' }
 #' @export
-basicFeatures = function(meterData){ # r is an instance of MeterDataClass
+basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
   data <- as.matrix(meterData$kwMat)
   id   <- meterData$id
 
