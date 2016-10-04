@@ -1,4 +1,4 @@
 library(testthat)
-library(VISDOM)
+library(visdom)
 
 test_check("VISDOM")
