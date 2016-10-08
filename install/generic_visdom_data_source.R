@@ -13,6 +13,7 @@ MyDataSource = function(dbConfig='data_db.cfg', queryCache=paste(getwd(),'/','DA
   obj$accountTable = 'account'
   obj$meterTable   = 'meter_data'
   obj$weatherTable = 'local_weather'
+  obj$interventionTable = 'intervention'
   
   obj$geoColumnName = 'zip5'
   
@@ -70,6 +71,16 @@ MyDataSource = function(dbConfig='data_db.cfg', queryCache=paste(getwd(),'/','DA
     # this allows for generic support for merging in account features with the other features by account id.
     # however, note that the column names can't be controlled by * queries, so all, including the ids will have their db names.
     query = 'SELECT * from account order by meter_uuid, acocunt_uuid'
+    data = run.query(query,obj$DB_CFG,cacheDir=obj$CACHE_DIR,cacheFile=cacheFile,forceRefresh=forceRefresh, debug=F)
+    return(data)
+  }
+
+  obj$getInterventionData = function(useCache=F,forceRefresh=F) {
+    cacheFile = NULL
+    if(useCache) { cacheFile=paste('interventionData.RData',sep='') }
+    query = paste(
+      'SELECT * FROM ', obj$interventionTable,
+      ' ORDER BY meter_uuid, account_uuid, install_date',sep='')
     data = run.query(query,obj$DB_CFG,cacheDir=obj$CACHE_DIR,cacheFile=cacheFile,forceRefresh=forceRefresh, debug=F)
     return(data)
   }
