@@ -56,9 +56,14 @@ writeH5Data = function(data,fName,label) {
 }
 
 #' @export
-writeSqliteData = function(data,fName,label) {
+writeSqliteData = function(data,fName,label,con) {
   print(paste(fName,label))
   print('No SQLite support yet!')
+  if (require("RSQLite")) {
+    con <- dbConnect(RSQLite::SQLite(), ":memory:")
+    dbWriteTable(con, fName, data)
+    dbDisconnect(con)
+  }
 }
 
 #' @export
