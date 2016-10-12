@@ -56,14 +56,23 @@ writeH5Data = function(data,fName,label) {
 }
 
 #' @export
-writeSqliteData = function(data,fName,label,con) {
+writeDatabaseData = function(data, tableName, conn, overwrite=TRUE) { # con <- dbConnect(SQLite(), dbname="filename.sqlite")
+  
+  
   print(paste(fName,label))
-  print('No SQLite support yet!')
-  if (require("RSQLite")) {
-    con <- dbConnect(RSQLite::SQLite(), ":memory:")
-    dbWriteTable(con, fName, data)
-    dbDisconnect(con)
-  }
+  dbWriteTable(conn=con, name=fName, value=data, row.names=F, overwrite=overwrite) # write data frame to table
+  dbDisconnect(db)
+  #print('No SQLite support yet!')
+  #if (require("RSQLite")) {
+  #  con <- dbConnect(RSQLite::SQLite(), ":memory:")
+    
+  #  dbDisconnect(con)
+  #}
+  #dbWriteTable(conn=db, name="allBasics", value=basicsPlus, row.names=F, overwrite=T) # write data frame to table
+  #dbListFields(db,"allBasics")                                                   # list of column names
+  #db_allBasics = dbReadTable(conn=db, name="allBasics")                           # load data frame from table
+  #dbDisconnect(db)                                                                # cleanup: close the file
+  
 }
 
 #' @export

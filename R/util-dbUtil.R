@@ -55,10 +55,14 @@ dbCfg = function(filePath){
 #'   
 #' @export
 conf.dbCon = function(cfg) {
-  drv = dbDriver(cfg$dbType) # dbType is a string like 'MySQL'. 'PostgreSQL' etc.
+  drvName = cfg$dbType
+  if( is.null(drvName) ) stop('[conf.dbCon] No dbType specified')
+  driver = NULL
+  driver = tryCatch( dbDriver(drvName), error = function(e) {} )
+  if( is.null(driver) ) driver = eval(parse(text=drvName))
   cfg$dbType <- NULL         # remove the dbType entry from the list that will be passed as arguments
   # cfg params, a named list likely read in through dbCfg, are passed as parameters to the dbConnect
-  con = do.call(dbConnect,c(drv,cfg))
+  con = do.call(dbConnect,c(driver,cfg))
   return(con)
 }
 
