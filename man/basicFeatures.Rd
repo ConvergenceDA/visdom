@@ -4,7 +4,7 @@
 \alias{basicFeatures}
 \title{Implementation of several basic statistical features}
 \usage{
-basicFeatures(meterData)
+basicFeatures(meterData, ...)
 }
 \arguments{
 \item{meterData}{An instance of \code{\link{MeterDataClass}} that provides the data used for all the implemented feature calculations.}
@@ -25,6 +25,7 @@ DATA_SOURCE = TestData(n=10)
 meterData = DATA_SOURCE$getMeterDataClass(DATA_SOURCE$getIds()[1])
 features = basicFeatures(meterData)
 names(features)
+class(features)
 }
 }
 
