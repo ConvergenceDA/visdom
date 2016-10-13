@@ -334,7 +334,7 @@ getMeterIds = function(zip) {
   return( DATA_SOURCE$getSPs(zip, useCache=T) )
 }
 
-#' runs applyDateFilter if the appropriate values are found in the ctx and the data is not yet
+#' runs applyDateFilters if the appropriate values are found in the ctx and the data is not yet
 #' flagged as filtered.
 #' @export
 runDateFilterIfNeeded = function(ctx) {

@@ -8,6 +8,8 @@ Authors@R: c(
     person("Jungsuk", "Kwac", email = "kwjusu1@gmail.com", role = "aut"),
     person("Ram", "Rajagopal", email = "ramr@stanford.edu", role = "aut")
     )
+URL: https://github.com/convergenceda/visdom
+BugReports: https://github.com/convergenceda/visdom/issues
 Depends:
     R (>= 3.1.0)
 Imports:

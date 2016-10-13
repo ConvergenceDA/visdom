@@ -2,13 +2,13 @@
 % Please edit documentation in R/iterator.R
 \name{runDateFilterIfNeeded}
 \alias{runDateFilterIfNeeded}
-\title{runs applyDateFilter if the appropriate values are found in the ctx and the data is not yet
+\title{runs applyDateFilters if the appropriate values are found in the ctx and the data is not yet
 flagged as filtered.}
 \usage{
 runDateFilterIfNeeded(ctx)
 }
 \description{
-runs applyDateFilter if the appropriate values are found in the ctx and the data is not yet
+runs applyDateFilters if the appropriate values are found in the ctx and the data is not yet
 flagged as filtered.
 }
 

@@ -2,17 +2,22 @@
 % Please edit documentation in R/filter.R
 \name{applyDateFilters}
 \alias{applyDateFilters}
-\title{MOY - list of months of the year to include, using 1 for Jan through 12 for Dec
-DOW - days of week to include, using 1 for Sun and 7 for Sat
-start.date - the first day of data to include: all dates before this date are excluded
-end.date - the last day of data to include: all dates after this date are excluded}
+\title{Date filter meter data}
 \usage{
 applyDateFilters(df, filterRules = NULL, dateCol = "dates")
 }
-\description{
+\arguments{
+\item{df}{The data frame of data to filter}
+
+\item{filterRules}{A named list of filtering rules. Supported arguments inclide:
 MOY - list of months of the year to include, using 1 for Jan through 12 for Dec
 DOW - days of week to include, using 1 for Sun and 7 for Sat
 start.date - the first day of data to include: all dates before this date are excluded
-end.date - the last day of data to include: all dates after this date are excluded
+end.date - the last day of data to include: all dates after this date are excluded}
+
+\item{dateCol}{The name of the column in 'df' with dates in it.}
+}
+\description{
+Utility function that filters raw meter data (one customer day per row) based on date criteria
 }
 

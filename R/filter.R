@@ -1,11 +1,21 @@
 # Copyright 2016 Convergence Data Analytics
 # Direct inquiries to Sam Borgeson (sam@convergenceda.com) 
 
+#' @title Date filter meter data
 #' 
+#' @description
+#' Utility function that filters raw meter data (one customer day per row) based on date criteria
+#' 
+#' @param df The data frame of data to filter
+#' 
+#' @param filterRules A named list of filtering rules. Supported arguments inclide:
 #' MOY - list of months of the year to include, using 1 for Jan through 12 for Dec
 #' DOW - days of week to include, using 1 for Sun and 7 for Sat
 #' start.date - the first day of data to include: all dates before this date are excluded
 #' end.date - the last day of data to include: all dates after this date are excluded
+#' 
+#' @param dateCol The name of the column in 'df' with dates in it.
+#' 
 #' @export
 applyDateFilters = function(df, filterRules=NULL, dateCol="dates") {
   # if no rules, don't filter
