@@ -334,8 +334,13 @@ getMeterIds = function(zip) {
   return( DATA_SOURCE$getSPs(zip, useCache=T) )
 }
 
-#' runs applyDateFilters if the appropriate values are found in the ctx and the data is not yet
-#' flagged as filtered.
+#' @title Run date filters on raw meter data
+#' 
+#' @description Runs \code{applyDateFilters} if the appropriate values are found in the ctx and the data is not yet
+#' flagged as filtered. This function retrieves data from \code{ctx$RAW_DATA} and writes its results to the same field.
+#' 
+#' @param ctx Context object that is an R environment with named parameters
+#' 
 #' @export
 runDateFilterIfNeeded = function(ctx) {
   # filters only apply to RAW_DATA

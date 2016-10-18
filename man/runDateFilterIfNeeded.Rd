@@ -2,13 +2,15 @@
 % Please edit documentation in R/iterator.R
 \name{runDateFilterIfNeeded}
 \alias{runDateFilterIfNeeded}
-\title{runs applyDateFilters if the appropriate values are found in the ctx and the data is not yet
-flagged as filtered.}
+\title{Run date filters on raw meter data}
 \usage{
 runDateFilterIfNeeded(ctx)
 }
+\arguments{
+\item{ctx}{Context object that is an R environment with named parameters}
+}
 \description{
-runs applyDateFilters if the appropriate values are found in the ctx and the data is not yet
+Runs \code{\link{applyDateFilters}} if the appropriate values are found in the ctx and the data is not yet
 flagged as filtered.
 }
 

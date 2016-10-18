@@ -13,6 +13,9 @@ weatherFeatures = function(w){ # w is an instance of WeatherClass
   names(sMeans) = paste('summer.',names(sMeans),sep='')
   names(wMeans) = paste('winter.',names(wMeans),sep='')
   features = c(zip5=w$zip,yMeans,wMeans,sMeans)
+  
+  # TODO: Add HDD, CDD
+  
   return(features)
 }
 

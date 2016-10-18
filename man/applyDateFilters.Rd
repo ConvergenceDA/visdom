@@ -9,11 +9,15 @@ applyDateFilters(df, filterRules = NULL, dateCol = "dates")
 \arguments{
 \item{df}{The data frame of data to filter}
 
-\item{filterRules}{A named list of filtering rules. Supported arguments inclide:
-MOY - list of months of the year to include, using 1 for Jan through 12 for Dec
-DOW - days of week to include, using 1 for Sun and 7 for Sat
-start.date - the first day of data to include: all dates before this date are excluded
-end.date - the last day of data to include: all dates after this date are excluded}
+\item{filterRules}{A named list of filtering rules. Supported arguments include:
+
+\code{MOY} - list of months of the year to include, using 1 for Jan through 12 for Dec
+
+\code{DOW} - days of week to include, using 1 for Sun and 7 for Sat
+
+\code{start.date} - the first day of data to include: all dates before this date are excluded
+
+\code{end.date} - the last day of data to include: all dates after this date are excluded}
 
 \item{dateCol}{The name of the column in 'df' with dates in it.}
 }
