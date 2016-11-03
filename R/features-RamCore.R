@@ -30,9 +30,7 @@
 #' @export
 coreFeaturesfn = function(meterData, ctx, ...){
 
-  require('class') ## for knn use
-  source('utility.R')
-  #load('pge_res_dic200.RData') ## for dic200 use
+  #load('dicionary200.RData') ## for dic200 use
   dic200 = ctx$dic200
 
   ## get meter data
@@ -83,7 +81,7 @@ coreFeaturesfn = function(meterData, ctx, ...){
   odata = kjs.impute(as.matrix(meterData$kwMat),1:24) ## depending on meter data format, adjust here
   odata[which(is.na(odata))] <- 0 # HACK!! What to do with missing data!?
   i=1
-  encode200 = knn(dic200,odata,1:200)
+  encode200 = class::knn(dic200,odata,1:200)
 
   ## assume shannon.entropy2 in utility.r is included in the same package. if not, include manually.
   ## sumidx and -sumidx should be populated based on ctx$start.date and ctx$end.date

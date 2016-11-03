@@ -79,14 +79,14 @@ conf.dbCon = function(cfg) {
 #' 
 #' @export
 clearCons = function(cfg) {
-  all_cons <- dbListConnections(dbDriver(cfg$dbType))
+  all_cons <- DBI::dbListConnections(DBI::dbDriver(cfg$dbType))
   for(con in all_cons) {
-    res <- dbListResults(con)
+    res <- DBI::dbListResults(con)
     if(length(res)>0) {
-      dbClearResult(res[[1]])
+      DBI::dbClearResult(res[[1]])
       rm(res)
     }
-    dbDisconnect(con)
+    DBI::dbDisconnect(con)
   }
 }
 

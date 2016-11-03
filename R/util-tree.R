@@ -50,7 +50,7 @@ ctree.boot = function(df, nRun=100, nSample=NULL, ctl=NULL, responseVar, ignoreC
 #' @export
 spread.boot = function(df, df.ct, nRun=100, nSample=NULL, responseVar, ignoreCols) {
   if(is.null(nSample)) { nSample = nrow(df) / 10 }
-  out = adply( 1:nRun, 
+  out = plyr::adply( 1:nRun, 
                .margins=1, 
                .fun = spreadScore, 
                df=df,
@@ -136,10 +136,10 @@ spreadScore = function(df, df.ct, nSample=NULL, responseVar, ignoreCols=c()) {
   newData = rm.col(df[sub,], c(responseVar,ignoreCols))
   responsePct = mean( as.logical(df[,responseVar]) )
   responseProb = NULL
-  if("constparty" %in% class(df.ct)) {
+  if("constparty" %in% class(df.ct)) { # if the tree is from party
     responseprob = predict(df.ct, newdata = newData, type='prob')[,2]
-  } else {
-    responseprob = sapply(treeresponse(df.ct, newdata = newData), FUN = function(x) x[2])
+  } else { # the tree must be from partykit
+    responseprob = sapply(partykit::treeresponse(df.ct, newdata = newData), FUN = function(x) x[2])
   }
   relResponse = responsePct - responseprob
   #print(head(relResponse))

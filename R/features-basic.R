@@ -128,7 +128,7 @@ basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
     therm.mean.summer = mean(meterData$therms[ gasSummer],na.rm=T)
     therm.mean.winter = mean(meterData$therms[!gasSummer],na.rm=T)
     thermdf = data.frame(therm=meterData$therms,day=meterData$gasDays,month=as.POSIXlt(meterData$gasDays)$mon)
-    thermMonth = dcast(thermdf,month ~ .,mean,value.var='therm')
+    thermMonth = reshape2::dcast(thermdf,month ~ .,mean,value.var='therm')
     names(thermMonth) <- c('month','therm')
     therm.min = mean(sort(thermMonth$therm,decreasing=F)[1:3]) # mean of three lowest months
     #therm.min = mean(thermMonth$therm[thermMonth$month %in% 5:7]) # this is unreliable!!

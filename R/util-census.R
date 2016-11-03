@@ -191,7 +191,7 @@ loadACSTable = function(table='DP02',colList=NULL,colNames=NULL,filterErr=T){
 # Load a data frame that maps from "ZIP" to "ZCTA" using a crosswalk file from http://udsmapper.org/ziptozctacrosswalk.cfm (now http://udsmapper.org/docs/zip_to_zcta_2015.xlsx)
 # usage: df = zipToZCTA()
 zipToZCTA = function() {
-  data('ZIP_TO_ZCTA', package='visdom') # loads ZIP_TO_ZCTA
+  data('ZIP_TO_ZCTA', package='visdom', envir = environment()) # loads ZIP_TO_ZCTA
   return(ZIP_TO_ZCTA)
 }
 
@@ -200,7 +200,7 @@ zipToZCTA = function() {
 CENSUS_GAZ = NULL
 censusGaz = function() {
   if(is.null(CENSUS_GAZ)) {
-    data('CENSUS_GAZ',package='visdom') # loads CENSUS_GAZ
+    data('CENSUS_GAZ',package='visdom', envir = environment()) # loads CENSUS_GAZ
   }
   return(CENSUS_GAZ)
 }

@@ -268,7 +268,7 @@ cp24Generator = function(r,df,namePrefix,formula,subset=NULL,cvReps=0,terms=NULL
   hourlyFits=hourlyChangePoint(df,as.list(1:24),trange=c(50:(max(df$tout,na.rm=T)-5)))
   cps = hourlyFits['cp',]
   cps[hourlyFits['nullModelTest',] > 0.05] <- NA # if the cp model failed the f-test afgainst the no cp model, don't include it
-  splitToutList = alply(cps,.fun=piecewise.regressor,.margin=1,r$tout,diverge=diverge) # get a list of hourly piecewise splits for tout
+  splitToutList = plyr::alply(cps,.fun=piecewise.regressor,.margin=1,r$tout,diverge=diverge) # get a list of hourly piecewise splits for tout
   # combine the list into a sensible set of regressors
   hourlyCP = c() # hourly change point pieces
   for (hr in 1:length(cps)) { # for every hour, get the piecewise regressors, select just the right hours, and combine with cbind
@@ -320,7 +320,7 @@ cp24Generator = function(r,df,namePrefix,formula,subset=NULL,cvReps=0,terms=NULL
 # toutPieces24Generator breaks temperature into piecewise segments, broken at 55,65,75F
 # and regresses these with different coefficients for every hour of the day.
 #' @export
-toutPieces24Generator = function(r,df,namePrefix,formula,subset=NULL,cvReps=0,terms='+ HOW - 1',basics=NULL,breaks=c(55,65,75),diverge=F,datestoIgnore=NULL) {
+toutPieces24Generator = function(r,df,namePrefix,formula,subset=NULL,cvReps=0,terms='+ HOW - 1',basics=NULL,breaks=c(55,65,75),diverge=F,datesToIgnore=NULL) {
   toutPIECES = regressor.piecewise(r$tout,breaks,diverge=diverge)
   if(class(subset) == 'character' & subset == 'idxSteps') {
     step = 30*24

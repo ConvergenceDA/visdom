@@ -34,7 +34,7 @@ solarGeom = function(dates,zip=NULL,lat=NULL,azimBreaks=seq(0,360,45),elevBreaks
   #ZIP_LOCATION <- read.csv(file.path("data/Erle_zipcodes.csv"), header=TRUE)
   # now laods as a part of the VISDOM package data
   if( ! exists('ERLE_ZIP_LOCATION')) {
-    data('ERLE_ZIP_LOCATION') # loads ERLE_ZIP_LOCATION mapping between zip code and lat/lon
+    data('ERLE_ZIP_LOCATION', envir = environment()) # loads ERLE_ZIP_LOCATION mapping between zip code and lat/lon
   }
   blanks = is.na(dates)        # dates have na's for daylight savings spring forward day
   dates[blanks] <- dates[1]    # they must be overridden as real dates for calcSol to work

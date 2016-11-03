@@ -10,7 +10,7 @@ runDateFilterIfNeeded(ctx)
 \item{ctx}{Context object that is an R environment with named parameters}
 }
 \description{
-Runs \code{\link{applyDateFilters}} if the appropriate values are found in the ctx and the data is not yet
-flagged as filtered.
+Runs \code{applyDateFilters} if the appropriate values are found in the ctx and the data is not yet
+flagged as filtered. This function retrieves data from \code{ctx$RAW_DATA} and writes its results to the same field.
 }
 

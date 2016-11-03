@@ -4,7 +4,7 @@
 \alias{exportData}
 \title{Export feature data into a selection of formats}
 \usage{
-exportData(df, name, label = None, format = "hdf5", ...)
+exportData(df, name, label = NA, format = "hdf5", ...)
 }
 \arguments{
 \item{df}{Data frame of feature data to export}

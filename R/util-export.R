@@ -92,8 +92,8 @@ writeH5Data = function(data,fName,label) {
   #source("https://bioconductor.org/biocLite.R")
   #biocLite("rhdf5")
   require(rhdf5)
-  if(! file.exists(fName)) { h5createFile(fName) }
-  h5write(data,fName,label)
+  if(! file.exists(fName)) { rhdf5::h5createFile(fName) }
+  rhdf5::h5write(data,fName,label)
 }
 
 #' @title Write feature data frame to a database
@@ -113,8 +113,8 @@ writeH5Data = function(data,fName,label) {
 #' @export
 writeDatabaseData = function(data, tableName, label=NULL, conn, overwrite=TRUE) { # con <- dbConnect(SQLite(), dbname="filename.sqlite")
   print(paste(tableName))
-  dbWriteTable(conn=conn, name=tableName, value=data, row.names=F, overwrite=overwrite, append=!overwrite) # write data frame to table
-  dbDisconnect(conn)
+  DBI::dbWriteTable(conn=conn, name=tableName, value=data, row.names=F, overwrite=overwrite, append=!overwrite) # write data frame to table
+  DBI::dbDisconnect(conn)
   #print('No SQLite support yet!')
   #if (require("RSQLite")) {
   #  con <- dbConnect(RSQLite::SQLite(), ":memory:")
@@ -140,7 +140,7 @@ writeDatabaseData = function(data, tableName, label=NULL, conn, overwrite=TRUE) 
 #' @param label Unused, but present for compatibility with other write* fucntions
 #' 
 #' @export
-writeCSVData = function(data,fName,label=None) {
+writeCSVData = function(data,fName,label=NA) {
   write.csv(data, file=fName, row.names=F)
 }
 
@@ -175,7 +175,7 @@ exportShapes = function(shape.results,prefix='',format='hdf5') {
 #' database export requires a conn object.
 #' 
 #' @export
-exportData = function(df,name,label=None,format='hdf5', ...) {
+exportData = function(df,name,label=NA,format='hdf5', ...) {
   ext = list(hdf5='h5',hdf='h5',h5='h5',csv='csv',database='')
   fn = list(  hdf5=writeH5Data,
               hdf=writeH5Data,

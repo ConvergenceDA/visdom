@@ -1,8 +1,8 @@
 Package: visdom
 Type: Package
 Title: R package for energy data analytics
-Version: 0.9
-Date: 2015-09-18
+Version: 0.7.0
+Date: 2016-11-03
 Authors@R: c(
     person("Sam", "Borgeson", email = "sam@convergenceda.com", role = c("aut","cre")),
     person("Jungsuk", "Kwac", email = "kwjusu1@gmail.com", role = "aut"),
@@ -26,6 +26,8 @@ Imports:
     ggplot2,
     solaR,
     gridExtra,
+    party,
+    partykit,
     testthat,
     digest,
     DBI
@@ -36,7 +38,7 @@ Suggests:
     knitr,
     roxygen,
     rmarkdown
-Description: R package for energy data analytics. VISDOM stands for Visialization
+Description: R package for energy data analytics. VISDOM stands for Visualization
     and Insight System for Demand Operations and Management.
 License: GPL-3
 LazyData: true
