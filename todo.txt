@@ -1,0 +1,33 @@
+Adding support for dynamic retrieval of ACS data:
+
+An important US census product is the American Community Survey, which includes statistics on demographics, income, and housing characteristics and is updated on an annual basis. Note that ACS 3-year or 5-year data refers to the number of years prior to the update year are used to develop the statistical power behind the estimates. We currently use snapshots from ACS directly downloaded from util-census.R (see the comments at the top of that file for manual download details or consult the project data-raw directory for the migrateData script that converts them into RData files and a look at the raw california-specific files for ACS 2011 5year at the Zip Code tabulation area level of aggregation). 
+
+These snapshots files are essentially canned rollups of specific census variables of interest to those of us trying to explain energy usage or program participation. In particular, we are interested in:
+
+DP02: SELECTED SOCIAL CHARACTERISTICS IN THE UNITED STATES (household types, marital status, education, citizenship, ancestry)
+DP03: SELECTED ECONOMIC CHARACTERISTICS (employment status, job, income, poverty)
+DP04: SELECTED HOUSING CHARACTERISTICS (occupancy, units, vintage, tenure, value, costs, fuels)
+DP05: ACS DEMOGRAPHIC AND HOUSING ESTIMATES (sex, age, race)
+
+This task is about getting more flexibility out of our census data support. The goal of this effort is to use the R package 'acs' to dynamically download the equivalent of DP02-05 for different years, geographies, and levels of aggregation, so we are not bound by either manual downloads or specific timing or geographic identifiers. The ideal solution would bea drop in replacement for the 'data()' calls in util-census.R.
+
+The catch? The acs package author has confirmed that the DP* files are a special case/format of census data and not directly supported by 'acs'. One must re-create them using the lower level data access found in 'acs' and appropriate summary functions i fappropriate and that is really what this task is about. One imagines that there is some way to take the variable names from the dp files to get started with this task.
+devtools::githubinstall('convergenceda/visdom')
+data("ACS_11_5YR_DP04")
+names(ACS_11_5YR_DP04)
+
+Acceptance criteria:
+
+The ideal implementation, assumed to be called getACS here would work as follows:
+data("ACS_11_5YR_DP04")
+newACS = getACS(year=2011, interval='5yr', table='DP04')
+all(newACS == ACS_11_5YR_DP04)
+
+data("ACS_11_5YR_DP02")
+newACS = getACS(year=2011, interval='5yr', table='DP02')
+all(newACS == ACS_11_5YR_DP02)
+
+etc.
+
+However, in practice, the data quality/certainty columns are not accessed at the moment, so a fallback would be to affirm that at least all the columns that util-census.R uses have been replicated.
+
