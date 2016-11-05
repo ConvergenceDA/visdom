@@ -43,8 +43,13 @@
 WeatherClass = function(geocode,doMeans=T,useCache=F,doSG=F){
   raw = DATA_SOURCE$getWeatherData(geocode,useCache=useCache)
   if(length(raw)==0) stop(paste('No data found for geocode',geocode))
+  requiredCols = c("date", "temperaturef", "pressure", "dewpointf", "hourlyprecip", "windspeed"  )
+  if( any(! names(raw) %in% requiredCols) ) {
+    missing = paste( names(raw)[which(! names(raw) %in% requiredCols)], collapse=', ' )
+    stop(paste('Required named data columns are missing:', missing))
+  }
   rawData = data.frame(
-    dates = as.POSIXct(raw[,1],tz="America/Los_Angeles",origin='1970-01-01','%Y-%m-%d %H:%M:%S'),
+    dates = as.POSIXct(raw[,'date'],tz="America/Los_Angeles",origin='1970-01-01','%Y-%m-%d %H:%M:%S'),
     tout = raw[,'temperaturef'],
     pout = raw[,'pressure'],
     rain = raw[,'hourlyprecip'],

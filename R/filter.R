@@ -8,7 +8,7 @@
 #' 
 #' @param df The data frame of data to filter
 #' 
-#' @param filterRules A named list of filtering rules. Supported arguments include:
+#' @param filterRules A named list of filtering rules. Supported list entries include:
 #' 
 #' \code{MOY} - list of months of the year to include, using 1 for Jan through 12 for Dec
 #' 

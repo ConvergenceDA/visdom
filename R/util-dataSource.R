@@ -105,22 +105,13 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   print('Running getIds()')
   ids = DATA_SOURCE$getIds(geocode=NULL, useCache=useCache)
   
-  print('Running getMeterDataClass() - loadas a meter data class object by id')
-  mdc = DATA_SOURCE$getMeterDataClass(id=ids[1], useCache = useCache)
-  
-  print('Running plot.MeterDataClass() on loaded meter data')
-  plot(mdc)
-  
-  if(class(mdc$id) != 'character') {
-    print('MeterDataClass$id should be a character string with class(mdc$id) == "character"')
-  }
-  
-  if(class(mdc$geocode) != 'character') {
-    print('MeterDataClass$geocode should be a character string with class(mdc$geocode) == "character"')
-  }
-  
-  if(class(mdc$weather$geocode) != 'character') {
-    print('MeterDataClass$weather$geocode should be a character string with class(mdc$weather$geocode) == "character"')
+  if(class(ids) != 'character') {
+    print(head(ids))
+    stop(paste('DATA_SOURCE$getIds() should return character values. There are too many ways',
+               'to loose leading zeros or blow past the maximum numeric size with data base identifiers',
+               'and many ids are truly mixed character stringc, so it is important to treat them all the same way.',
+               'NOTE: unless you are loosing leading zeros, you probably just need to call as.character() on',
+               'your return values.'))
   }
   
   # Array of all geo codes in the data set.
@@ -130,6 +121,49 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   # the feature browser web interface rely on geo code being zip code.
   print('Running getGeocodes()')
   geos = DATA_SOURCE$getGeocodes(useCache=useCache)
+  
+  if(class(geos) != 'character') {
+    print(head(geos))
+    stop('DATA_SOURCE$getGeocodes() should return character values. i.e. zip codes can have leading zeros - they are not numbers!')
+  }
+  
+  
+  # Reverse lookup of goe code given an id
+  print('Running getGeoForId() - reverse lookup of geo code by id')
+  geo = DATA_SOURCE$getGeoForId(ids[1],useCache=useCache)
+  
+  # data frame of meter data for an indiividual customer
+  print('Running getMeterData() - loading meter data for a single id')
+  mData = DATA_SOURCE$getMeterData(id = ids[1])
+  
+  sanityCheckMeterDataDF( mData )
+  
+  # data frame of all meter data for a given geo code location
+  print('Running getAllData() - loads data for all ids assocaited with an optional geo code, or all available data when geo code is not specified.')
+  allGeoData = DATA_SOURCE$getAllData(geocode = geos[1],useCache = useCache)
+  
+  sanityCheckMeterDataDF( allGeoData )
+  
+  # data frame of all weather data for a given geo code location
+  print('Running getWeather() - loads weather data assocaited with an optional geo code, or all available weather data when geo code is not specified.')
+  geoWeatherData = DATA_SOURCE$getWeather(geocode = geos[1], useCache = useCache)
+  
+  sanityCheckWeatherDataDF( geoWeatherData )
+  
+  print('Running getMeterDataClass() - loadas a meter data class object by id')
+  mdc = DATA_SOURCE$getMeterDataClass(id=ids[1], useCache = useCache)
+  
+  print('Running plot.MeterDataClass() on loaded meter data')
+  plot(mdc)
+  
+  testthat::expect_true(class(mdc$id) == 'character', 
+                        'MeterDataClass$id should be a character string with class(mdc$id) == "character"')
+  
+  testthat::expect_true(class(mdc$geocode) == 'character',
+                        'MeterDataClass$geocode should be a character string with class(mdc$geocode) == "character"')
+  
+  testthat::expect_true(class(mdc$weather$geocode) == 'character',
+                        'MeterDataClass$weather$geocode should be a character string with class(mdc$weather$geocode) == "character"')
   
   # Arrays of the subsets of ids found in each geo code location
   print('Running getIds() for each geocode')
@@ -146,59 +180,6 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   print('Running getIdMetaData() - meta data available at the id level, for example rate type or NAICS code')
   accounts = DATA_SOURCE$getIdMetaData(useCache=useCache)
   print(dim(accounts))
-  
-  # Reverse lookup of goe code given an id
-  print('Running getGeoForId() - reverse lookup of geo code by id')
-  geo = DATA_SOURCE$getGeoForId(ids[1],useCache=useCache)
-  
-  # data frame of meter data for an indiividual customer
-  print('Running getMeterData() - loading meter data for a single id')
-  mData = DATA_SOURCE$getMeterData(id = ids[1])
-  
-  # TODO: check that the last 24 or 96 columns of data are numeric
-  
-  # assert some things about the structure of the meter data here,...
-  # must have an id column
-  print('test that meter data has an id column')
-  testthat::expect_true('id' %in% names(mData))
-  # must have a geo code column
-  print('test that meter data has a geo code column')
-  testthat::expect_true(DATA_SOURCE$geoColumnName %in% names(mData),info = DATA_SOURCE$geoColumnName)
-  # must have a dates column
-  print('test that meter data has a dates column')
-  testthat::expect_true('dates' %in% names(mData))
-  
-  # check parsing behavior
-  print('test that date format is parsable')
-  day = as.POSIXct(paste(mData[1,'dates'],'00:00'),tz="America/Los_Angeles", DATA_SOURCE$dateFormat)
-  print(paste('First day:',day))
-  
-  geocode = mData[1,DATA_SOURCE$geoColumnName]
-  print(paste('Geo code:',geocode))
-
-  ncol = ncol(mData)
-  readings = NA
-  if(ncol > 97) {
-    print('Meter data has more than 97 columns, assuming that the readings are 96 intervals per day (15 min)')
-    readings = mData[1,(ncol-96+1):ncol] # last 96 columns are assumed to be the readings.
-    print(readings)
-  } else {
-    print('Meter data has 97 or fewer columns, assuming that the readings are 24 intervals per day')
-    readings = mData[1,(ncol-24+1):ncol] # last 24 columns are assumed to be the readings.
-  }
-  print('First day of readings')
-  print(readings)
-  print('test that meter readings are numeric')
-  testthat::expect_true( all( sapply(readings,class) %in% c('numeric','integer') ) )
-  
-  
-  # data frame of all meter data for a given geo code location
-  print('Running getAllData() - loads data for all ids assocaited with an optional geo code, or all available data when geo code is not specified.')
-  allGeoData = DATA_SOURCE$getAllData(geocode = geos[1],useCache = useCache)
-  
-  # data frame of all weather data for a given geo code location
-  print('Running getWeather() - loads weather data assocaited with an optional geo code, or all available weather data when geo code is not specified.')
-  geoWeatherData = DATA_SOURCE$getWeather(geocode = geos[1], useCache = useCache)
   
   # loop over all geo codes to load the meter data for each.
   # The is a full data sample check that things are working and 
@@ -231,4 +212,54 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   }
 }
 
+sanityCheckWeatherDataDF = function(wData) {
+  requiredCols = c("date", "temperaturef", "pressure", "dewpointf", "hourlyprecip", "windspeed"  )
+  if( any(! names(wData) %in% requiredCols) ) {
+    missing = paste( names(wData)[which(! names(wData) %in% requiredCols)], collapse=', ' )
+    stop(paste('Required named weather data columns are missing:', missing,
+               'Note that the columns are required, but they can be empty if no data is available.'))
+  }
+  print('Checking date parsing for weather data')
+  dates = as.POSIXct(wData[,'date'],tz="America/Los_Angeles",origin='1970-01-01','%Y-%m-%d %H:%M:%S')
+}
 
+# assert many things about the structure of the 'raw' meter data here...
+sanityCheckMeterDataDF = function(mData) {
+  # must have an id column
+  print('test that meter data has an id column')
+  testthat::expect_true('id' %in% names(mData))
+  # must have a geo code column
+  print('test that meter data has a geo code column')
+  testthat::expect_true(DATA_SOURCE$geoColumnName %in% names(mData),info = DATA_SOURCE$geoColumnName)
+  # must have a dates column
+  print('test that meter data has a dates column')
+  testthat::expect_true('dates' %in% names(mData))
+  
+  # check parsing behavior
+  print('test that date format is parsable')
+  day = as.POSIXct(paste(mData[1,'dates'],'00:00'),tz="America/Los_Angeles", DATA_SOURCE$dateFormat)
+  print(paste('First day:',day))
+  
+  geocode = mData[1,DATA_SOURCE$geoColumnName]
+  print(paste('Geo code:',geocode))
+  
+  ncol = ncol(mData)
+  readings = NA
+  if(ncol > 97) {
+    print('Meter data has more than 97 columns, assuming that the readings are 96 intervals per day (15 min)')
+    readings = mData[1,(ncol-96+1):ncol] # last 96 columns are assumed to be the readings.
+  } else {
+    print('Meter data has 97 or fewer columns, assuming that the readings are 24 intervals per day')
+    readings = mData[1,(ncol-24+1):ncol] # last 24 columns are assumed to be the readings.
+  }
+  print('First day of readings')
+  print(readings)
+  print('test that meter readings are numeric')
+  print(paste('The way the code parses out the meter readings form the rest of the data',
+              'is that it pulls the last 24 or 96 columns. If you have appended columns',
+              'after the meter data, they will cause errors. Here we try to catch that by',
+              'checking that all values are numeric. However, if you have added a numeric',
+              'column after the meter readings, it will pass this test while ultimately',
+              'corrupting your data.'))
+  testthat::expect_true( all( sapply(readings,class) %in% c('numeric','integer') ) )
+}
