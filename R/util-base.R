@@ -3,13 +3,17 @@
 # or professor Ram Rajagopal (ramr@stanford.edu)
 
 #' @export
-Mode <- function(x) {
+Mode <- function(x,rndTieBreak=F) {
   ux <- unique(x)
   tab = tabulate(match(x, ux))
   maxCount = max(tab)
 
   modes = ux[tab == maxCount] # there could be more than one
-  out = sample(rep(modes,2),1) # random choice breaks ties; single mode is deterministic
+  if(rndTieBreak) {
+    out = sample(rep(modes,2),1) # random choice breaks ties; single mode is deterministic
+  } else {
+    out = rep(modes,2)[1]
+  }
   if(length(out) == 0) out = NA
   return(out)
 }

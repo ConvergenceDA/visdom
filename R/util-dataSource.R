@@ -111,6 +111,18 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   print('Running plot.MeterDataClass() on loaded meter data')
   plot(mdc)
   
+  if(class(mdc$id) != 'character') {
+    print('MeterDataClass$id should be a character string with class(mdc$id) == "character"')
+  }
+  
+  if(class(mdc$geocode) != 'character') {
+    print('MeterDataClass$geocode should be a character string with class(mdc$geocode) == "character"')
+  }
+  
+  if(class(mdc$weather$geocode) != 'character') {
+    print('MeterDataClass$weather$geocode should be a character string with class(mdc$weather$geocode) == "character"')
+  }
+  
   # Array of all geo codes in the data set.
   # These is typically zip codes, but can be other geographies
   # as long as they are consistent. 
@@ -142,6 +154,8 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   # data frame of meter data for an indiividual customer
   print('Running getMeterData() - loading meter data for a single id')
   mData = DATA_SOURCE$getMeterData(id = ids[1])
+  
+  # TODO: check that the last 24 or 96 columns of data are numeric
   
   # assert some things about the structure of the meter data here,...
   # must have an id column

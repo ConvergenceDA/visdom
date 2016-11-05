@@ -87,13 +87,13 @@ MeterDataClass = function(id,geocode=NULL,weather=NULL,data=NULL,gasData=NULL,us
         subRows = which(rawData$id == id)
         data = rawData[subRows,]
       } else {
-        print('Running getMeterData')
+        print(paste('Running getMeterData', id, geocode))
         data = DATA_SOURCE$getMeterData(id,geocode)
       }
     }
   }
-  if(is.null(data)) stop(paste('No data found for id',id))
-  if(nrow(data)==0) stop(paste('No data found for id',id))
+  if(is.null(data)) stop(paste('[meterDataClass] No data found for id',id))
+  if(nrow(data)==0) stop(paste('[meterDataClass] No data found for id',id))
   days = as.POSIXct(paste(data[,'dates'],'00:00'),tz="America/Los_Angeles", format=DATA_SOURCE$dateFormat)
 
   gasTout = NULL
