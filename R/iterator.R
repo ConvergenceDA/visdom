@@ -368,7 +368,6 @@ runDateFilterIfNeeded = function(ctx) {
 # which should be returned by getMeterIds and other related functions.
 # Supports optional data from the ctx for speeding up access to zip code, weather
 # data, and meter data from the relevant zip code
-#' @export
 getMeterDataClass = function(meterId,ctx) {
   meterData = NULL
   # if the data was already looked up in advance and passed into the context
@@ -399,7 +398,7 @@ getMeterDataClass = function(meterId,ctx) {
   return(md)
 }
 
-#' @export
+
 getWeather = function(zip) {
   print(paste('Loading weather for',zip))
   weather = WeatherClass(zip,useCache=T,doSG=F)
