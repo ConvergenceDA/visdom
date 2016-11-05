@@ -1,0 +1,6 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^install$
+^data-raw$
+^copyright\.txt$
+^apply_copyright\.sh$
