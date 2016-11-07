@@ -13,7 +13,7 @@ vignette: >
 
 In VISDOM, a data source is an adapter between your customer and meter data and the internal data formats used by VISDOM functions. To use VISDOM with your own data, you will need to author a DataSource object that maps between the formatting of your data and the data structures used by VISDOM by implementing all the relevant functions stubbed out by `DataSource()` in `util-dataSource.R`. This is the key step and main pre-requsite for using VISDOM. You will typically need to set up data access (i.e. to a SQL database if applicable - see `util-dbUtil.R` - or figure out how you will be loading your data from disk or elsewhere), and write the code to perform the queries or other data access steps as appropriate to load, format, and return your data in the VISDOM standard format expected to come out of a data source. You can see the DataSource implemented for testing purposes in the file `testDataSource.R` in the R directory of the package.
 
-Setting the global varaible `DATA_SOURCE = YourDataSource()` configures your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE).
+Setting the global variable `DATA_SOURCE = YourDataSource()` configures your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE).
 
 See the entry for the data parameter in the help for MeterDataClass:
 
@@ -32,13 +32,33 @@ library(visdom)
 DATA_SOURCE = TestData(100)
 ```
 
-1. Meter data for a single customer. Note that id (i.e. the VISDOM internal identifier for the meter), geocode, and dates (of type Date - without time) are required, as are 24 hourly or 96 15 minute meter observations per day. customerID (i.e. the owner of the meter) and other fields can be added, but are not required.
+The following describe the functions and output formats that should be created in your data source (e.g., here it is `TestData()`).
+
+1. Meter data for a single customer.
 
 ```{r customer_data_sample}
 custdata = DATA_SOURCE$getMeterData(id=1)
 head(custdata,2)
 dim(custdata)
 ```
+
+Returns a date.frame where each row corresponds to a day.  Variables (columns) as below:
+ 
+     Name        |    Type       |     Example    |   Required?   |    Description
+-----------------|---------------|----------------|---------------|-------
+    `id`         |  `character`  |   `meter_1`    |   Required    |          Meter ID   
+    `geocode`    |  `character`  |   `94305`      |   Required    |     Geography code (here zip code)  
+    `dates`      |  `Date`       |  `2013-01-01`  |   Required    |     Date without time 
+    `H1`         |  `numeric`    |    12.19631    |   Required    |   Electricity usage in kWh over given interval H1
+    ...          |               |                |   Required    |   other interval readings
+    `customerID` |  `character`  |  `cust_1001`   |   Optional    |     Customer ID        
+    ...          |               |                |   Optional    |     Additional optional variables 
+
+The above description is for hourly meter data, though could do analogously for 15-minute data.  In that case, perhaps use interval names like `Q1` to `Q96` (Q for quarterly).
+
+QUESTION:
+
+* `id`, `geocode`, `customerID`, etc could also be something like integer
 
 2. Meter data from multiple customers.
 
@@ -50,13 +70,30 @@ dim(geosample)
 unique(geosample$id)
 ```
 
-3. Weather data: dates (required of type POSIXct, with time at whatever intervals observations are available in, ideally with hourly or less intervals), temperaturef (required), pressure, hourlyprecip, dewpoint.
+Returns data.frame with similar format to `getMeterData`, where here data for individual meters are stacked into one big data.frame for all meters in the given `geocode`.
+
+3. Weather data: 
 
 ```{r weather_attributes}
 weather = DATA_SOURCE$getWeatherData(geocode='94305')
 head(weather,2)
 dim(weather)
 ```
+
+Returns a data.frame for the weather in the specified zip code, where each row is an instance of weather variables (e.g., hourly or less).  Columns are:
+
+     Name          |    Type              |     Example                  |  Required?  |    Description
+-------------------|----------------------|------------------------------|-------------|-------------------------
+    `dates`        |  "POSIXct" "POSIXt"  |   `2013-01-01 01:00:00 PST`  |  Required   | Time instance   
+    `temperaturef` |  `numeric`           |   65                         |  Required   | Temperature in deg F  
+    `pressure`     |  `numeric`           |   30                         |  Optional   |  inches Hg (mercury) ??
+    `hourlyprecip` |  `numeric`           |  0.53                        |  Optional   |  ??
+    `dewpointf`    |  `numeric`           |   53.3                       |  Optional   | Dew point temp in deg F          
+
+QUESTIONS:
+
+* pressure units: inches Mercury?  If so should be closer to 30, where example in TestDatasource 19.
+* Hourly Precip: unsure what value means.  Values in test data are 0 or 1, whereas in weather data in mysql table they are postive real values that can go above 1.  To test if something like inches of rain in the given time interval, I summed up the quantities for the year for a few random zip code and they turned out in the 15 - 60 range.
 
 4. Misc capabilites
 
