@@ -43,7 +43,7 @@
 WeatherClass = function(geocode,doMeans=T,useCache=F,doSG=F){
   raw = DATA_SOURCE$getWeatherData(geocode,useCache=useCache)
   if(length(raw)==0) stop(paste('No data found for geocode',geocode))
-  requiredCols = c("date", "temperaturef", "pressure", "dewpointf", "hourlyprecip", "windspeed"  )
+  requiredCols = c("date", "temperaturef", "pressure", "dewpointf", "hourlyprecip"  )
   if( any(! names(raw) %in% requiredCols) ) {
     missing = paste( names(raw)[which(! names(raw) %in% requiredCols)], collapse=', ' )
     stop(paste('Required named data columns are missing:', missing))
