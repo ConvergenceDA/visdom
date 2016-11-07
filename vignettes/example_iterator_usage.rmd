@@ -4,7 +4,7 @@ author: "Sam Borgeson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Woring With Samples from Many Meters}
+  %\VignetteIndexEntry{Working With Samples from Many Meters}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

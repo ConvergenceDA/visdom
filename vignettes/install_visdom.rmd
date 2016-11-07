@@ -11,7 +11,7 @@ vignette: >
 
 #Simplest approach
 
-There is support in R for installing and updating packages directly from their version control repositories. If you plan to use VISDOM without altering any of its soruce code, this is the preferred method of installation.
+There is support in R for installing and updating packages directly from their version control repositories. If you plan to use VISDOM without altering any of its source code, this is the preferred method of installation.
 
 ##Install VISDOM directly from GitHub source
 
@@ -29,7 +29,7 @@ devtools::install_github("convergenceda/visdom", build_vignettes=T )
 
 ##Install VISDOM directly from local source
 
-If you are planning to read through, experiment with, or update the VISDOM source code itself, you will want a local copy of the reopsitory on your machine. 
+If you are planning to read through, experiment with, or update the VISDOM source code itself, you will want a local copy of the repository on your machine. 
 
 First ensure that you have cloned the repository into working version only your local machine, choosing one of:
 
@@ -39,7 +39,7 @@ git clone git@github.com:convergenceda/visdom.git
 git clone https://github.com/convergenceda/visdom.git
 ```
 
-If you are working within a corporate firewall, it may be necessary to use a proxy server account to connect to GitHub. Here you will need to replace the user and pass with your usernam and password and `proxy.server` with either the name or ip address of your proxy server. The port `8080` may also be different for your specific configuration.
+If you are working within a corporate firewall, it may be necessary to use a proxy server account to connect to GitHub. Here you will need to replace the user and pass with your username and password and `proxy.server` with either the name or ip address of your proxy server. The port `8080` may also be different for your specific configuration.
 
 ```{bash eval=F}
 git config --global http.proxy http://user:pass@proxy.server:8080

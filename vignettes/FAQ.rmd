@@ -39,7 +39,7 @@ A. With the 24/96 column formats it ignores the 25th hour of fall back and treat
 
 **Q. In the standard meter data format what hour does each column correspond to?**
 
-A. Your column headers don't have to match these, but referring to the TestData output, the first column, H1, is 12-1am (i.e. the averag eof consumption up to but excluding 1am) so H10 is 9-10am, and h24 is 11pm-12am.
+A. Your column headers don't have to match these, but referring to the TestData output, the first column, H1, is 12-1am (i.e. the average of consumption up to but excluding 1am) so H10 is 9-10am, and h24 is 11pm-12am.
 
 ***
 
@@ -69,7 +69,7 @@ A. If you hoping to load data directly from CSVs or RData or something, you are 
 
 **Q. Load Shape Clustering: Is the clustering profile library rich enough to expect it to perform well on customer data that includes also industrial customers and streetlighting.**
 
-A. First of all, the load shape clustering algorithms are protected by a patent and are therefore available separately from the rest of the VISDOM code. You need to ask for permission to work with that code, but non-commercial licensing is free. As for separating data for clsutering, this depends on your intended use. Typically you would separate residential, commerical, industry, etc. and fit clusters separately. Even within commercial there is so much diversity of use that it can be good to do separate fits for each sub type (i.e. NAICS or other codes).
+A. First of all, the load shape clustering algorithms are protected by a patent and are therefore available separately from the rest of the VISDOM code. You need to ask for permission to work with that code, but non-commercial licensing is free. As for separating data for clustering, this depends on your intended use. Typically you would separate residential, commercial, industry, etc. and fit clusters separately. Even within commercial there is so much diversity of use that it can be good to do separate fits for each sub type (i.e. NAICS or other codes).
 
 ***
 
