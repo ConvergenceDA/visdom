@@ -214,8 +214,8 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
 
 sanityCheckWeatherDataDF = function(wData) {
   requiredCols = c("date", "temperaturef", "pressure", "dewpointf", "hourlyprecip", "windspeed"  )
-  if( any(! names(wData) %in% requiredCols) ) {
-    missing = paste( names(wData)[which(! names(wData) %in% requiredCols)], collapse=', ' )
+  if( any(! requiredCols %in% names(wData) ) ) {
+    missing = paste( names(wData)[which(! requiredCols %in% names(wData))], collapse=', ' )
     stop(paste('Required named weather data columns are missing:', missing,
                'Note that the columns are required, but they can be empty if no data is available.'))
   }
