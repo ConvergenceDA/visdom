@@ -72,7 +72,7 @@
 MeterDataClass = function(id,geocode=NULL,weather=NULL,data=NULL,gasData=NULL,useCache=T,doSG=F,rawData=NULL){
   tic('init')
   print(geocode)
-  if(is.null(geocode) | geocode == 'unknown') {
+  if(is.null(geocode) || geocode == 'unknown') {
     geocode = DATA_SOURCE$getGeoForId(id)
     print(paste('[MeterDataClass] looked up geocode',geocode))
   }
