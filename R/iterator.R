@@ -206,14 +206,16 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
                   print(e)
                 })
       print('[iterator$iterateZip] weather data loaded')
+      
+      zipIds = DATA_SOURCE$getIds(ctx$zip,useCache=T)
+      
       # load all raw data for the zip code and indicate that it has not yet been date filtered
       ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
       ctx$ALREADY_DATE_FILTERED = F
-      
       # it is important that this happens after any filtering ocurrs
       idx = iterator.build.idx(ctx)
       print('[iterator$iterateZip] raw zip code usage data loaded')
-      zipIds = DATA_SOURCE$getIds(ctx$zip,useCache=T)
+      
       featureList = iterator.iterateMeters(zipIds,custFn,ctx,...)
       toc( name='zip',prefixStr=paste('Processed',length(zipIds),'entries in zipcode',zip) )
       if(cacheResults) {

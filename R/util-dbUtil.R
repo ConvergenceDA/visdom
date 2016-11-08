@@ -31,6 +31,7 @@ dbCfg = function(filePath){
   cfg[] <- lapply(cfg, as.character)
   cfg = as.list(setNames(cfg$V2,cfg$V1)) # convert data frame to named list values
   if('port' %in% names(cfg)) { cfg$port = as.numeric(cfg$port) }
+  if('client.flag' %in% names(cfg)) { cfg$client.flag = as.numeric(cfg$client.flag) }
   if(is.null(cfg$dbType)) {
     print("[dbUtil$dbCfg] Warning: config must contain dbType in ('MySQL','PostgreSQL',etc.)")
   }
