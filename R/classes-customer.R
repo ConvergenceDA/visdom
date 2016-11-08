@@ -71,9 +71,9 @@
 #' }
 MeterDataClass = function(id,geocode=NULL,weather=NULL,data=NULL,gasData=NULL,useCache=T,doSG=F,rawData=NULL){
   tic('init')
-  if(is.null(geocode)) {
+  if(is.null(geocode) | geocode =='unknown') {
     geocode = DATA_SOURCE$getGeoForId(id)
-    print(paste('looked up geocode',geocode))
+    print(paste('[MeterDataClass] looked up geocode',geocode))
   }
   if(is.null(data) || nrow(data) == 0) {
     # if raw data has been passed in, subset to just the data for this meter
@@ -82,12 +82,12 @@ MeterDataClass = function(id,geocode=NULL,weather=NULL,data=NULL,gasData=NULL,us
       data = rawData[subRows,] }
     else {
       if(useCache) {
-        print('Running get all data')
+        print('[MeterDataClass] Running get all data')
         rawData = DATA_SOURCE$getAllData(geocode,useCache=useCache)
         subRows = which(rawData$id == id)
         data = rawData[subRows,]
       } else {
-        print(paste('Running getMeterData', id, geocode))
+        print(paste('[MeterDataClass] Running getMeterData', id, geocode))
         data = DATA_SOURCE$getMeterData(id,geocode)
       }
     }
