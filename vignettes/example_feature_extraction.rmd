@@ -132,7 +132,7 @@ With the feature data in hand and in a data frame, it can be cased as RData, inc
 
 ##Exporting your data
 
-Once your features are computed, you may logically want to save or export them forIn `util-export.R`, there are several functions that are designed to support exports of your feature data to various useful formats.
+Once your features are computed, you may logically want to save or export them. In `util-export.R`, there are several functions that are designed to support exports of your feature data to various useful formats.
 
 ###data for VISDOM-web
 
