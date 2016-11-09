@@ -21,7 +21,7 @@ library(plyr)
 
 ##Load your custom data source
 
-To use VISDOM, you must have a DataSource implementation that maps your source data to the VISDOM cannonical data formats for meter data, meter ids, weather data, etc. You configure VISDOM to use your DataSource by assigning the global variable DATA_SOURCE as an instance of it. For this example we are using the `TestData()` data source, defined in `testDataSource.R` that conforms to the data source interface requirements, but generates loosely structured synthetic data (with coarse diurnal and seasonal changes).
+To use VISDOM, you must have a DataSource implementation that maps your source data to the VISDOM canonical data formats for meter data, meter ids, weather data, etc. You configure VISDOM to use your DataSource by assigning the global variable DATA_SOURCE as an instance of it. For this example we are using the `TestData()` data source, defined in `testDataSource.R` that conforms to the data source interface requirements, but generates loosely structured synthetic data (with coarse diurnal and seasonal changes).
 
 
 ```{r}
@@ -60,7 +60,7 @@ dailyCP = DescriptorGenerator(  name='tout1CP',
                                 cvReps=8) # 1 CP
 ```
 
-The actual feature funciton calls `run()` in the generated descriptor, here called `dailyCP` to run the specified regression model, with optional cross-validation, etc. as specified in the call to DescriptorGenerator. The model parameters of interest are stored in the object returned by `run` under `other` values. We return these with the prefix `dailyCP_`, to distinguish them from any other model outputs we might generate from other models in the same feature run.
+The actual feature function calls `run()` in the generated descriptor, here called `dailyCP` to run the specified regression model, with optional cross-validation, etc. as specified in the call to DescriptorGenerator. The model parameters of interest are stored in the object returned by `run` under `other` values. We return these with the prefix `dailyCP_`, to distinguish them from any other model outputs we might generate from other models in the same feature run.
 
 ```{r}
 regressionFeaturesfn = function(cust,ctx,...) { # for future results
@@ -111,7 +111,7 @@ ctx$end.date   = as.Date('2011-10-15')
 
 ##Running the feature extraction itself
 
-The business end of feature extraction is the call to an interator method that is passed meter ids and rules for calling feature function on meter data objects created using the passed data. This single line, runs features on every customer in the list of ids (including all of them) by using the id's to instantiate `CustomerData` objects via the `DATA_SOURCE`. This can be called during feature development and for testing with just a handful of ids (as shown here), or with hundreds of thousands for running features on rich data sets. Note that as a practical matter, the latter call (on large samples of customers) would logically be called with better support for parallel processing and error failover than the simple `iterator.iterateMeters` function provides. This call returns a list of lists of features. So the outter list is indexed by customer id and there is a named list of feature for each customer.
+The business end of feature extraction is the call to an iterator method that is passed meter ids and rules for calling feature function on meter data objects created using the passed data. This single line, runs features on every customer in the list of ids (including all of them) by using the id's to instantiate `CustomerData` objects via the `DATA_SOURCE`. This can be called during feature development and for testing with just a handful of ids (as shown here), or with hundreds of thousands for running features on rich data sets. Note that as a practical matter, the latter call (on large samples of customers) would logically be called with better support for parallel processing and error failover than the simple `iterator.iterateMeters` function provides. This call returns a list of lists of features. So the outer list is indexed by customer id and there is a named list of feature for each customer.
 
 ```{r}
 aRunOut = iterator.iterateMeters( DATA_SOURCE$getIds()[1:10], # just 10 for speed
@@ -120,7 +120,7 @@ aRunOut = iterator.iterateMeters( DATA_SOURCE$getIds()[1:10], # just 10 for spee
                                   extra='somedata')
 ```
 
-A list of lists is returned because it is maximally flexible. Some feature functions may opt to return diagnostic, error, residual, model, etc. data that are not scalar features, but have values in diagnosing problems, testing hypotheses, etc. To boild the list of lists down to a data frame of the scalar feature values, we call the utility function `iterator.todf()`.
+A list of lists is returned because it is maximally flexible. Some feature functions may opt to return diagnostic, error, residual, model, etc. data that are not scalar features, but have values in diagnosing problems, testing hypotheses, etc. To boil the list of lists down to a data frame of the scalar feature values, we call the utility function `iterator.todf()`.
 
 ```{r}
 runDF = iterator.todf( aRunOut )
@@ -200,7 +200,7 @@ aRunOut = plyr::alply(  .data = DATA_SOURCE$getIds(),
 
 ###Alternate 1 (eliminating redundant data access with or without parallelization):
 
-Note that one performance optimization that is pretty common when processing large numbers of meters is to load weather data for one location and process all meters from that location with the weather data and all relevant meter data cached in the ctx. This can be a bigger performance boost than naively running each customer in parallel, where data access will redundantly happen over and over. In this case, you might run alply across zip codes, calling a function that loads weather data and all customer data for that zip code, places them both into the ctx and then calls alply with all the customer ids for that zipcode (the underlying code looks in the ctx for weather data and customer data). Technically, this function does not exist. The "official" support for processing customers by zip code is in `iterator.iterateZip`, which is implemented using standard for loops, but it should be pretty clear from that what to do next if you want a parallelizable version.
+Note that one performance optimization that is pretty common when processing large numbers of meters is to load weather data for one location and process all meters from that location with the weather data and all relevant meter data cached in the ctx. This can be a bigger performance boost than naively running each customer in parallel, where data access will redundantly happen over and over. In this case, you might run alply across zip codes, calling a function that loads weather data and all customer data for that zip code, places them both into the ctx and then calls alply with all the customer ids for that zip code (the underlying code looks in the ctx for weather data and customer data). Technically, this function does not exist. The "official" support for processing customers by zip code is in `iterator.iterateZip`, which is implemented using standard for loops, but it should be pretty clear from that what to do next if you want a parallelizable version.
 
 ###Alternate 2 (subsetting meters using command line args):
 
@@ -208,7 +208,7 @@ In practice, users have often written a wrapper script that implements a form of
 
 ###Caveats:
 
-Note that as will all parallel operations, error handling is a bit tricky. `iterator.runMeter` traps errors and returns NAs after printing the error message so it can keep running. This allows the rest of the data to be processed. When running in parallel the place for print statements to output to is poorly defined, so users may never see the printed error message. Thus, you have to be extra careful to investigate any NAs values returned for any customers. In the future, we hope to architect infrastrucutre that allows storing and returning  error diagnostic information for each customer that has an error within the listof lists data structure, but for now parallel processing are related error handling is a partially unsupported "advanced" feature.
+Note that as will all parallel operations, error handling is a bit tricky. `iterator.runMeter` traps errors and returns NAs after printing the error message so it can keep running. This allows the rest of the data to be processed. When running in parallel the place for print statements to output to is poorly defined, so users may never see the printed error message. Thus, you have to be extra careful to investigate any NAs values returned for any customers. In the future, we hope to architect infrastructure that allows storing and returning  error diagnostic information for each customer that has an error within the listof lists data structure, but for now parallel processing are related error handling is a partially unsupported "advanced" feature.
 
 Also note that other than the error trapping, the official VISDOM code doesn't support mid-stream failures very gracefully. Ideally users would have the option of incrementally saving out results so they can recover from any fatal errors that could cause them to lose valid features built up in memory (or so that they can fill in NAs caused by errors without re-running all the good results). Parallel jobs tend to be all or nothing in their return values and can toss out viable computed values due to a data frame column name incompatibility or other minor issue compiling results. In the past VISDOM users have created scripted options for saving each zip code worth of features and also for savings lists of meters whose validation rules eliminated them from processing to save time re-processing good data over and over due to later failures and re-validating meters over and over. We may provide suitable official versions of these capabilities via the `iterator.R` functions in the future, but advanced users should currently plan to write their own iterators and wrappers if graceful failure is desired.
 
