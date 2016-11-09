@@ -77,7 +77,7 @@ TestData = function( n=100 ) {
   obj$getWeatherData = function( geocode, useCache=T ) {
     dates = as.POSIXct('2013-01-01',tz = "America/Los_Angeles" ) + 0:(365 * 24 - 1) * 3600
     data = data.frame(
-      dates        = dates,
+      date         = dates,
       temperaturef = c(1:6,6:1)[as.POSIXlt(dates)$mon + 1] + rep( c(64,64,64,64,65,65,65,65,66,66,66,66,67,67,67,67,68,68,68,68,66,66,66,66), 365 ),
       pressure     = rep( rep(19,24), 365 ),
       hourlyprecip = rep( c( rep(0,12),rep(1,2),rep(0,10) ), 365 ),
