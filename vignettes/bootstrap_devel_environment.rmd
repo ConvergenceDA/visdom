@@ -49,7 +49,7 @@ devtools::install_github("hadley/devtools")
 
 #Install VISDOM as a local package from your source
 
-Ensure that your getwd() is the vsidom source dir and then call:
+Ensure that your getwd() is the visdom source dir and then call:
 
 ```{r eval=F}
 devtools::document()
@@ -60,7 +60,7 @@ devtools::build_vignettes()
 
 ```
 
-Followed by installing hte package from source, which should resolve and install all the package dependencies,
+Followed by installing the package from source, which should resolve and install all the package dependencies,
 with some exceptions, like for HDF5 support.
 
 ```{r eval=F}

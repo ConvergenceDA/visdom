@@ -11,9 +11,9 @@ vignette: >
 
 #Implementing your own data source
 
-In VISDOM, a data source is an adapter between your customer and meter data and the internal data formats used by VISDOM functions. To use VISDOM with your own data, you will need to author a DataSource object that maps between the formatting of your data and the data structures used by VISDOM by implementing all the relevant functions stubbed out by `DataSource()` in `util-dataSource.R`. This is the key step and main pre-requsite for using VISDOM. You will typically need to set up data access (i.e. to a SQL database if applicable - see `util-dbUtil.R` - or figure out how you will be loading your data from disk or elsewhere), and write the code to perform the queries or other data access steps as appropriate to load, format, and return your data in the VISDOM standard format expected to come out of a data source. You can see the DataSource implemented for testing purposes in the file `testDataSource.R` in the R directory of the package.
+In VISDOM, a data source is an adapter between your customer and meter data and the internal data formats used by VISDOM functions. To use VISDOM with your own data, you will need to author a DataSource object that maps between the formatting of your data and the data structures used by VISDOM by implementing all the relevant functions stubbed out by `DataSource()` in `util-dataSource.R`. This is the key step and main prerequisite for using VISDOM. You will typically need to set up data access (i.e. to a SQL database if applicable - see `util-dbUtil.R` - or figure out how you will be loading your data from disk or elsewhere), and write the code to perform the queries or other data access steps as appropriate to load, format, and return your data in the VISDOM standard format expected to come out of a data source. You can see the DataSource implemented for testing purposes in the file `testDataSource.R` in the R directory of the package.
 
-Setting the global varaible `DATA_SOURCE = YourDataSource()` configures your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE).
+Setting the global variable `DATA_SOURCE = YourDataSource()` configures your data source for use by VISDOM (i.e. assign it to the global variable DATA_SOURCE).
 
 See the entry for the data parameter in the help for MeterDataClass:
 
@@ -58,7 +58,7 @@ head(weather,2)
 dim(weather)
 ```
 
-4. Misc capabilites
+4. Misc capabilities
 
 ```{r geo_attributes}
 DATA_SOURCE$getGeoForId('meter_1')
