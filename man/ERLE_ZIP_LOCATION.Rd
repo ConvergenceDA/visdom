@@ -3,7 +3,7 @@
 \docType{data}
 \name{ERLE_ZIP_LOCATION}
 \alias{ERLE_ZIP_LOCATION}
-\title{Zipcoe to location mapping}
+\title{Zipcode to location mapping}
 \format{A data frame with 43191 rows and 7 variables:
 \describe{
   \item{zip}{zip code, as a number}
