@@ -4,13 +4,15 @@
 \alias{exportFeatureAndShapeResults}
 \title{Export feature run and load shape results}
 \usage{
-exportFeatureAndShapeResults(feature.rdata, shape.results.rdata = NULL,
+exportFeatureAndShapeResults(feature.data, shape.results.data = NULL,
   format = "hdf5", prefix = "")
 }
 \arguments{
-\item{feature.rdata}{File path to an RData file with feature data}
+\item{feature.data}{File path to an RData file with feature data data frame or the data frame itself}
 
-\item{shape.results.rdata}{Optional file path to an RData file containing load shape clustering results}
+\item{shape.results.data}{Optional file path to an RData file containing load shape clustering results 
+or the results object itself. i.e. results from 
+\code{visdomloadshape::shapeFeatures(visdomloadshape::shapeCategoryEncoding())}}
 
 \item{format}{Export data format - one of the ones supported by exportData()}
 

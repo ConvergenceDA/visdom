@@ -74,9 +74,9 @@ ACS_DIR = file.path('data/census/ACS_11')
 loadACS = function(filterErr=T) {
   #print('Load acs')
   ACS = acsSocial(filterErr=filterErr)
-  print(dim(ACS))
+  #print(dim(ACS))
   ACS = merge(ACS,acsEcon(filterErr=filterErr))     # will merge on both GEO.id and ZCTA
-  print(dim(ACS))
+  #print(dim(ACS))
   ACS = merge(ACS,acsHousing(filterErr=filterErr))  # will merge on both GEO.id and ZCTA
   ACS = merge(ACS,acsDemo(filterErr=filterErr))     # will merge on both GEO.id and ZCTA
   return(ACS)
