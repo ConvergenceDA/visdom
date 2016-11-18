@@ -15,7 +15,7 @@ mergeShapeFeatures(features, shape.results)
 A data frame identical to the one passed in, but with new laod shape feature columns
 }
 \description{
-Pulls load shape features from a shape results object and appends them to 
+Pulls load shape features from a shape results object and appends them to
 an existing feature data frame
 }
 

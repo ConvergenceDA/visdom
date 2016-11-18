@@ -4,10 +4,10 @@
 \alias{exportShapes}
 \title{Save load shape results}
 \usage{
-exportShapes(shape.results, prefix = "", format = "hdf5")
+exportShapes(shape.results, prefix = "", format = "hdf5", filePath = ".")
 }
 \description{
-Exports standardized load shape clustering and assignment data into a 
+Exports standardized load shape clustering and assignment data into a
 corresponding set of exported data tables
 }
 

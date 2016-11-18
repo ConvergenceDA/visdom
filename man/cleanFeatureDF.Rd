@@ -4,16 +4,22 @@
 \alias{cleanFeatureDF}
 \title{Clean up feature data in preparation for saving}
 \usage{
-cleanFeatureDF(features)
+cleanFeatureDF(features, checkId = TRUE, checkGeo = TRUE)
 }
 \arguments{
 \item{features}{The data frame of feature to be cleaned up}
+
+\item{checkId}{boolean indicating whether to enforce a check for an id column with an error message. This should
+be true when exporting features or other id matched data and false otherwise.}
+
+\item{checkGeo}{boolean indicating whether to enforce a check zip5 columns with a warning message. This should
+be true when exporting features that will be mapped.}
 }
 \value{
 A copy of the original data frame that is cleaned up
 }
 \description{
-This function renames data columns for export via fixNames(), converts factors 
+This function renames data columns for export via fixNames(), converts factors
 into characters, and checks for id and zip5 colums
 }
 

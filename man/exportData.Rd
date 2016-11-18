@@ -4,19 +4,20 @@
 \alias{exportData}
 \title{Export feature data into a selection of formats}
 \usage{
-exportData(df, name, label = NA, format = "hdf5", ...)
+exportData(df, name, label = NA, format = "hdf5", checkId = TRUE,
+  checkGeo = TRUE, ...)
 }
 \arguments{
 \item{df}{Data frame of feature data to export}
 
 \item{name}{Primary name of export, meaning file name or database table name}
 
-\item{label}{Data label required for some export formats. For example the name 
+\item{label}{Data label required for some export formats. For example the name
 of the data table within an hdf5 file.}
 
 \item{format}{On of the supported formats for data export, currently 'hdf5', 'csv', or 'database'}
 
-\item{...}{Pass through parameters for specific export methods. For example, 
+\item{...}{Pass through parameters for specific export methods. For example,
 database export requires a conn object.}
 }
 \description{

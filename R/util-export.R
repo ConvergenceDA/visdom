@@ -60,18 +60,26 @@ mergeShapeFeatures = function(features,shape.results) {
 #'
 #' @param features The data frame of feature to be cleaned up
 #'
+#' @param checkId boolean indicating whether to enforce a check for an id column with an error message. This should
+#' be true when exporting features or other id matched data and false otherwise.
+#'
+#' @param checkGeo boolean indicating whether to enforce a check zip5 columns with a warning message. This should
+#' be true when exporting features that will be mapped.
+#'
 #' @return A copy of the original data frame that is cleaned up
 #'
 #' @export
-cleanFeatureDF = function(features, checkIdGeo=TRUE) {
+cleanFeatureDF = function(features, checkId=TRUE, checkGeo=TRUE) {
   names(features) <- fixNames(features)
   # convert any factors to regular characters (otherwise the values are the factor indices)
   i <- sapply(features, is.factor)
   features[i] <- lapply(features[i], as.character)
-  if(checkIdGeo) {
+  if(checkId) {
     if( ! c('id') %in% names(features)) {
       stop('id column required for exported data')
     }
+  }
+  if(checkGeo) {
     if( ! c('zip5') %in% names(features)) {
       print('[cleanFeatureDF] WARNING: VISDOM-web requires a zip5 geography column in features to produce maps')
     }
@@ -173,10 +181,33 @@ writeCSVData = function(data, fName, label=NA, filePath=NA) {
 #' @export
 exportShapes = function(shape.results,prefix='',format='hdf5', filePath='.') {
   name = paste(prefix,'LoadShape',sep='')
-  exportData(df=shape.results$shape.stats$cluster.counts,   name=name, label='counts',          format=format, checkIdGeo=FALSE, filePath=filePath)
-  exportData(df=shape.results$shape.stats$cluster.energy,   name=name, label='sums',            format=format, checkIdGeo=FALSE, filePath=filePath)
-  exportData(df=as.data.frame(shape.results$encoding.dict), name=name, label='centers',         format=format, checkIdGeo=FALSE, filePath=filePath)
-  exportData(df=shape.results$encoding.dict.category.info,  name=name, label='categoryMapping', format=format, checkIdGeo=FALSE, filePath=filePath)
+  exportData(df=shape.results$shape.stats$cluster.counts,
+             name=name,
+             label='counts',
+             format=format,
+             checkId=TRUE,
+             checkGeo=FALSE,
+             filePath=filePath)
+  exportData(df=shape.results$shape.stats$cluster.energy,
+             name=name, label='sums',
+             format=format,
+             checkId=TRUE,
+             checkGeo=FALSE,
+             filePath=filePath)
+  exportData(df=as.data.frame(shape.results$encoding.dict),
+             name=name,
+             label='centers',
+             format=format,
+             checkId=FALSE,
+             checkGeo=FALSE,
+             filePath=filePath)
+  exportData(df=shape.results$encoding.dict.category.info,
+             name=name,
+             label='categoryMapping',
+             format=format,
+             checkId=FALSE,
+             checkGeo=FALSE,
+             filePath=filePath)
 }
 
 #' @title Export feature data into a selection of formats
@@ -196,7 +227,7 @@ exportShapes = function(shape.results,prefix='',format='hdf5', filePath='.') {
 #' database export requires a conn object.
 #'
 #' @export
-exportData = function(df,name,label=NA,format='hdf5', checkIdGeo=TRUE, ...) {
+exportData = function(df,name,label=NA,format='hdf5', checkId=TRUE, checkGeo=TRUE, ...) {
   if ('matrix' %in% class(df) ) {
     print('Warning. Converting matrix to data.frame')
     df = as.data.frame(df)
@@ -207,7 +238,7 @@ exportData = function(df,name,label=NA,format='hdf5', checkIdGeo=TRUE, ...) {
               h5=writeH5Data,
               csv=writeCSVData,
               database=writeDatabaseData)
-  df = cleanFeatureDF(df, checkIdGeo)
+  df = cleanFeatureDF(df, checkId, checkGeo)
   fn[[format]](df, name, label, ... ) # call the format appropriate export function
 }
 
@@ -252,6 +283,10 @@ exportFeatureAndShapeResults = function(feature.data, shape.results.data=NULL, f
   }
 
   print(paste('Writing feature data frame to',format))
-  exportData(df = featureDF,name = paste(prefix,'Basics',sep=''),label = 'basics',format = format, filePath=filePath)
+  exportData(df = featureDF,
+             name = paste(prefix,'Basics',sep=''),
+             label = 'basics',
+             format = format,
+             filePath=filePath)
 }
 

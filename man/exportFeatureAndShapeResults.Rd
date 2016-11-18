@@ -5,13 +5,13 @@
 \title{Export feature run and load shape results}
 \usage{
 exportFeatureAndShapeResults(feature.data, shape.results.data = NULL,
-  format = "hdf5", prefix = "")
+  format = "hdf5", prefix = "", filePath = ".")
 }
 \arguments{
 \item{feature.data}{File path to an RData file with feature data data frame or the data frame itself}
 
-\item{shape.results.data}{Optional file path to an RData file containing load shape clustering results 
-or the results object itself. i.e. results from 
+\item{shape.results.data}{Optional file path to an RData file containing load shape clustering results
+or the results object itself. i.e. results from
 \code{visdomloadshape::shapeFeatures(visdomloadshape::shapeCategoryEncoding())}}
 
 \item{format}{Export data format - one of the ones supported by exportData()}
@@ -19,7 +19,7 @@ or the results object itself. i.e. results from
 \item{prefix}{Optional prefix to put n froun of all feature names}
 }
 \description{
-Loads feature data and load shape clustering data from RData files and 
+Loads feature data and load shape clustering data from RData files and
 saves them into the selected export format
 }
 

@@ -4,7 +4,7 @@
 \alias{writeH5Data}
 \title{Write feature data frame to an hdf5 file}
 \usage{
-writeH5Data(data, fName, label)
+writeH5Data(data, fName, label, filePath = NA)
 }
 \arguments{
 \item{data}{The feature data frame to be written}

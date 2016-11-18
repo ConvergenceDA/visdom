@@ -4,7 +4,7 @@
 \alias{writeCSVData}
 \title{Write feature data frame to a csv file}
 \usage{
-writeCSVData(data, fName, label = NA)
+writeCSVData(data, fName, label = NA, filePath = NA)
 }
 \arguments{
 \item{data}{The feature data frame to be written}
