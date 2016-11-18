@@ -17,6 +17,8 @@ or the results object itself. i.e. results from
 \item{format}{Export data format - one of the ones supported by exportData()}
 
 \item{prefix}{Optional prefix to put n froun of all feature names}
+
+\item{filePath}{optional path to the directory where exported data should be written if the export type is a file. '.' by default.}
 }
 \description{
 Loads feature data and load shape clustering data from RData files and

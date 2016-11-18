@@ -96,6 +96,8 @@ cleanFeatureDF = function(features, checkId=TRUE, checkGeo=TRUE) {
 #' @param fName The name of the hdf5 formatted file to write the data to
 #'
 #' @param label The name of the data table within the hdf5 file
+#' 
+#' @param filePath optional path to the location where exported files should be written (if applicable). Default is \code{getwd()}
 #'
 #' @export
 writeH5Data = function(data,fName,label, filePath=NA) {
@@ -159,6 +161,8 @@ writeDatabaseData = function(data, tableName, label=NULL, conn, overwrite=TRUE) 
 #' @param fName The name of the csv file to write the data to
 #'
 #' @param label Unused, but present for compatibility with other write* fucntions
+#' 
+#' @param filePath optional path to the location where exported files should be written (if applicable). Default is \code{getwd()}
 #'
 #' @export
 writeCSVData = function(data, fName, label=NA, filePath=NA) {
@@ -177,6 +181,16 @@ writeCSVData = function(data, fName, label=NA, filePath=NA) {
 #'
 #' @description Exports standardized load shape clustering and assignment data into a
 #' corresponding set of exported data tables
+#' 
+#' @param shape.results the shape feature results to export. These should be in the format returned by 
+#' \code{visdomloadshape::shapeFeatures()}, as in 
+#' \code{shapeFeatures(shapeCategoryEncoding(rawData=DATA_SOURCE$getAllData(), metaCols=1:4, encoding.dict=someDict))}
+#' 
+#' @param prefix a prefix to apply to the feature column names
+#' 
+#' @param format the data format for export. One of the values supported by the \code{format} paramater in \code{exportData()}
+#' 
+#' @param filePath optional path to the location where exported files should be written (if applicable). Default is \code{getwd()}
 #'
 #' @export
 exportShapes = function(shape.results,prefix='',format='hdf5', filePath='.') {
@@ -218,10 +232,14 @@ exportShapes = function(shape.results,prefix='',format='hdf5', filePath='.') {
 #'
 #' @param name Primary name of export, meaning file name or database table name
 #'
-#' @param label Data label required for some export formats. For example the name
-#' of the data table within an hdf5 file.
+#' @param label Optional data label for export formats. For example if not NA, this would be the name
+#' of the data table within an hdf5 file or a suffix to the csv file name, as in \code{paste(name, label, sep='_')}
 #'
-#' @param format On of the supported formats for data export, currently 'hdf5', 'csv', or 'database'
+#' @param format One of the supported formats for data export, currently 'hdf5', 'csv', or 'database'
+#' 
+#' @param checkId boolean control over whether to error out with a \code{stop()} if an id column is not present
+#' 
+#' @param checkGeo boolean control over whether to warn if a geographic field, \code{zip5} in this case, is not present.
 #'
 #' @param ... Pass through parameters for specific export methods. For example,
 #' database export requires a conn object.
@@ -256,6 +274,8 @@ exportData = function(df,name,label=NA,format='hdf5', checkId=TRUE, checkGeo=TRU
 #' @param format Export data format - one of the ones supported by exportData()
 #'
 #' @param prefix Optional prefix to put n froun of all feature names
+#' 
+#' @param filePath optional path to the directory where exported data should be written if the export type is a file. '.' by default.
 #'
 #' @export
 exportFeatureAndShapeResults = function(feature.data, shape.results.data=NULL, format='hdf5', prefix='', filePath='.') {

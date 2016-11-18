@@ -12,6 +12,8 @@ writeCSVData(data, fName, label = NA, filePath = NA)
 \item{fName}{The name of the csv file to write the data to}
 
 \item{label}{Unused, but present for compatibility with other write* fucntions}
+
+\item{filePath}{optional path to the location where exported files should be written (if applicable). Default is \code{getwd()}}
 }
 \description{
 Write feature data frame to a csv file

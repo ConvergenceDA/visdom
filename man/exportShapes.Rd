@@ -6,6 +6,17 @@
 \usage{
 exportShapes(shape.results, prefix = "", format = "hdf5", filePath = ".")
 }
+\arguments{
+\item{shape.results}{the shape feature results to export. These should be in the format returned by 
+\code{visdomloadshape::shapeFeatures()}, as in 
+\code{shapeFeatures(shapeCategoryEncoding(rawData=DATA_SOURCE$getAllData(), metaCols=1:4, encoding.dict=someDict))}}
+
+\item{prefix}{a prefix to apply to the feature column names}
+
+\item{format}{the data format for export. One of the values supported by the \code{format} paramater in \code{exportData()}}
+
+\item{filePath}{optional path to the location where exported files should be written (if applicable). Default is \code{getwd()}}
+}
 \description{
 Exports standardized load shape clustering and assignment data into a
 corresponding set of exported data tables
