@@ -3,180 +3,154 @@
 # or professor Ram Rajagopal (ramr@stanford.edu)
 
 
-#############################
-# ACS data summary
-#
-# Written by Sam Borgeson
-# sborgeson@berkeley.edu
-#
-# last updated 7/25/2013
-#
-# Data files that contain demographic, housing, income, etc. data by zip code tabulation area (ZCTA) are from the
-# American Community Survey (ACS) 2011. The 5yr estimate data spans 2007 to 2012.
-# To download, go here: http://factfinder2.census.gov/faces/nav/jsf/pages/searchresults.xhtml
-# choose 5-digit Zip Code Tabulation Areas under "Geographies" search option,
-# then choose CA, then "all 5-digit...within CA"
-# to locate ACS summary data, choose "Data Profile" under topic : "Product Type"
-# This will produce a very manageable list, but to be very specific, you can also choose
-# "2011 ACS 5-year estimates" under topic: "Dataset" as well
-# the resulting DP* data files will be aggregated by ZCTA and span the breadth of topics covered by the ACS
-# Check boxes next to all the data you want to download and wait for the zip file to be generated and download
-# Unzip that file into a directory off your working directory called census/ACS_11/
-#
-# The tables of greates interest are:
-# DP02: SELECTED SOCIAL CHARACTERISTICS IN THE UNITED STATES (household types, marital status, education, citizenship, ancestry)
-# DP03: SELECTED ECONOMIC CHARACTERISTICS (employment status, job, income, poverty)
-# DP04: SELECTED HOUSING CHARACTERISTICS (occupancy, units, vintage, tenure, value, costs, fuels)
-# DP05: ACS DEMOGRAPHIC AND HOUSING ESTIMATES (sex, age, race)
-# file naming convention is ACS_<yr>_<span>_<table>_with_ann.csv
-# for example: ACS_11_5YR_DP02_with_ann.csv is the table with social characteristics
-# columns are named HC01_VC03, HC02_VC03, HC03_VC03, HC04_VC03, etc.
-# HC01 is for the estimated value
-# HC02 is for the margin of error for the estimated value
-# HC03 is for the estimated percentage of the value
-# HC04 is for the percentage margin of error
-#
-# ACS_<yr>_<span>_<table>_metadata.csv provides human readable names for the coded columns in the data files
-# heirarchical levels of categorical breakdowns are separate by '-',
-# with the top level also containing the type of observation followed by a ';'
-# For example: HC04_VC12 is Percent Margin of Error; HOUSEHOLDS BY TYPE - Family households (families) - Female householder, no husband present, family - With own children under 18 years
-# So this field provides the % margin of error for:
-# HOUSEHOLDS BY TYPE
-#   Family households (families)
-#     Female householder, no husband present, family
-#       With own children under 18 years
-#
-# For insipiration, you can look at even more human friendly data lists here (same names can be searched in the metadata):
-# http://factfinder2.census.gov/faces/help/jsf/pages/metadata.xhtml?lang=en&type=table&id=table.en.ACS_11_5YR_DP02#
-# http://factfinder2.census.gov/faces/help/jsf/pages/metadata.xhtml?lang=en&type=table&id=table.en.ACS_11_5YR_DP03#
-# http://factfinder2.census.gov/faces/help/jsf/pages/metadata.xhtml?lang=en&type=table&id=table.en.ACS_11_5YR_DP04#
-# http://factfinder2.census.gov/faces/help/jsf/pages/metadata.xhtml?lang=en&type=table&id=table.en.ACS_11_5YR_DP05#
-#
-# for entries in the data files:
-# (X) means NA
-# - means too few samples to compute an estimate
-# ** means too few samples to calc margin of error (error cols only)
-# a - following a median means the median is in the lowest interval of the distro
-# a + following a median means the median is in the highest interval of the distro
-# a *** in the margin of error column means that the estimate is in the lowest or highest interval (i.e. stat test inappropriate)
-# a ***** in the margin of error means that the estimate is controlled, so a statistical test is inappropriate
-# an 'N' in the margin of error indicates that the data cannot be displayed because the sample size is too small
-# margin of error means that prob that the true value lies in the range defined by the estimate +- the margin is 90%
-# the upshot is essentailly that values that cannot be parsed as numerical can be treated as missing data for the puroses of analysis
-# these will be turned into NA values so lm, and functions with na.rm, etc. will ignore them.
+.onLoad <- function(libname, pkgname) {
+     # Set default package options if they aren't already defined.
+     op <- options()
+     op.visdom <- list(
+          visdom.acs.cache = file.path(system.file(package=pkgname), "extdata", "census.cache")
+     )
+     toset <- !(names(op.visdom) %in% names(op))
+     if(any(toset)) options(op.visdom[toset])
 
+     # Set up a cache directory. Any other code using R.cache will also write to this directory.
+     dir.create(getOption("visdom.acs.cache"), recursive=T, showWarnings=F)
+     R.cache::setCacheRootPath(getOption("visdom.acs.cache"))
 
-ACS_DIR = file.path('data/census/ACS_11')
-
-# this is the main function to call, but its results are configured by the functions below it
-# the filterErr boolean determines whether or not to filter the columns that contain error metrics
-# from the data frame returned.
-loadACS = function(filterErr=T) {
-  #print('Load acs')
-  ACS = acsSocial(filterErr=filterErr)
-  #print(dim(ACS))
-  ACS = merge(ACS,acsEcon(filterErr=filterErr))     # will merge on both GEO.id and ZCTA
-  #print(dim(ACS))
-  ACS = merge(ACS,acsHousing(filterErr=filterErr))  # will merge on both GEO.id and ZCTA
-  ACS = merge(ACS,acsDemo(filterErr=filterErr))     # will merge on both GEO.id and ZCTA
-  return(ACS)
+     invisible()
 }
 
-# DP02: SELECTED SOCIAL CHARACTERISTICS IN THE UNITED STATES (household types, marital status, education, citizenship, ancestry)
-acsSocial = function(filterErr=T) {
-  fields = c('VC20','VC17','VC18','VC93','VC94','VC118','VC119')
-  names  = c('avg_hh_size','hh_under_18','hh_over_65','pop_past_highschool','pop_past_bachelors','res_same_1yr','res_diff_1yr')
+#' @title
+#'  Download census data, employing caching to avoid repeated downloads.
+#' @description 
+#'   A thin caching wrapper around \code{acs.fetch(...)} in the acs package. 
+#' @examples
+#'   acs.fetch.and.cache(...)
+#' @export
+acs.fetch.and.cache = R.cache::addMemoization(acs::acs.fetch)
 
-  return (loadACSTable(table='DP02',colList=fields,colNames=names,filterErr=filterErr))
+#' @title
+#' Flush the cache directory that stores downloaded census data.
+#' @examples
+#'   clear_acs_cache()
+#' @export
+clear_acs_cache = function() {
+     file.remove(Sys.glob(file.path(getOption("visdom.acs.cache"), "*.Rcache")))
+     invisible()
 }
 
-# DP03: SELECTED ECONOMIC CHARACTERISTICS (employment status, job, income, poverty)
-acsEcon = function(filterErr=T) {
-  fields = c('VC85','VC86','VC112','VC113','VC115','VC156')
-  names  = c('median_hh_income','mean_hh_income','median_fam_income','mean_fam_income','per_cap_income','pct_below_poverty')
+#' @title
+#' Retrieve census data from the American Community Survey.
+#' 
+#' @description
+#' Download data from the Census API and cache it locally on disk. This is a
+#' thin wrapper around the \code{acs.fetch} function in the [acs
+#' package](https://cran.r-project.org/web/packages/acs/index.html). The results
+#' of acs.fetch() are converted from a fancy S4 class to a simple data frame.
+#' The geographical designations (zip code, state, census block, etc) are specified
+#' in the row names, and if zip code (actually ZCTA) is used for the geography, the
+#' numeric value is also available as a column.
+#'
+#' @param filterErr=T
+#'   Remove the standard error columns from the results
+#' @param endyear=2014
+#'   Specify which year of data to download. Currently, 2013 & 2014 are available.
+#' @param span=5
+#'   Whether you want the 3-year or the 5-year estimates. See census website for more explanations.
+#' @param geography
+#'   The geographic aggregations and search terms to use with the \code{acs.fetch}
+#'   interface. This will default to all zip codes.
+#' @param acs_vars_to_load
+#'   A dataframe to specify which variables to load and what to name the resultant columns.
+#'   The dataframe should have columns "census_var" and "label" as characters. See example below.
+#'   This will default to the variables specified in data-raw/census/census_vars.txt
+#'
+#' @details
+#' Before using these functions, you will need to set a census API key. You can get one from
+#' http://api.census.gov/data/key_signup.html Once you have obtained a key, set it up like so:
+#' \code{
+#' acs::api.key.install(key='b9cfb06fa75169602cd01ece2bef67ae72654b93')
+#' }
+#' If you are a developer who frequently reinstalls packages, you may want to
+#' copy this into your .Rprofile
+#' 
+#' The path to the cache directory is stored as an R option. You may customize
+#' it by creating a .Rprofile file in either your project or home directory.
+#' \code{
+#' options("visdom.acs.cache"="/new/path/to/cache/dir")
+#' getOption("visdom.acs.cache")
+#' clear_acs_cache()
+#' }
+#' 
+#' The default set of Data Profile variables are specified in 
+#' raw-data/census/census_vars.txt. If you edit that list, don't forget to 
+#' re-execute migrateData.R. You can look at what variables are available by
+#' going to 
+#' \url{http://www.census.gov/data/developers/data-sets/acs-5year.2014.html},
+#' choosing the appropriate year, searching the page for "ACS Data Profile API
+#' Variables", and clicking 
+#' \href{http://api.census.gov/data/2014/acs5/profile/variables.html}{html}. As of
+#' November 11, 2016, the API only works reliably for 2013 and 2014.
+#' 
+#' @seealso \code{\link{DataSource}}
+#' 
+#' @examples
+#'   library(acs)
+#'   # Load data by state
+#'   loadACS(geography = acs::geo.make(state='*'))
+#'   # Load data for 2 zip codes
+#'   loadACS(geography = c(acs::geo.make(zip.code='94709'), acs::geo.make(zip.code='94710')))
+#'   # Load data for all tracts, restricted to California.
+#'   loadACS(geography = acs::geo.make(state='CA', county='*', tract='*'))
+#'   # Unfortunately, Zip codes can't be restricted to a single state like tracts can.
+#'   
+#'   # Selecting different variables
+#'   acs_vars_to_load = data.frame(
+#'        census_var = c("DP02_0015", "DP04_0047"),
+#'        label = c("avg_hh_size", "owner_hh_size"),
+#'        stringsAsFactors = F )
+#'   loadACS(acs_vars_to_load = acs_vars_to_load)
+#######
+# Developer note:
+# If the acs code is ever acting buggy, try importing the whole package. If you
+# don't import anything, then acs's code won't work properly (it was failing
+# with applying cbind on two acs objects). I don't know if these classes will be
+# sufficient to make all of the acs code work properly, but it passes some smoke
+# tests and Hadley discourages importing entire packages.
+# ' @import acs
+#' @importClassesFrom acs acs geo geo.set acs.lookup
+#' @export
+loadACS = function(filterErr=T, endyear=2014, span=5, geography=NULL, acs_vars_to_load=NULL) {
+  # Set default arguments
+  if(is.null(geography)) {
+       # geography = acs::geo.make(zip.code='94709') # Tiny dataset for debugging.
+       geography = acs::geo.make(zip.code='*')
+  }
+  if(is.null(acs_vars_to_load)){
+       curEnv=environment()
+       data(list = c('CENSUS_VARS_OF_INTEREST'), package='visdom', envir=curEnv)
+       acs_vars_to_load = curEnv[['CENSUS_VARS_OF_INTEREST']]
+  }
 
-  return (loadACSTable(table='DP03',colList=fields,colNames=names,filterErr=filterErr))
-}
+  # Load data
+  acs.data = acs.fetch.and.cache(
+       endyear = endyear, span = span, geography = geography,
+       variable = acs_vars_to_load$census_var,
+       col.names = acs_vars_to_load$label,
+       dataset = "acs_dp")
 
-# DP04: SELECTED HOUSING CHARACTERISTICS (occupancy, units, vintage, tenure, value, costs, fuels)
-acsHousing = function(filterErr=T) {
-  fields = c('VC04','VC63','VC64','VC66','VC67','VC125','VC48')
-  names  = c('occupied_units','owner_occupied','renter_occupied','owner_hh_size','renter_hh_size','median_home_value','median_rooms')
-
-  return (loadACSTable(table='DP04',colList=fields,colNames=names,filterErr=filterErr))
-}
-
-# DP05: ACS DEMOGRAPHIC AND HOUSING ESTIMATES (sex, age, race)
-acsDemo = function(filterErr=T) {
-  fields = c('VC21','VC23','VC29','VC30','VC26','VC33','VC34')
-  names  = c('median_pop_age','pop_above_18','pop_above_18_M','pop_above_18_F','pop_above_65','pop_above_65_M','pop_above_65_F')
-
-  return (loadACSTable(table='DP05',colList=fields,colNames=names,filterErr=filterErr))
-}
-
-# this is the generic function that loads the data from the ACS data files. Note the hard coded relative path
-# forces the search for the data files into the census/ACS_11 directory.
-# table is the DP* name of the table of interest
-# colList is an optional list of field codes to narrow the returned data (just the VC* parts. The HC* parts are automatically handled)
-# if a col list is provided, HC01-HC04 are replaced with these suffixes: 'val','valerr','pct','pcterr'
-# colNames is an optional list corresponding 1:1 with colList providing the human readable column names to substitute
-# filterErr is a boolean value that, when T, removes the two columns per field that provide the error statistics
-
-loadACSTable = function(table='DP02',colList=NULL,colNames=NULL,filterErr=T){
-  # data only loads string literal names, so the dynamic name must be placed in a list
-  name = c(paste('ACS_11_5YR_',table,sep=''))
-  curEnv = environment()
-  data(list = name, package='visdom', envir=curEnv)
-  
-  ACS = curEnv[[name]]
-  #print(name)
-  #print(dim(ACS))
-
+  # Copy the acs object's estimates and standard error into a data frame
   if(filterErr) {
-    valCols = grep('^HC01',colnames(ACS))
-    pctCols = grep('^HC03',colnames(ACS))
-    ACS = ACS[,c(1,2,valCols,pctCols)]
+       dat = as.data.frame(estimate(acs.data))
+  } else {
+       stderr = as.data.frame(standard.error(acs.data))
+       colnames(stderr) = paste(colnames(stderr), '.stderr', sep='')
+       dat = as.data.frame(cbind(as.data.frame(estimate(acs.data)), stderr))
   }
-  if(!is.null(colList)) {
-    newCols = c()
-    newNames = c()
-    suffix = c('val','valerr','pct','pcterr')
-    for(i in 1:4) {
-      prefix = paste('HC0',i,sep='')
-      end    = suffix[i]
-      #print(prefix)
-      subCols = as.vector(sapply(colList,FUN=function(x) grep(paste(prefix,'_',x,sep=''),colnames(ACS))))
-      if(is.numeric(subCols)) { # sapply with no grep matches returns a list, which should be ignored
-        #print(class(subCols))
-        newCols = c(newCols,subCols)
-        #print(newCols)
-        if(! is.null(colNames) ) {
-          newNames = c(newNames,paste(colNames,'_',end,sep=''))
-          #print(newNames)
-        }
-      }
-    }
-    ACS = ACS[,c(1,2,newCols)]
-    colnames(ACS)[c(-1,-2)] <- newNames
+  # If zip codes were specified, parse the ZCTA value from row names. 
+  if( substr(row.names(dat)[1], 1, 6) == "ZCTA5 " ) {
+       dat$ZCTA = substr(row.names(dat), 7, 12) 
   }
-
-  # remove all the entries that are non-numeric and convert all data columns to numeric before returning
-  # the removal is like running the following, but it also turns max value entries, like '1,000,000+'
-  # into their numerical equivalents
-  #ACS[ACS == '(X)']        = NA
-  #ACS[ACS == '-']          = NA
-  #ACS[ACS == '**']         = NA
-  #ACS[ACS == '***']        = NA
-  #ACS[ACS == '*****']      = NA
-  #ACS[ACS == 'N']          = NA
-  for (colName in colnames(ACS)[c(-1,-2)]) { # don't modify the geographic codes
-    data = ACS[,colName]
-    if(is.character(data)) {
-      data = gsub('[^0-9]','',data)
-    }
-    ACS[,colName] = as.numeric(data)
-  }
-  return(ACS)
+  return(dat)
 }
 
 # Utility functions to merge census data into other data frames with ZCTA or plain ZIP columns

@@ -198,7 +198,7 @@ aRunOut = plyr::alply(  .data = DATA_SOURCE$getIds(),
                   .progress='text' )
 ```
 
-However, this call has been shown to run serieally for some users (i.e. no benefit from parallelization). An alternate approach using foreach is the currently recommended approach. Here we are running all the meter data for each geocode (i.e. zip code in this example) in each parallel process:
+However, this call has been shown to run serially for some users (i.e. no benefit from parallelization). An alternate approach using foreach is the currently recommended approach. Here we are running all the meter data for each geocode (i.e. zip code in this example) in each parallel process:
 
 ```{r eval=F}
 library(doParallel)
