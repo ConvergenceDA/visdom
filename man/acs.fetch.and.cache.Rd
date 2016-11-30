@@ -4,7 +4,7 @@
 \alias{acs.fetch.and.cache}
 \title{Download census data, employing caching to avoid repeated downloads.}
 \usage{
-acs.fetch.and.cache(..., envir = parent.frame())
+acs.fetch.and.cache(...)
 }
 \description{
 A thin caching wrapper around \code{acs.fetch(...)} in the acs package.
