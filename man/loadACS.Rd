@@ -34,7 +34,7 @@ numeric value is also available as a column.
 Before using these functions, you will need to set a census API key. You can get one from
 http://api.census.gov/data/key_signup.html Once you have obtained a key, set it up like so:
 \code{
-acs::api.key.install(key='b9cfb06fa75169602cd01ece2bef67ae72654b93')
+acs::api.key.install(key='PASTE_YOUR_KEY_HERE')
 }
 If you are a developer who frequently reinstalls packages, you may want to
 copy this into your .Rprofile

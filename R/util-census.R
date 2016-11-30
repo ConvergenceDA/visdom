@@ -16,6 +16,15 @@
      dir.create(getOption("visdom.acs.cache"), recursive=T, showWarnings=F)
      R.cache::setCacheRootPath(getOption("visdom.acs.cache"))
 
+     if( ! acs::api.key.exists() ) {
+          warning(
+               "Before using downloading census data, you need to set a census API key. ",
+               "You can get one from http://api.census.gov/data/key_signup.html ",
+               "Once you have obtained a key, set it up like so: ",
+               "acs::api.key.install(key='PASTE_YOUR_KEY_HERE')"
+          )
+     }
+     
      invisible()
 }
 
@@ -26,7 +35,31 @@
 #' @examples
 #'   acs.fetch.and.cache(...)
 #' @export
-acs.fetch.and.cache = R.cache::addMemoization(acs::acs.fetch)
+# This was the lightweight memoization. Super easy, but no extra error protection
+# or cache customization.
+# acs.fetch.and.cache = R.cache::addMemoization(acs::acs.fetch)
+# This is a slightly thicker caching wrapper.
+acs.fetch.and.cache = function(...) {
+     key = list(...)
+     result = R.cache::loadCache(key=key, dirs="visdom.acs")
+     if( ! is.null(result) && acs::is.acs(result)) { 
+          return(result) 
+     }
+     if( ! acs::api.key.exists() ) {
+          stop("Before using downloading census data, you need to set a census API key. ",
+               "You can get one from http://api.census.gov/data/key_signup.html ",
+               "Once you have obtained a key, set it up like so: ",
+               "acs::api.key.install(key='PASTE_YOUR_KEY_HERE')")
+     }
+     acs_results = acs::acs.fetch(...)
+     # We could check for other error conditions if we knew what to test for.
+     # This test will differentiate between NA and an object of the "acs" class.
+     if( ! is.acs(acs_results)) { 
+          stop("The census API returned an error. No data is currently available.")
+     }
+     R.cache::saveCache(acs_results, key=key, dirs="visdom.acs")
+     return(acs_results)
+}
 
 #' @title
 #' Flush the cache directory that stores downloaded census data.
@@ -68,7 +101,7 @@ clear_acs_cache = function() {
 #' Before using these functions, you will need to set a census API key. You can get one from
 #' http://api.census.gov/data/key_signup.html Once you have obtained a key, set it up like so:
 #' \code{
-#' acs::api.key.install(key='b9cfb06fa75169602cd01ece2bef67ae72654b93')
+#' acs::api.key.install(key='PASTE_YOUR_KEY_HERE')
 #' }
 #' If you are a developer who frequently reinstalls packages, you may want to
 #' copy this into your .Rprofile
