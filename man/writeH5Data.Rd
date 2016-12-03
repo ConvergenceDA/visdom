@@ -4,7 +4,7 @@
 \alias{writeH5Data}
 \title{Write feature data frame to an hdf5 file}
 \usage{
-writeH5Data(data, fName, label)
+writeH5Data(data, fName, label, filePath = NA)
 }
 \arguments{
 \item{data}{The feature data frame to be written}
@@ -12,6 +12,8 @@ writeH5Data(data, fName, label)
 \item{fName}{The name of the hdf5 formatted file to write the data to}
 
 \item{label}{The name of the data table within the hdf5 file}
+
+\item{filePath}{optional path to the location where exported files should be written (if applicable). Default is \code{getwd()}}
 }
 \description{
 Write feature data frame to an hdf5 file

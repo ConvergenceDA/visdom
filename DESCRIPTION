@@ -29,7 +29,10 @@ Imports:
     partykit,
     testthat,
     digest,
-    DBI
+    DBI,
+    R.cache,
+    acs
+Remotes: josiahjohnston/acs
 Suggests:
     foreach,
     doParallel,

@@ -132,7 +132,7 @@ With the feature data in hand and in a data frame, it can be cased as RData, inc
 
 ##Exporting your data
 
-Once your features are computed, you may logically want to save or export them forIn `util-export.R`, there are several functions that are designed to support exports of your feature data to various useful formats.
+Once your features are computed, you may logically want to save or export them. In `util-export.R`, there are several functions that are designed to support exports of your feature data to various useful formats.
 
 ###data for VISDOM-web
 
@@ -184,11 +184,11 @@ aRunOut = alply(  DATA_SOURCE$getIds(),
                   iterator.callAllFromCtx, ctx)
 ```
 
-where you can add the `.parallel=T` option, noting that parallel backend configuration, which uses the configuration you set up for foreach support is platform specific, better supported by Revolution R (the open version is called RRO) than standard R distributions, and you need to make decisions about multi-core vs. multi-machine parallelization. There are ample resources online addressing these issues, especially the [Getting Started with doParallel and foreach pdf](https://cran.r-project.org/web/packages/doParallel/vignettes/gettingstartedParallel.pdf). In general you will likely be setting up your foreach configuration by registering the doParallel backend:
+where you can add the `.parallel=T` option, noting that parallel backend configuration, which uses the configuration you set up for foreach support is platform specific, better supported by Revolution R (the open version is called RRO) than standard R distributions, and you need to make decisions about multi-core vs. multi-machine parallelization. There are ample resources online addressing these issues, especially the [Getting Started with doParallel and foreach pdf](https://cran.r-project.org/web/packages/doParallel/vignettes/gettingstartedParallel.pdf). In general you will likely be setting up your foreach configuration by registering the doParallel backend and ideally alply, etc. will handle the rest:
 
 ```{r eval=F}
 library(doParallel)
-nCores = 2
+nCores = parallel::detectCores()
 registerDoParallel(cores=nCores) # setup parallel processing on multiple cores
 aRunOut = plyr::alply(  .data = DATA_SOURCE$getIds(), 
                   .margins = 1, 
@@ -198,6 +198,26 @@ aRunOut = plyr::alply(  .data = DATA_SOURCE$getIds(),
                   .progress='text' )
 ```
 
+However, this call has been shown to run serially for some users (i.e. no benefit from parallelization). An alternate approach using foreach is the currently recommended approach. Here we are running all the meter data for each geocode (i.e. zip code in this example) in each parallel process:
+
+```{r eval=F}
+library(doParallel)
+nCores = parallel::detectCores()
+registerDoParallel(cores=nCores) # setup parallel processing on multiple cores
+zips = DATA_SOURCE$getGeocodes(useCache=T)
+zipRunOutParallel = foreach(i = length(zips)) %dopar% { 
+  zipRunOut = iterator.iterateZip( zipList = zips[i],
+                                   custFn = iterator.callAllFromCtx, 
+                                   cacheResults = T,
+                                   ctx=ctx )
+  
+  return(zipRunOut)
+}
+
+# concat results
+aRunOut = do.call(c, zipRunOutParallel)
+
+```
 ###Alternate 1 (eliminating redundant data access with or without parallelization):
 
 Note that one performance optimization that is pretty common when processing large numbers of meters is to load weather data for one location and process all meters from that location with the weather data and all relevant meter data cached in the ctx. This can be a bigger performance boost than naively running each customer in parallel, where data access will redundantly happen over and over. In this case, you might run alply across zip codes, calling a function that loads weather data and all customer data for that zip code, places them both into the ctx and then calls alply with all the customer ids for that zipcode (the underlying code looks in the ctx for weather data and customer data). Technically, this function does not exist. The "official" support for processing customers by zip code is in `iterator.iterateZip`, which is implemented using standard for loops, but it should be pretty clear from that what to do next if you want a parallelizable version.
