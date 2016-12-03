@@ -21,7 +21,6 @@ Imports:
     cvTools,
     sandwich,
     lmtest,
-    AER,
     RColorBrewer,
     ggplot2,
     solaR,
