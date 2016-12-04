@@ -112,6 +112,7 @@ MeterDataClass = function(id,geocode=NULL,weather=NULL,data=NULL,gasData=NULL,us
   }
 
   # some days are duplicated in the DB. Remove all but the first one.
+  # todo: should they instead be summed?
   dup = which(diff(days) == 0)
   if(any(dup > 0)) {
     data = data[-dup,] # delete the row
