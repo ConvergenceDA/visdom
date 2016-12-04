@@ -54,7 +54,7 @@ acs.fetch.and.cache = function(...) {
      acs_results = acs::acs.fetch(...)
      # We could check for other error conditions if we knew what to test for.
      # This test will differentiate between NA and an object of the "acs" class.
-     if( ! is.acs(acs_results)) { 
+     if( ! acs::is.acs(acs_results)) { 
           stop("The census API returned an error. No data is currently available.")
      }
      R.cache::saveCache(acs_results, key=key, dirs="visdom.acs")
