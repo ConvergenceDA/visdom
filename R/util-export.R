@@ -121,7 +121,7 @@ writeH5Data = function(data,fName,label, filePath=NA) {
 
 #' @title Write feature data frame to a database
 #'
-#' @description Write feature data frame to a database
+#' @description Write feature data frame to a database using a \code{\link{DBI::dbWriteTable}} call
 #'
 #' @param data The feature data frame to be written
 #'
@@ -250,7 +250,7 @@ exportData = function(df,name,label=NA,format='hdf5', checkId=TRUE, checkGeo=TRU
     print('Warning. Converting matrix to data.frame')
     df = as.data.frame(df)
   }
-  print(paste('Exporting', name, label))
+  print(paste('Exporting name:', name, 'label:', label))
   fn = list(  hdf5=writeH5Data,
               hdf=writeH5Data,
               h5=writeH5Data,

@@ -51,6 +51,11 @@ TestData = function( n=100 ) {
     names(data)[5:28] = paste('H',1:24,sep='')
     return(data)
   }
+  
+  obj$getIdMetaData = function() {
+    ids = obj$getIds()
+    return( data.frame( id = ids, status='good', income = 'myob' ) )
+  }
 
   obj$getAllData = function(geocode,useCache=TRUE) {
     return( obj$getHourlyAlignedData( ) )
@@ -78,7 +83,7 @@ TestData = function( n=100 ) {
     dates = as.POSIXct('2013-01-01',tz = "America/Los_Angeles" ) + 0:(365 * 24 - 1) * 3600
     data = data.frame(
       date         = dates,
-      temperaturef = c(1:6,6:1)[as.POSIXlt(dates)$mon + 1] + rep( c(64,64,64,64,65,65,65,65,66,66,66,66,67,67,67,67,68,68,68,68,66,66,66,66), 365 ),
+      temperaturef = (c(0:5,5:0)*3)[as.POSIXlt(dates)$mon + 1] + rep(rnorm(n=365, mean=0, sd=0.5), each=24) + rep( rep(c(54,55,56,57,58,56), each=4), 365 ),
       pressure     = rep( rep(19,24), 365 ),
       hourlyprecip = rep( c( rep(0,12),rep(1,2),rep(0,10) ), 365 ),
       dewpointf    = rep( rep(55,24), 365 )
