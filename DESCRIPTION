@@ -33,7 +33,6 @@ Imports:
     DBI,
     R.cache,
     acs
-Remotes: josiahjohnston/acs
 Suggests:
     foreach,
     doParallel,

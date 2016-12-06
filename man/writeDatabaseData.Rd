@@ -18,6 +18,6 @@ writeDatabaseData(data, tableName, label = NULL, conn, overwrite = TRUE)
 \item{overwrite}{Boolean indicator for whether the data written should overwrite any existing table or append it}
 }
 \description{
-Write feature data frame to a database
+Write feature data frame to a database using a \code{\link{DBI::dbWriteTable}} call
 }
 

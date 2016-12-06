@@ -17,6 +17,7 @@ Load VISDOM (which loads its dependencies) and any supporting libraries your cus
 ```{r}
 library(visdom)
 library(plyr)
+library(acs)
 ```
 
 ##Load your custom data source
@@ -103,10 +104,11 @@ Note that the context, here called `ctx`, is implemented as a new environment `n
 
 ```{r}
 ctx=new.env()
-ctx$a='hi'
 ctx$fnVector = c(custZipfn,basicFeaturesfn,regressionFeaturesfn,weatherFeaturesfn,peakHOD)
-ctx$start.date = as.Date('2010-10-15')
-ctx$end.date   = as.Date('2011-10-15')
+ctx$dateFilter = list(DOW        = 2:6,
+                      start.date = as.Date('2010-10-15'), 
+                      end.date   = as.Date('2011-10-15')    )
+
 ```
 
 ##Running the feature extraction itself
@@ -158,8 +160,26 @@ The simplest export format compatible with VISDOM-web is csv. If you only have a
 ```{r eval=F}
 
 runPlusCensusDF = mergeCensus(runDF,zipCol='zip5')
-exportData(runPlusCensusDF,name='myFeatures',format='csv') # csv extension automatically added
 
+# csv file written to getwd() location. csv extension automatically added
+exportData(df=runDF,name='myFeatures',format='csv') 
+```
+
+You can also save feature data to a database using a database connection with CREATE TABLE privileges. If `overwrite=TRUE`, the table will be re-written. Otherwise, the data will be appended to the table. See `?visdom::writeDatabaseData` for options.
+
+```{r eval=F}
+library(RMySQL)
+exportData(df = as.data.frame(runDF), 
+           name='visdom_example', 
+           format='database', 
+           conn=conf.dbCon(dbCfg('visdom_features_db.cfg')), 
+           overwrite=TRUE ) # the rows in runDF will be found in the table
+
+exportData(df = as.data.frame(runDF), 
+           name='visdom_example', 
+           format='database', 
+           conn=conf.dbCon(dbCfg('visdom_features_db.cfg')), 
+           overwrite=FALSE ) # a second copy of the rows in runDF are appended to the same table
 ```
 
 ##parallel processing
