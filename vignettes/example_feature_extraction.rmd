@@ -164,6 +164,7 @@ runPlusCensusDF = mergeCensus(runDF,zipCol='zip5')
 # csv file written to getwd() location. csv extension automatically added
 exportData(df=runDF,name='myFeatures',format='csv') 
 ```
+###database export
 
 You can also save feature data to a database using a database connection with CREATE TABLE privileges. If `overwrite=TRUE`, the table will be re-written. Otherwise, the data will be appended to the table. See `?visdom::writeDatabaseData` for options.
 
