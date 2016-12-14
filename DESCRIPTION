@@ -31,6 +31,7 @@ Imports:
     testthat,
     digest,
     DBI,
+    RMySQL,
     R.cache,
     acs
 Suggests:

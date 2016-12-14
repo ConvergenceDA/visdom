@@ -16,7 +16,7 @@ Utility function that opens a database connection using the standard \code{dbCfg
 \code{conf.dbCon} is called by passing in a names list that contains \code{dbType} providing the name of the desired database driver,
   which is passed directly into \code{\link{DBI::dbDriver}} to get an instance of the required driver. The rest of the parameters are
   driver specific, but typically include \code{host}, \code{user}, \code{password}, and \code{dbname}. These are passed as arguments 
-  into a call to \code{\link{DBI::dbConnect}}, using the named driver to get a databse connection and return it.
+  into a call to \code{\link{DBI::dbConnect}}, using the named driver to get a database connection and return it.
 }
 \seealso{
 \code{\link{dbDfg}}, \code{\link{run.query}}

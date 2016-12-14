@@ -119,25 +119,138 @@ writeH5Data = function(data,fName,label, filePath=NA) {
   rhdf5::h5write(data,fName,label)
 }
 
+# Internal function for parsing name=value configuration file
+parseConfig = function(config_path) {
+     cfg = read.csv(config_path,sep="=",header=F)
+     cfg[] <- lapply(cfg, as.character)
+     cfg = as.list(setNames(cfg$V2,cfg$V1))
+     return(cfg)
+}
+
+#' @title Get the database id of a feature_set/run combination
+#'
+#' @description Load user-specified run config file and return a unique numeric
+#'   id from the feature_runs metadata table. Create the feature_runs table if
+#'   it does not exist.
+#'
+#' @param conn A database connection, usually obtained from \code{conf.dbCon} or \code{\link{DBI::dbConnect}}
+#'
+#' @param runConfig The run configuration file with key-value pairs of
+#'   feature_set, feature_set_description, run_name and run_description. See
+#'   1inst/feature_set_run_conf/exampl_feature_set.conf1 for an example.
+#'
+#' @export
+getRunId = function(conn, runConfig) {
+     cfg = parseConfig(runConfig)
+     
+     # Create the feature_runs table if it doesn't exist.
+     table_name = "feature_runs"
+     if( ! DBI::dbExistsTable(conn, table_name) ) {
+          sql_dialect = getSQLdialect(conn)
+          create_table_path = file.path(system.file(package=pkgname), "sql", 
+                                        paste("feature_runs.create.", sql_dialect, ".sql", sep=""))
+          if( file.exists(create_table_path) ) {
+               sql_create = readChar(create_table_path, file.info(create_table_path)$size)
+          } else {
+               stop(sprintf(paste(
+                    "The sql file to create the %s table does not exist for",
+                    "SQL dialect %s at path %s. You need to manually create the feature_run",
+                    "table in your database, or store the create statement(s) at that path."),
+                    table_name, sql_dialect, create_table_path))
+          }
+          rows_affected = DBI::dbExecute(conn, sql_create)
+     }
+     
+     # Validate incoming data. Start by determining length of varchar columns. The length column may or may not be available outside of the MySQL database driver.
+     sql_schema_query = DBI::sqlInterpolate(
+          conn,
+          paste("SELECT *", 
+                "FROM", DBI::dbQuoteIdentifier(conn, table_name), 
+                "limit 0"))
+     rs <- DBI::dbSendQuery(conn, sql_schema_query)
+     column_info = DBI::dbColumnInfo(rs)
+     DBI::dbClearResult(rs)
+     # Now check length of data against length of columns.
+     for(column in names(cfg)) {
+          dat_length = nchar(cfg[column])
+          allowed_length = column_info[column_info$name == column, ]$length
+          if(dat_length > allowed_length) {
+               stop(sprintf(paste(
+                    "Data for %s from run config file %s is too long.", 
+                    "Max character length is %d, and the data is %d characters long."),
+                    column, runConfig, allowed_length, dat_length))
+          }
+     }
+     
+     # Look for an existing record in the table based on feature_set and run_name
+     sql_query = DBI::sqlInterpolate(
+          conn,
+          paste("SELECT *", 
+                "FROM", DBI::dbQuoteIdentifier(conn, table_name), 
+                "WHERE feature_set = ?feature_set and run_name = ?run_name"),
+          feature_set=cfg$feature_set,
+          run_name=cfg$run_name)
+     dat = DBI::dbGetQuery(conn, sql_query)
+     
+     # Insert a record for this run if one does not exist
+     if( nrow(dat) == 0 ) {
+          sql_insert = DBI::sqlInterpolate(
+               conn,
+               paste("INSERT INTO", DBI::dbQuoteIdentifier(conn, table_name), 
+                     "(feature_set, feature_set_description, run_name, run_description)",
+                     "VALUES (?feature_set, ?feature_set_description, ?run_name, ?run_description)"),
+               feature_set = cfg$feature_set,
+               feature_set_description = cfg$feature_set_description,
+               run_name = cfg$run_name,
+               run_description = cfg$run_description)
+          rows_affected = DBI::dbExecute(conn, sql_insert)
+          if( rows_affected != 1) {
+               stop(sprintf("Error inserting into %s table data from %s.", table_name, runConfig))
+          }
+          # Look up the id now.
+          dat = DBI::dbGetQuery(conn, sql_query)
+     }
+     
+     return(dat$id)
+}
+
 #' @title Write feature data frame to a database
 #'
 #' @description Write feature data frame to a database using a \code{\link{DBI::dbWriteTable}} call
 #'
 #' @param data The feature data frame to be written
 #'
-#' @param tableName The name of the table to write the data to
+#' @param name Unused, but present for compatibility with other write* fucntions
 #'
 #' @param label Unused, but present for compatibility with other write* fucntions
 #'
 #' @param conn A DBI dbConnection object to the database that will host the table
 #'
 #' @param overwrite Boolean indicator for whether the data written should overwrite any existing table or append it
+#' 
+#' @param runConfig Path to a run configuration file with names and descriptions
+#'   of the feature set and run. See 
+#'   `inst/feature_set_run_conf/exampl_feature_set.conf` for an example.
 #'
 #' @export
-writeDatabaseData = function(data, tableName, label=NULL, conn, overwrite=TRUE) { # con <- dbConnect(SQLite(), dbname="filename.sqlite")
-  print(paste(tableName))
+writeDatabaseData = function(data, name=NULL, label=NULL, conn, overwrite=TRUE, runConfig) { # con <- dbConnect(SQLite(), dbname="filename.sqlite")
+  # Use cbind so runId is the first column. 
+  data = cbind(runId=getRunId(conn, runConfig), data)
+  tableName = parseConfig(runConfig)$feature_set
   DBI::dbWriteTable(conn=conn, name=tableName, value=data, row.names=F, overwrite=overwrite, append=!overwrite) # write data frame to table
-  DBI::dbDisconnect(conn)
+  
+  # Update the time in the metadata table
+  table_name = "feature_runs"
+  sql_update = DBI::sqlInterpolate(
+       conn,
+       paste("UPDATE", DBI::dbQuoteIdentifier(conn, table_name), 
+             "SET update_time=CURRENT_TIMESTAMP"))
+  rows_affected = DBI::dbExecute(conn, sql_update)
+  if( rows_affected != 1) {
+       stop(sprintf("Error updating time in %s table.", table_name))
+  }
+
+  # DBI::dbDisconnect(conn)
   #print('No SQLite support yet!')
   #if (require("RSQLite")) {
   #  con <- dbConnect(RSQLite::SQLite(), ":memory:")
@@ -259,6 +372,7 @@ exportData = function(df,name,label=NA,format='hdf5', checkId=TRUE, checkGeo=TRU
   df = cleanFeatureDF(df, checkId, checkGeo)
   fn[[format]](df, name, label, ... ) # call the format appropriate export function
 }
+
 
 #' @title Export feature run and load shape results
 #'
