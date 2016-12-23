@@ -42,14 +42,15 @@ dbCfg = function(filePath){
 # the file path to the appropriate sql file. Can accept either a connection or a configuration
 # file as an argument. 
 getSQLdialect = function(conn) {
-     if(dbIsValid(conn)) {
-          return(switch(class(conn)[1],
-                        "MySQLConnection" = "mysql",
-                        "generic"))
-     } else {
-          # Use tolower to better support file systems that are not case sensitive
-          return(tolower(dbCfg(filePath)$dbType))
-     }
+  #return(tolower(dbCfg(filePath)$dbType))
+  if(DBI::dbIsValid(conn)) {
+    return(switch(class(conn)[1],
+                  "MySQLConnection" = "mysql",
+                  "generic"))
+  } else {
+    # Use tolower to better support file systems that are not case sensitive
+    return(tolower(dbCfg(filePath)$dbType))
+  }
 }
 
 #' @title
@@ -78,7 +79,7 @@ conf.dbCon = function(cfg) {
   cfg$dbType <- NULL         # remove the dbType entry from the list that will be passed as arguments
   # cfg params, a named list likely read in through dbCfg, are passed as parameters to the DBI::dbConnect
   con = do.call(DBI::dbConnect,c(driver,cfg))
-  if( dbIsValid(conn) ) {
+  if( DBI::dbIsValid(con) ) {
     return(con)
   } else {
     print("Error making database connection!")

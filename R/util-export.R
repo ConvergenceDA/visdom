@@ -147,7 +147,7 @@ getRunId = function(conn, runConfig) {
      table_name = "feature_runs"
      if( ! DBI::dbExistsTable(conn, table_name) ) {
           sql_dialect = getSQLdialect(conn)
-          create_table_path = file.path(system.file(package=pkgname), "sql", 
+          create_table_path = file.path(system.file(package='visdom'), "sql", 
                                         paste("feature_runs.create.", sql_dialect, ".sql", sep=""))
           if( file.exists(create_table_path) ) {
                sql_create = readChar(create_table_path, file.info(create_table_path)$size)

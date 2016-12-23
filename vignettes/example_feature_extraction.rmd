@@ -169,11 +169,12 @@ exportData(df=runDF, name='myFeatures', format='csv')
 You can also save feature data to a database using a database connection with CREATE TABLE privileges. If `overwrite=TRUE`, the table will be re-written. Otherwise, the data will be appended to the table. See `visdom::writeDatabaseData` for options.
 
 ```{r eval=F}
+library('RMySQL')
 db_cfg_path = "db_connect.conf"
 conn = conf.dbCon(dbCfg(db_cfg_path))
 run_cfg_path = file.path(system.file(package="visdom"), 
                          "feature_set_run_conf", "example_feature_set.conf")
-exportData(df=runDF, name=NULL, format="database", conn=conn, overwrite=TRUE, runConfig=run_cfg_path)
+exportData(df=runDF, name=NULL, format="database", conn=conn, overwrite=FALSE, runConfig="example_feature_set.conf")
 
 ```
 

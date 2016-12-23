@@ -182,18 +182,18 @@ basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
   max.day.pct = mean(tMean <= max.day.tout)
   min.day.pct = mean(tMean <= min.day.tout)
 
-  kw.tout.cor        = cor(meterData$kw,meterData$tout,               use='complete.obs') # correlation between tout and kw
+  kw.tout.cor        = cor(meterData$kw, meterData$tout, use='complete.obs') # correlation between tout and kw
   kw.pout.cor = NA
   #if(any(! is.na(meterData$w('pout')))) {
   #  kw.pout.cor = cor(meterData$kw,meterData$w('pout'), use='complete.obs') # correlation between pressure and kw
   #}
-  kw.var             = var(meterData$kw/kw.mean,                use='complete.obs') # normed by mean of kW
-  kw.var.summer      = var(meterData$kw[summerSubset]/kw.mean,na.rm=T)   # normed by mean of kW
-  kw.var.winter      = var(meterData$kw[!summerSubset]/kw.mean,na.rm=T)  # normed by mean of kW
+  kw.var             = var(meterData$kw/kw.mean, use='complete.obs') # normed by mean of kW
+  kw.var.summer      = var(meterData$kw[summerSubset]/kw.mean,  na.rm=T)   # normed by mean of kW
+  kw.var.winter      = var(meterData$kw[!summerSubset]/kw.mean, na.rm=T)  # normed by mean of kW
 
-  daily.kw.var       = var(rowMeans(meterData$kwMat)/kw.mean,   use='complete.obs') # normed by mean of kW
-  daily.kw.min.var   = var(dMin/kw.mean,                use='complete.obs') # normed by mean of kW
-  daily.kw.max.var   = var(dMax/kw.mean,                use='complete.obs') # normed by mean of kW
+  daily.kw.var       = var(rowMeans(meterData$kwMat)/kw.mean, use='complete.obs') # normed by mean of kW
+  daily.kw.min.var   = var(dMin/kw.mean, use='complete.obs') # normed by mean of kW
+  daily.kw.max.var   = var(dMax/kw.mean, use='complete.obs') # normed by mean of kW
 
   lags = 0:24
   lag.cor = apply(as.matrix(lags),  1,function(x) cor(meterData$kw,lag(meterData$tout,x),use='complete.obs'))
