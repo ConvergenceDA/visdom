@@ -4,18 +4,23 @@
 \alias{writeDatabaseData}
 \title{Write feature data frame to a database}
 \usage{
-writeDatabaseData(data, tableName, label = NULL, conn, overwrite = TRUE)
+writeDatabaseData(data, name = NULL, label = NULL, conn, overwrite = TRUE,
+  runConfig)
 }
 \arguments{
 \item{data}{The feature data frame to be written}
 
-\item{tableName}{The name of the table to write the data to}
+\item{name}{Unused, but present for compatibility with other write* fucntions}
 
 \item{label}{Unused, but present for compatibility with other write* fucntions}
 
 \item{conn}{A DBI dbConnection object to the database that will host the table}
 
 \item{overwrite}{Boolean indicator for whether the data written should overwrite any existing table or append it}
+
+\item{runConfig}{Path to a run configuration file with names and descriptions
+of the feature set and run. See 
+`inst/feature_set_run_conf/exampl_feature_set.conf` for an example.}
 }
 \description{
 Write feature data frame to a database using a \code{\link{DBI::dbWriteTable}} call

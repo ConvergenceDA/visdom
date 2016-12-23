@@ -61,13 +61,13 @@ dailyCP = DescriptorGenerator(  name='tout1CP',
                                 cvReps=8) # 1 CP
 ```
 
-The actual feature funciton calls `run()` in the generated descriptor, here called `dailyCP` to run the specified regression model, with optional cross-validation, etc. as specified in the call to DescriptorGenerator. The model parameters of interest are stored in the object returned by `run` under `other` values. We return these with the prefix `dailyCP_`, to distinguish them from any other model outputs we might generate from other models in the same feature run.
+The actual feature function calls `run()` in the generated descriptor, here called `dailyCP` to run the specified regression model, with optional cross-validation, etc. as specified in the call to DescriptorGenerator. The model parameters of interest are stored in the object returned by `run` under `other` values. We return these with the prefix `dailyCP_`, to distinguish them from any other model outputs we might generate from other models in the same feature run.
 
 ```{r}
 regressionFeaturesfn = function(cust,ctx,...) { # for future results
-  result = dailyCP$run(cust,as.daily.df(cust))
+  result = dailyCP$run(cust, as.daily.df(cust))
   out = as.list(t(result$other))
-  names(out) = fixNames(rownames(result$other),prefix='dailyCP_')
+  names(out) = fixNames(rownames(result$other), prefix='dailyCP_')
   return( out )
 }
 ```
@@ -104,7 +104,7 @@ Note that the context, here called `ctx`, is implemented as a new environment `n
 
 ```{r}
 ctx=new.env()
-ctx$fnVector = c(custZipfn,basicFeaturesfn,regressionFeaturesfn,weatherFeaturesfn,peakHOD)
+ctx$fnVector = c(custZipfn, basicFeaturesfn, regressionFeaturesfn, weatherFeaturesfn, peakHOD)
 ctx$dateFilter = list(DOW        = 2:6,
                       start.date = as.Date('2010-10-15'), 
                       end.date   = as.Date('2011-10-15')    )
@@ -159,27 +159,23 @@ The simplest export format compatible with VISDOM-web is csv. If you only have a
 
 ```{r eval=F}
 
-runPlusCensusDF = mergeCensus(runDF,zipCol='zip5')
+runPlusCensusDF = mergeCensus(runDF, zipCol='zip5')
 
 # csv file written to getwd() location. csv extension automatically added
-exportData(df=runDF,name='myFeatures',format='csv') 
+exportData(df=runDF, name='myFeatures', format='csv') 
 ```
+###database export
 
-You can also save feature data to a database using a database connection with CREATE TABLE privileges. If `overwrite=TRUE`, the table will be re-written. Otherwise, the data will be appended to the table. See `?visdom::writeDatabaseData` for options.
+You can also save feature data to a database using a database connection with CREATE TABLE privileges. If `overwrite=TRUE`, the table will be re-written. Otherwise, the data will be appended to the table. See `visdom::writeDatabaseData` for options.
 
 ```{r eval=F}
-library(RMySQL)
-exportData(df = as.data.frame(runDF), 
-           name='visdom_example', 
-           format='database', 
-           conn=conf.dbCon(dbCfg('visdom_features_db.cfg')), 
-           overwrite=TRUE ) # the rows in runDF will be found in the table
+library('RMySQL')
+db_cfg_path = "db_connect.conf"
+conn = conf.dbCon(dbCfg(db_cfg_path))
+run_cfg_path = file.path(system.file(package="visdom"), 
+                         "feature_set_run_conf", "example_feature_set.conf")
+exportData(df=runDF, name=NULL, format="database", conn=conn, overwrite=FALSE, runConfig="example_feature_set.conf")
 
-exportData(df = as.data.frame(runDF), 
-           name='visdom_example', 
-           format='database', 
-           conn=conf.dbCon(dbCfg('visdom_features_db.cfg')), 
-           overwrite=FALSE ) # a second copy of the rows in runDF are appended to the same table
 ```
 
 ##parallel processing

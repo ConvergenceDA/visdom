@@ -27,7 +27,7 @@ cached data before calling the \code{run.query} function.}
 \details{
 \code{run.query} is a utility function that is very often used in \code{DataSource} implementations. It automatically connects to a database
 with configuration that can be read from a config file, runs queries, and returns results as data.frames. It also supports caching of query results
-in a query cache directory, using passed cacheFile names, which must be carfeully managed by the data source author to ensure that the cacheFile names 
+in a query cache directory, using passed cacheFile names, which must be carefully managed by the data source author to ensure that the cacheFile names 
 are truly unique to each unique query made. For example, the cache file for query to load meter data for an individual meter would need to include
 the meter's id (or similar) to ensure that it isn't mistaken for data from another meter already cached. The purpose of all this cacheing logic is,
 of course, to improve the performance of data retrieval for large sets of data where query times can significantly impact performance. Thus it is often good 

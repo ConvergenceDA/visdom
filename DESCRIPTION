@@ -15,6 +15,15 @@ Depends:
 Imports:
     akmeans (>= 1.1),
     plyr,
+    assertthat,
+    tibble,
+    RCurl,
+    bitops,
+    zoo,
+    latticeExtra,
+    R.methodsS3,
+    R.oo,
+    R.utils,
     dplyr,
     lubridate,
     timeDate,
@@ -29,7 +38,8 @@ Imports:
     partykit,
     testthat,
     digest,
-    DBI,
+    DBI (>= 0.5),
+    XML,
     R.cache,
     acs
 Suggests:

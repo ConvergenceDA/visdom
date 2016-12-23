@@ -10,8 +10,8 @@
 #' \code{key=value
 #' key2=value2}
 #' etc. into a named list.
-#' Keys must include \code{dbType} passed in to \code{dbDriver} to load the appropriate driver (i.e. MySQL, PostgreSQL, etc.)
-#' and any parameters like \code{host}, \code{user}, \code{password}, \code{dbname} that should be passed into the dbConnect function call for your driver.
+#' Keys must include \code{dbType} passed in to \code{DBI::dbDriver} to load the appropriate driver (i.e. MySQL, PostgreSQL, SQLite, etc.)
+#' and any parameters like \code{host}, \code{user}, \code{password}, \code{dbname} that should be passed into the DBI::dbConnect function call for your driver.
 #'
 #' @param filePath The file path to the config file to be read in. Must be absolute or relative to the working directory from \code{getwd()}
 #'
@@ -38,6 +38,21 @@ dbCfg = function(filePath){
   return(cfg)
 }
 
+# Internal helper functions to determine the SQL dialect which can be used to determine 
+# the file path to the appropriate sql file. Can accept either a connection or a configuration
+# file as an argument. 
+getSQLdialect = function(conn) {
+  #return(tolower(dbCfg(filePath)$dbType))
+  if(DBI::dbIsValid(conn)) {
+    return(switch(class(conn)[1],
+                  "MySQLConnection" = "mysql",
+                  "generic"))
+  } else {
+    # Use tolower to better support file systems that are not case sensitive
+    return(tolower(dbCfg(filePath)$dbType))
+  }
+}
+
 #' @title
 #' Get a database connection
 #' 
@@ -50,7 +65,7 @@ dbCfg = function(filePath){
 #' \code{conf.dbCon} is called by passing in a names list that contains \code{dbType} providing the name of the desired database driver,
 #'   which is passed directly into \code{\link{DBI::dbDriver}} to get an instance of the required driver. The rest of the parameters are
 #'   driver specific, but typically include \code{host}, \code{user}, \code{password}, and \code{dbname}. These are passed as arguments 
-#'   into a call to \code{\link{DBI::dbConnect}}, using the named driver to get a databse connection and return it.
+#'   into a call to \code{\link{DBI::dbConnect}}, using the named driver to get a database connection and return it.
 #'   
 #' @seealso \code{\link{dbDfg}}, \code{\link{run.query}}
 #'   
@@ -59,12 +74,16 @@ conf.dbCon = function(cfg) {
   drvName = cfg$dbType
   if( is.null(drvName) ) stop('[conf.dbCon] No dbType specified')
   driver = NULL
-  driver = tryCatch( dbDriver(drvName), error = function(e) {} )
+  driver = tryCatch( DBI::dbDriver(drvName), error = function(e) {} )
   if( is.null(driver) ) driver = eval(parse(text=drvName))
   cfg$dbType <- NULL         # remove the dbType entry from the list that will be passed as arguments
-  # cfg params, a named list likely read in through dbCfg, are passed as parameters to the dbConnect
-  con = do.call(dbConnect,c(driver,cfg))
-  return(con)
+  # cfg params, a named list likely read in through dbCfg, are passed as parameters to the DBI::dbConnect
+  con = do.call(DBI::dbConnect,c(driver,cfg))
+  if( DBI::dbIsValid(con) ) {
+    return(con)
+  } else {
+    print("Error making database connection!")
+  }
 }
 
 
@@ -101,7 +120,7 @@ clearCons = function(cfg) {
 #' 
 #' @export
 showCons = function(cfg) {
-  all_cons <- dbListConnections(dbDriver(cfg$dbType))
+  all_cons <- dbListConnections(DBI::dbDriver(cfg$dbType))
   print(dim(all_cons))
   print(all_cons)
   s = dbGetQuery(all_cons[[1]], "show processlist")
@@ -130,7 +149,7 @@ showCons = function(cfg) {
 #' @details
 #' \code{run.query} is a utility function that is very often used in \code{DataSource} implementations. It automatically connects to a database
 #' with configuration that can be read from a config file, runs queries, and returns results as data.frames. It also supports caching of query results
-#' in a query cache directory, using passed cacheFile names, which must be carfeully managed by the data source author to ensure that the cacheFile names 
+#' in a query cache directory, using passed cacheFile names, which must be carefully managed by the data source author to ensure that the cacheFile names 
 #' are truly unique to each unique query made. For example, the cache file for query to load meter data for an individual meter would need to include
 #' the meter's id (or similar) to ensure that it isn't mistaken for data from another meter already cached. The purpose of all this cacheing logic is,
 #' of course, to improve the performance of data retrieval for large sets of data where query times can significantly impact performance. Thus it is often good 

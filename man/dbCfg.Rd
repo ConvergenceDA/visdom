@@ -14,8 +14,8 @@ Read database config file with key=value format:
 \code{key=value
 key2=value2}
 etc. into a named list.
-Keys must include \code{dbType} passed in to \code{dbDriver} to load the appropriate driver (i.e. MySQL, PostgreSQL, etc.)
-and any parameters like \code{host}, \code{user}, \code{password}, \code{dbname} that should be passed into the dbConnect function call for your driver.
+Keys must include \code{dbType} passed in to \code{DBI::dbDriver} to load the appropriate driver (i.e. MySQL, PostgreSQL, SQLite, etc.)
+and any parameters like \code{host}, \code{user}, \code{password}, \code{dbname} that should be passed into the DBI::dbConnect function call for your driver.
 }
 \details{
 The result of this function call is just a list with named entries. As long as the entries are valid, it can be generated in other ways.
