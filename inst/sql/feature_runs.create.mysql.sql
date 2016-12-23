@@ -15,7 +15,7 @@ CREATE TABLE feature_runs (
 	run_name VARCHAR(40) NOT NULL UNIQUE,
 	run_description VARCHAR(250) NULL,
 	-- This only works with MySQL version 5.6.5 and above. See http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
-	create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+	create_time DATETIME,
 	update_time DATETIME DEFAULT NULL
 		COMMENT 'To be updated when features are written to the feature table. This could be implemented with a trigger on the feature table, but doing it programatically from R will probably be easier and more portable across databases (MySQL, PostgreSQL, SQL Server, etc)',
 	CONSTRAINT feature_run UNIQUE (feature_set, run_name)
