@@ -126,12 +126,27 @@ iternator.rbind.scalars = function(a,b) {
 #' and allow an interrupted batch process to resume processing where it left off.
 #' The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.
 #' 
+#' @param zipList List of zip codes over which to run the feature.
+#' 
+#' @param custFn The feature function(s) to call on \code{MeterDataClass} instances from within the zip code
+#' 
+#' @param cacheResults A boolean flag that indicates whether results should be cached as RData. 
+#' If true, the cached data will be looked up prior to feature extraction to bypass running 
+#' features for the given zip code while returning the cached results. This can prevent duplicate processing
+#' and allow an interrupted batch process to resume processing where it left off.
+#' The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.
+#' 
 #' @param ctx The ctx environment that configures the feature run.
+#' 
+#' @param clearCachedResultsFromRAM A boolean that instructs the code to drop previous results from RAM if caching 
+#' is in effect. This allows for larer runs to be executed and cached without accumulating in RAM. The idea is 
+#' that after the run, this function will be called again, with useCache=TRUE and this flag set to FALSE, which 
+#' will simply load and concatenate results from disk to re-create the full set. 
 #' 
 #' @param ... Arguments to be passed into the feature function(s).
 #' 
 #' @export
-iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,...) {
+iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,clearCachedResultsFromRAM=F,...) {
   tic(name='zip code run')
   if(is.null(ctx)) { ctx = list() }
   out = list()
@@ -141,8 +156,13 @@ iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,...) {
     i = i + 1
     print( paste('Processing zip ',z,' (',i,'/',n,')',sep='') )
     tic(name='zip')
-    out = c(out,iterator.runZip(z,custFn,cacheResults=cacheResults,ctx=ctx,...))
+    if(cacheResults & clearCachedResultsFromRAM){
+      out = iterator.runZip(z,custFn,cacheResults=cacheResults,ctx=ctx,...)
+    } else {
+      out = c(out,iterator.runZip(z,custFn,cacheResults=cacheResults,ctx=ctx,...))
+    }
   }
+  gc()
   toc( name='zip code run' )
   return(out)
 }
