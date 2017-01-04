@@ -197,8 +197,8 @@ getRunId = function(conn, runConfig) {
           sql_insert = DBI::sqlInterpolate(
                conn,
                paste("INSERT INTO", DBI::dbQuoteIdentifier(conn, table_name), 
-                     "(feature_set, feature_set_description, run_name, run_description)",
-                     "VALUES (?feature_set, ?feature_set_description, ?run_name, ?run_description)"),
+                     "(feature_set, feature_set_description, run_name, run_description,create_time)",
+                     "VALUES (?feature_set, ?feature_set_description, ?run_name, ?run_description, NOW())"),
                feature_set = cfg$feature_set,
                feature_set_description = cfg$feature_set_description,
                run_name = cfg$run_name,
