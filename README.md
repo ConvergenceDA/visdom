@@ -11,6 +11,9 @@ You steps will be:
    ```r
    # install devtools if you don't have it.
    install.packages(c("devtools"))
+   
+   # install bug fix/enhanced version of acs to support loading census data direct from the US Census API
+   devtools::install_github('josiahjohnston/acs')
 
    devtools::install_github("convergenceda/visdom", build_vignettes=T )
    
