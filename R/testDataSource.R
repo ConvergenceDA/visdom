@@ -52,7 +52,7 @@ TestData = function( n=100 ) {
     return(data)
   }
   
-  obj$getIdMetaData = function() {
+  obj$getIdMetaData = function(useCache=TRUE) {
     ids = obj$getIds()
     return( data.frame( id = ids, status='good', income = 'myob' ) )
   }

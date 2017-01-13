@@ -4,8 +4,8 @@
 \alias{iterator.iterateZip}
 \title{Iterate over zip codes, extracting features for meters in each}
 \usage{
-iterator.iterateZip(zipList, custFn, cacheResults = F, ctx = NULL,
-  clearCachedResultsFromRAM = F, ...)
+iterator.iterateZip(zipList, custFn, cacheResults = FALSE, ctx = NULL,
+  clearCachedResultsFromRAM = FALSE, ...)
 }
 \arguments{
 \item{zipList}{List of all zip codes to iterate over}
