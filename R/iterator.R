@@ -146,7 +146,7 @@ iternator.rbind.scalars = function(a,b) {
 #' @param ... Arguments to be passed into the feature function(s).
 #' 
 #' @export
-iterator.iterateZip = function(zipList,custFn,cacheResults=F,ctx=NULL,clearCachedResultsFromRAM=F,...) {
+iterator.iterateZip = function(zipList,custFn,cacheResults=FALSE,ctx=NULL,clearCachedResultsFromRAM=FALSE,...) {
   tic(name='zip code run')
   if(is.null(ctx)) { ctx = list() }
   out = list()
