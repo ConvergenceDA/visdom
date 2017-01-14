@@ -174,7 +174,8 @@ db_cfg_path = "db_connect.conf"
 conn = conf.dbCon(dbCfg(db_cfg_path))
 run_cfg_path = file.path(system.file(package="visdom"), 
                          "feature_set_run_conf", "example_feature_set.conf")
-exportData(df=runDF, name=NULL, format="database", conn=conn, overwrite=FALSE, runConfig="example_feature_set.conf")
+# note datesToEpoch ensures that dates are stored as integer seconds since the epoch
+exportData(df=datesToEpoch(runDF), name=NULL, format="database", conn=conn, overwrite=FALSE, runConfig="example_feature_set.conf")
 
 ```
 

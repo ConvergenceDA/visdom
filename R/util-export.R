@@ -53,6 +53,25 @@ mergeShapeFeatures = function(features,shape.results) {
   return(newFeatures)
 }
 
+#' @title Convert POSIXct data frame columns to integer seconds since the epoch
+#'
+#' @description Searches the data frame for columns with 'POSIXct' in their class values and 
+#' converts them to integers representing seconds since the epoch
+#'
+#' @param df Data frame of feature data
+#'
+#' @return A data frame identical to the one passed in, but with integer columns replacing POSIXct ones
+#'
+#' @export
+datesToEpoch = function(df) {
+  cls = lapply(df, class)
+  dateCols = which(unlist(lapply(cls, function(x) { 'POSIXct' %in% x })))
+  for( col in dateCols){
+    df[,col] <- as.integer(df[,col])
+  }
+  return(df)
+}
+
 #' @title Clean up feature data in preparation for saving
 #'
 #' @description This function renames data columns for export via fixNames(), converts factors
