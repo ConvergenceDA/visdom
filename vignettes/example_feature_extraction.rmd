@@ -81,7 +81,7 @@ weatherFeaturesfn = function(cust,ctx,...) {
   }
   wf = ctx$weatherFeatures[[cust$weather$geocode]]
   if( is.null( wf ) ) {
-    wf = as.list(weatherFeatures(cust$weather))
+    wf = weatherFeatures(cust$weather)
     wf$zip5 <- NULL # remove the zip code, which we already have
     ctx$weatherFeatures[[cust$weather$geocode]] = wf
     print('computed weather features')
@@ -175,7 +175,7 @@ conn = conf.dbCon(dbCfg(db_cfg_path))
 run_cfg_path = file.path(system.file(package="visdom"), 
                          "feature_set_run_conf", "example_feature_set.conf")
 # note datesToEpoch ensures that dates are stored as integer seconds since the epoch
-exportData(df=datesToEpoch(runDF), name=NULL, format="database", conn=conn, overwrite=FALSE, runConfig="example_feature_set.conf")
+exportData(df=datesToEpoch(runDF), name=NULL, format="database", conn=conn, overwrite=TRUE, runConfig="example_feature_set.conf")
 
 ```
 

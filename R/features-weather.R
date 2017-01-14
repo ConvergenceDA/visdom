@@ -12,7 +12,7 @@ weatherFeatures = function(w){ # w is an instance of WeatherClass
   wMeans = colMeans(subset(w$rawData[,-1],subset = !summerSubset),na.rm=T) # just winter
   names(sMeans) = paste('summer.',names(sMeans),sep='')
   names(wMeans) = paste('winter.',names(wMeans),sep='')
-  features = c(zip5=w$zip,yMeans,wMeans,sMeans)
+  features = append(list(zip5=w$zip),as.list(c(yMeans,wMeans,sMeans)))
   
   # TODO: Add HDD, CDD
   
