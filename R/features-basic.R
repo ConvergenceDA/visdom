@@ -95,8 +95,8 @@ basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
   #wknd2wk = mean(wkend) / mean(wkdays)
 
   soft <- quantile(meterData$kw,c(0.03,0.97),na.rm=T)
-  max  <- soft[2]
-  min  <- soft[1]
+  max.97  <- soft[2]
+  min.3  <- soft[1]
   nObs <- prod(dim(data))
   kw.mean.annual = NA
 
