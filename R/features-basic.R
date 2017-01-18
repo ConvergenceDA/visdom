@@ -95,8 +95,8 @@ basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
   #wknd2wk = mean(wkend) / mean(wkdays)
 
   soft <- quantile(meterData$kw,c(0.03,0.97),na.rm=T)
-  max  <- soft[2]
-  min  <- soft[1]
+  max.97.  <- soft[2]
+  min.3.  <- soft[1]
   nObs <- prod(dim(data))
   kw.mean.annual = NA
 
@@ -220,8 +220,8 @@ basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
              therm.mean.winter=therm.mean.winter,
              therm.total=therm.mean * 365 * 24,
              therm.min=therm.min,
-             max=max,  # will be named 'max.97.' due to quantile origin
-             min=min,  # will be called 'min.3.' due to quantile origin
+             max.97.=max.97.,  # named 'max.97.' due to quantile origin (a "soft" maximum is the 97th percentile)
+             min.3.=min.3.,  # named 'min.3.' due to quantile origin (a "soft" minimum is the 3rd percentile)
              kw.var=kw.var,
              kw.var.summer=kw.var.summer,
              kw.var.winter=kw.var.winter,
