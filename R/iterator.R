@@ -210,7 +210,9 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
                 weatherFeatures = weatherFeatures.saved
                 print(paste( length(featureList), 'features retrieved from cache for',zip))
               }, 
-              error = function(e) { print(e) } ) # pass. If the load fails, we will run the features.
+              error = function(e) { 
+                print('Load from cache failed:')
+                print(e) } ) # pass. If the load fails, we will run the features.
   }
   if( ! is.null(weatherFeatures) & ! is.null(featureList) ) { # if the data load from the cache was successful
     print(paste('Features and weather features for',zip,'loaded from cache',cacheFile))

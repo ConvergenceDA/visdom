@@ -104,7 +104,7 @@ Note that the context, here called `ctx`, is implemented as a new environment `n
 
 ```{r}
 ctx=new.env()
-ctx$fnVector = c(custZipfn, basicFeaturesfn, regressionFeaturesfn, weatherFeaturesfn, peakHOD)
+ctx$fnVector = c(custZipfn, basicFeatures, regressionFeaturesfn, weatherFeaturesfn, peakHOD)
 ctx$dateFilter = list(DOW        = 2:6,
                       start.date = as.Date('2010-10-15'), 
                       end.date   = as.Date('2011-10-15')    )
