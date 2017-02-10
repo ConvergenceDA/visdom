@@ -2,6 +2,12 @@
 # Direct inquiries to Sam Borgeson (sborgeson@stanford.edu) 
 # or professor Ram Rajagopal (ramr@stanford.edu)
 
+
+#' @importFrom dplyr %>%
+#' @export
+dplyr::`%>%`
+
+
 #' @export
 Mode <- function(x,rndTieBreak=F) {
   ux <- unique(x)

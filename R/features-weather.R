@@ -6,10 +6,10 @@
 weatherFeatures = function(w){ # w is an instance of WeatherClass
   summerMon = 4:8 # May through Sept - zero based
   summerSubset = as.POSIXlt(w$rawData$dates)$mon %in% summerMon
-
-  yMeans = colMeans(w$rawData[,-1],na.rm=T) # annual means
-  sMeans = colMeans(subset(w$rawData[,-1],subset =  summerSubset),na.rm=T) # just summer
-  wMeans = colMeans(subset(w$rawData[,-1],subset = !summerSubset),na.rm=T) # just winter
+  weatherValues = w$rawData[,! names(w$rawData) %in% c('dates','day','date','days')]
+  yMeans = colMeans(weatherValues,na.rm=T) # annual means
+  sMeans = colMeans(subset(weatherValues,subset =  summerSubset),na.rm=T) # just summer
+  wMeans = colMeans(subset(weatherValues,subset = !summerSubset),na.rm=T) # just winter
   names(sMeans) = paste('summer.',names(sMeans),sep='')
   names(wMeans) = paste('winter.',names(wMeans),sep='')
   features = append(list(zip5=w$zip),as.list(c(yMeans,wMeans,sMeans)))

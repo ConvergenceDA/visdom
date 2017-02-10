@@ -41,6 +41,7 @@ dbCfg = function(filePath){
 # Internal helper functions to determine the SQL dialect which can be used to determine 
 # the file path to the appropriate sql file. Can accept either a connection or a configuration
 # file as an argument. 
+#' @export
 getSQLdialect = function(conn) {
   #return(tolower(dbCfg(filePath)$dbType))
   if(DBI::dbIsValid(conn)) {

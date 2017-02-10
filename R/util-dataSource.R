@@ -213,14 +213,20 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
 }
 
 sanityCheckWeatherDataDF = function(wData) {
-  requiredCols = c("date", "temperaturef", "pressure", "dewpointf", "hourlyprecip"  )
-  if( any(! requiredCols %in% names(wData) ) ) {
+  requiredCols = c("temperaturef", "pressure", "dewpointf", "hourlyprecip"  )
+  dateCols    = c('date', 'dates')
+  if( ! all( requiredCols %in% names(wData) ) | ! any(dateCols %in% names(wData)) ) {
     missing = paste( requiredCols[which(! requiredCols %in% names(wData))], collapse=', ' )
     stop(paste('Required named weather data columns are missing:', missing,
                'Note that the columns are required, but they can be empty if no data is available.'))
   }
+  if( ! any(dateCols %in% names(wData)) ) {
+    missing = paste( dateCols, collapse=', ' )
+    stop(paste('A date column in', missing, 'is required'))
+  }
   print('Checking date parsing for weather data')
-  dates = as.POSIXct(wData[,'date'],tz="America/Los_Angeles",origin='1970-01-01','%Y-%m-%d %H:%M:%S')
+  dateCol = names(wData) %in% dateCols
+  dates = as.POSIXct(wData[,dateCol],tz="America/Los_Angeles",origin='1970-01-01','%Y-%m-%d %H:%M:%S')
 }
 
 # assert many things about the structure of the 'raw' meter data here...

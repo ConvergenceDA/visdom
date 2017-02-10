@@ -15,6 +15,8 @@ Depends:
 Imports:
     akmeans (>= 1.1),
     plyr,
+    dplyr,
+    magrittr,
     assertthat,
     tibble,
     RCurl,
@@ -42,7 +44,7 @@ Imports:
     XML,
     R.cache,
     acs
-Remotes: github::josiahjohnston/acs
+#Remotes: github::josiahjohnston/acs
 Suggests:
     foreach,
     doParallel,

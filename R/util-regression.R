@@ -804,12 +804,13 @@ as.daily.df = function(meterData,norm=F,bp=65,rm.na=FALSE) {
   df$CDH = meterData$daily('tout',function(tout,bp=65,na.rm=T) sum(pmax(0,tout-bp),na.rm=na.rm))
   df$HDH = meterData$daily('tout',function(tout,bp=65,na.rm=T) sum(pmax(0,bp-tout),na.rm=na.rm))
   w = meterData$weather
-  dayMatch = match(as.Date(df$day),as.Date(w$dayMeans$day))
+  dayMatch = match(as.Date(df$day),as.Date(w$dayStats$day))
 
-  # todo: add NAs for days that are in df$day, but not dayMeans (caused by > 24 hrs of data missing)
-  df$tout.mean  = w$dayMeans[dayMatch,'tout']
-  df$tout.min   = w$dayMins[dayMatch,'tout']
-  df$tout.max   = w$dayMaxs[dayMatch,'tout']
+  # "day" "tout_mean" "pout_mean" "rain_mean" "dp_mean" "tout_min" "pout_min" "rain_min" "dp_min" "tout_max" "pout_max" "rain_max" "dp_max"
+  # todo: add NAs for days that are in df$day, but not dayStats (caused by > 24 hrs of data missing)
+  df$tout.mean  = w$dayStats[dayMatch,'tout_mean'] 
+  df$tout.min   = w$dayStats[dayMatch,'tout_min']
+  df$tout.max   = w$dayStats[dayMatch,'tout_max']
   df$tout.mean.65 = pmax(0,df$tout.mean-65)
   tPieces = regressor.piecewise(df[['tout.mean']],c(65))
   df$tout.mean.65lower = tPieces[,1] # lower data for fixed 65 CP
@@ -821,9 +822,9 @@ as.daily.df = function(meterData,norm=F,bp=65,rm.na=FALSE) {
   #   df$tout.mean = meterData$daily('tout',mean)
   #   df$tout.max  = meterData$daily('tout',max)
   #   df$tout.min  = meterData$daily('tout',min)
-  df$pout.mean = w$dayMeans[dayMatch,'pout']
-  df$pout.min  = w$dayMins[dayMatch,'pout']
-  df$pout.max  = w$dayMaxs[dayMatch,'pout']
+  df$pout.mean = w$dayStats[dayMatch,'pout_mean']
+  df$pout.min  = w$dayStats[dayMatch,'pout_min']
+  df$pout.max  = w$dayStats[dayMatch,'pout_max']
   #   df$pout.mean = meterData$daily('pout',mean)
   #   df$pout.max  = meterData$daily('pout',max)
   #   df$pout.min  = meterData$daily('pout',min)

@@ -291,8 +291,14 @@ iterator.runMeter = function(meterId,custFn,ctx,...) {
       }
     },
     error = function(e) {
-      print(paste('  WARNING: Could not load meter data. Skipping:',meterId))
-      print(e)
+      if( is.null(ctx$STOP_ON_ERROR) ) {
+        print(paste('  WARNING: Could not load meter data. Skipping:',meterId))
+        print(e)
+      } else {
+        if( ctx$STOP_ON_ERROR ) {
+          stop(e)
+        }
+      }
     },
     finally = function() { return(NA) }
   )
@@ -344,8 +350,15 @@ iterator.iterateMeters = function(meterList,custFn,ctx,...) {
         }
       },
       error = function(e) {
-        print(paste('  WARNING: Could not load meter data. Skipping:',meterId))
-        print(e)
+        if( is.null(ctx$STOP_ON_ERROR) ) {
+          print(paste('  WARNING: Could not load meter data. Skipping:',meterId))
+          print(e)
+        } else {
+          if( ctx$STOP_ON_ERROR ) {
+            traceback(2)
+            stop(e)
+          }
+        }
       }
     )
   }

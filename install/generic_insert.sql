@@ -111,7 +111,7 @@ SET md.account_uuid = a.account_uuid;
 SELECT zip5, MIN(DATE), MAX(DATE) FROM meter_data GROUP BY zip5;
 # save results as zip_dates.csv
 # run with 3 stations averaged per zip and a preferred radius of less than 20 km
-# python dumpWeather.csv -i path/to/sip_dates.csv -o path/to/out/dir/weather_data.csv -n 3 -r 20
+# python weatherDump.py -i path/to/zip_dates.csv -o path/to/out/dir/weather_data.csv -n 3 -d 20
 
 
 /* load weather data in the format produced by local_weather's dumpWeather.py utility */

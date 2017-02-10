@@ -40,45 +40,58 @@
 #' weather = WeatherData(geocode='12601')
 #' plot(weather)
 #' }
-WeatherClass = function(geocode,doMeans=T,useCache=F,doSG=F){
-  raw = DATA_SOURCE$getWeatherData(geocode,useCache=useCache)
+WeatherClass = function(geocode,raw=NULL,doMeans=T,useCache=F,doSG=F){
+  if( is.null(raw) ) {
+    raw = DATA_SOURCE$getWeatherData(geocode,useCache=useCache)
+  }
+  if( !'date' %in% names(raw) ) {
+    datesIdx = which( names(raw) %in% 'dates')
+    if(length(datesIdx) == 1) {
+      names(raw)[datesIdx] = 'date'
+    }
+  }
   if(length(raw)==0) stop(paste('No data found for geocode',geocode))
   requiredCols = c("date", "temperaturef", "pressure", "dewpointf", "hourlyprecip"  )
   if( any(! requiredCols %in% names(raw)) ) {
     missing = paste( requiredCols[which(! requiredCols %in%  names(raw))], collapse=', ' )
     stop(paste('Required named data columns are missing:', missing))
   }
+  dates = raw[,'date']
+  if( ! 'POSIXct' %in% class(raw$dateclass) ) {
+    dates = as.POSIXct(dates, tz="America/Los_Angeles", origin='1970-01-01', '%Y-%m-%d %H:%M:%S')
+  }
   rawData = data.frame(
-    dates = as.POSIXct(raw[,'date'],tz="America/Los_Angeles",origin='1970-01-01','%Y-%m-%d %H:%M:%S'),
-    tout = raw[,'temperaturef'],
-    pout = raw[,'pressure'],
-    rain = raw[,'hourlyprecip'],
-    dp   = raw[,'dewpointf']
+    dates = dates,
+    day   = as.Date(dates,tz="America/Los_Angeles"),
+    tout  = raw[,'temperaturef'],
+    pout  = raw[,'pressure'],
+    rain  = raw[,'hourlyprecip'],
+    dp    = raw[,'dewpointf']
     #wind = raw[,'windspeed']
   )
-  days = unique(as.Date(rawData$dates))
+  days = unique(as.Date(rawData$day))
 
 
   sg = list()
   if(doSG) {
     #TODO: make solarGeom generic to different geo codes
-    sg = solarGeom(rawData$dates,zip=geocode)
+    sg = solarGeom(raw[,'date'],zip=geocode)
   }
-
 
   # FYI, spring forward causes NA dates to find these:
   # which(is.na(dates))
 
   # TODO: do we need to do anything about the NA values?
-
   dayMeans    = c()
   dayMins     = c()
   dayMaxs     = c()
+  dayStats    = c()
   dayLengths  = c()
   if(doMeans) {
-    dayMeans  = dailyMeans(rawData)
-    dayMins   = dailyMins(rawData)
-    dayMaxs   = dailyMaxs(rawData)
+    #dayMeans  = dailyMeans(rawData)
+    #dayMins   = dailyMins(rawData)
+    #dayMaxs   = dailyMaxs(rawData)
+    dayStats = daySummarize(rawData[,-1],.by = 'day')
     if(doSG) {
       dayLengths = dailySums(sg[,c('dates','daylight')])
     }
@@ -93,9 +106,10 @@ WeatherClass = function(geocode,doMeans=T,useCache=F,doSG=F){
     sg       = sg,
     daylight = sg$daylight,
     rawData  = rawData,
-    dayMeans = dayMeans,
-    dayMins  = dayMins,
-    dayMaxs  = dayMaxs,
+    dayStats = dayStats,
+    #dayMeans = dayMeans,
+    #dayMins  = dayMins,
+    #dayMaxs  = dayMaxs,
     dayLengths = dayLengths,
     get      = function(x) obj[[x]],
     # Not sure why <<- is used here
@@ -149,6 +163,16 @@ WeatherClass = function(geocode,doMeans=T,useCache=F,doSG=F){
   return(obj)
 }
 
+
+# Use dplyr to summarize a data frame, typically by date
+#' @export
+daySummarize = function(rawData, fns=c('mean','min','max'), .by='day') {
+  agg = rawData %>% 
+    dplyr::group_by_(.dots = .by) %>%
+    dplyr::summarize_all( dplyr::funs_(fns, args=list(na.rm=T)) )
+  #dplyr::mutate( rain = rain * 24 )
+  return(data.frame(agg))
+}
 
 #' @export
 plot.WeatherClass = function(w,colorMap=NA,main=NULL,issueTxt='',type='tout',...) {
