@@ -44,7 +44,7 @@ Imports:
     XML,
     R.cache,
     acs
-#Remotes: github::josiahjohnston/acs
+Remotes: github::josiahjohnston/acs
 Suggests:
     foreach,
     doParallel,
