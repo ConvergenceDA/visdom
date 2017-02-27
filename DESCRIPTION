@@ -54,7 +54,7 @@ Suggests:
     rmarkdown
 Description: R package for energy data analytics. VISDOM stands for Visualization
     and Insight System for Demand Operations and Management.
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 LazyLoad: yes
 RoxygenNote: 5.0.1
