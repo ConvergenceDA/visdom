@@ -36,6 +36,12 @@ toc <- function(name='default',prefixStr=NA)
 
 }
 
+#' @export
+mem.usage = function() {
+  mem.use = sapply(ls(), function(x) { object.size(get(x))}, simplify = FALSE)
+  print(sapply(mem.use[order(as.integer(mem.use))], function(var) { format(var, unit = 'auto') } ))
+}
+
 # print out crude profiling stats fort he padded in function with arguments ...
 #' @export
 run.profile = function(fn, ...) {

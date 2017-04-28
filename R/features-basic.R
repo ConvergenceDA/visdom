@@ -36,6 +36,7 @@ basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
 
   summerMon = 4:8 # May through Sept - zero based
   summerSubset = as.POSIXlt(meterData$dates)$mon %in% summerMon
+  wkdySubset   = as.POSIXlt(meterData$dates)$day %in% 1:5
 
   # todo: apply/quantile is slow. Is it worth softening min,max this way?
   qtle     <- apply(data,1,FUN=quantile,c(0.01,0.99),na.rm=T)

@@ -247,7 +247,7 @@ validateRes = function(r,minDays=180,minKwMean=0.110,maxZeroPct=0.15) {
   if( dayCount < minDays)     issues[paste('days',minDays,sep='')]= dayCount # less than 180 days (could be non-consecutive)
   #if( span < 270 )           issues$span270    = span # spanning less than 270 days total
   #if( maxtd > 60 )           issues$bigdiff    = maxtd # more than 2 months of missing data
-  if( kwmean < minKwMean )    issues$lowmean    = kwmean # mean less than 150W is almost always empty or bad readings
+  if( kwmean < minKwMean )    issues$lowmean    = kwmean # mean less than 110W is almost always empty or bad readings
   if( zerospct > maxZeroPct ) issues[paste('zerospct',maxZeroPct,sep='')] = zerospct # over 15% of readings are zero
   return(issues)
 }
@@ -268,6 +268,12 @@ mapColors = function(data,colorMap=NA,log=FALSE) {
 }
 
 hmap = function(data,colorMap=NULL,yvals=NA,xvals=NA,xlabs=NULL,ylabs=NULL,cex.axis=1,...) {
+  if('data.frame' %in% class(data)) { 
+    data = data.matrix(data)
+  }
+  if(! 'matrix' %in% class(data) ) {
+    data = matrix(data, ncol=24,byrow = T)
+  }
   n = dim(data)[1]
   m = dim(data)[2]
   # defailt values

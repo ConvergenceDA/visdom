@@ -646,7 +646,7 @@ changeCP = function(data,dt=2) {
 # zeros except for the regressor values that match the membership values
 # corresponding to the column. This supports regression with separate
 # coefficints for each group defined by the membership
-# for example, splitRegressor(Tout,dates$hour) will return a matrix with 24
+# for example, regressor.split(Tout,dates$hour) will return a matrix with 24
 # columns, where the only non-zero entry per row contains the Tout value in
 # the column corresponding to the hour of day it was recorded
 #' @export

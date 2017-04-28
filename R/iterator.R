@@ -286,7 +286,10 @@ iterator.runMeter = function(meterId,custFn,ctx,...) {
         print(paste('  WARNING: Bad or insufficient data. Skipping:',paste(colnames(issues),collapse=', ')))
       }
       else {
-        return( custFn(meterData,ctx,...) )
+        out = custFn(meterData,ctx,...)
+        # in case id isn't already there, add it.
+        out$id = meterData$id
+        return( out )
         toc(name='  process meter')
       }
     },
@@ -344,7 +347,10 @@ iterator.iterateMeters = function(meterList,custFn,ctx,...) {
         }
         else {
           tic('features')
-          out[[i]] = custFn(meterData,ctx,...)
+          newFeatures = custFn(meterData,ctx,...)
+          # in case the id isn't there, add it
+          newFeatures$id = meterData$id
+          out[[i]] = newFeatures
           toc('features')
           toc(name='  process meterData')
         }

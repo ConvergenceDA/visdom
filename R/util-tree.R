@@ -98,11 +98,11 @@ ctree.subscore = function(i, df, nSample=NULL, ctl=NULL, responseVar, ignoreCols
 #' @param ... additional arguments to be passed to partykit::ctree
 #' 
 #' @export
-ctree.run = function(df, fmla=NULL, sub=T, ctl=NULL, responseVar, ignoreCols, ... ) {
+ctree.run = function(df, fmla=NULL, sub=NULL, ctl=NULL, responseVar, ignoreCols, ... ) {
   if(is.null(fmla)) { 
     fmla = formula(paste(responseVar,'~ .'))
   }
-  if(is.null(sub)) { sub=T }
+  if(is.null(sub)) { sub=TRUE }
   if(is.null(ctl)) {
     ctl = partykit::ctree_control(mincriterion = 0.95)
   }
