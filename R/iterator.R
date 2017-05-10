@@ -97,6 +97,14 @@ iterator.todf = function(lofl) {
 iterator.build.idx = function(ctx) {
   ids = unique(ctx$RAW_DATA$id)
   first = match(ids,ctx$RAW_DATA$id)
+  if( max(diff(first)) < 10 ) {
+    print( head( ctx$RAW_DATA, 15 ) )
+    warning( paste('iterator.build.idx called with ctx$RAW_DATA where match() values on ids',
+                   'are fewer than 10 rows apart. This can occur if a data source does not order',
+                   'getAllData() return values by id, date, which is an assumption of the fast',
+                   'indexing used by the fuction. See the print of the head of the meter data data.frame above.') )
+    
+  }
   last = c(first[-1]-1,length(ctx$RAW_DATA$id))
   idxLookup = data.frame(ids,first,last)
   ctx$idxLookup = idxLookup
