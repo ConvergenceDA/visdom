@@ -24,10 +24,11 @@
 applyDateFilters = function(df, filterRules=NULL, dateCol="dates") {
   # if no rules, don't filter
   if( is.null(filterRules) ) { return(df) }
-  
+  names(filterRules) = tolower(names(filterRules))
   # sanity check inputs - test for one or more valid filters
-  validFilters = c('start.date', 'end.date', 'DOW', 'MOY')
+  validFilters = c('start.date', 'end.date', 'dow', 'moy')
   if( ! any(validFilters %in% names(filterRules) ) ) {
+    print(names(filterRules))
     stop('No valid filter rules.')
   }
   
@@ -43,8 +44,9 @@ applyDateFilters = function(df, filterRules=NULL, dateCol="dates") {
     stop(sprintf('Dates from column %s not a valid date class type: %s',dateCol, class(dts))) 
   }
   
-  DOW   = filterRules$DOW
-  MOY   = filterRules$MOY
+  # if any of these are not in the list, they will be set to null
+  DOW   = filterRules$dow 
+  MOY   = filterRules$moy
   start = filterRules$start.date
   end   = filterRules$end.date
   

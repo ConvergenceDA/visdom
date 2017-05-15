@@ -111,7 +111,7 @@ iterator.build.idx = function(ctx) {
   return(idxLookup)
 }
 
-iternator.rbind.scalars = function(a,b) {
+iterator.rbind.scalars = function(a,b) {
   # trim a down to scalars is.character, is.numeric
   # trim b down to scalars
 }
@@ -400,17 +400,16 @@ runDateFilterIfNeeded = function(ctx) {
   }
   # to ensure that date filtering can be applied to the raw data once and only once
   # we track whether it has been applied with a boolean flag
-  if( ! is.null(ctx$ALREADY_DATE_FILTERED)) {
-    if (! ctx$ALREADY_DATE_FILTERED) {
-      flt = ctx$dateFilter
-      print('Applying date filter')
-      norig = nrow(ctx$RAW_DATA)
-      ctx$RAW_DATA = applyDateFilters( ctx$RAW_DATA, flt ) # if flt is NULL, this will just return the original data
-      print( sprintf('Filtered from %d -> %d', norig, nrow(ctx$RAW_DATA) ) )
-      ctx$ALREADY_DATE_FILTERED = T
-      # it is important that this happens after any filtering ocurrs
-      idx = iterator.build.idx(ctx)
-    }
+  if(is.null(ctx$ALREADY_DATE_FILTERED)) ctx$ALREADY_DATE_FILTERED = FALSE
+  if (! ctx$ALREADY_DATE_FILTERED) {
+    flt = ctx$dateFilter
+    print('Applying date filter')
+    norig = nrow(ctx$RAW_DATA)
+    ctx$RAW_DATA = applyDateFilters( ctx$RAW_DATA, flt ) # if flt is NULL, this will just return the original data
+    print( sprintf('Filtered from %d -> %d', norig, nrow(ctx$RAW_DATA) ) )
+    ctx$ALREADY_DATE_FILTERED = TRUE
+    # it is important that this happens after any filtering ocurrs
+    idx = iterator.build.idx(ctx)
   }
   return()
 }

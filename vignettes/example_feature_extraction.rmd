@@ -105,9 +105,10 @@ Note that the context, here called `ctx`, is implemented as a new environment `n
 ```{r}
 ctx=new.env()
 ctx$fnVector = c(custZipfn, basicFeatures, regressionFeaturesfn, weatherFeaturesfn, peakHOD)
+# note that htis is only applied if the meter data is available via ctx$RAW_DATA, rather than a direct lookup
 ctx$dateFilter = list(DOW        = 2:6,
-                      start.date = as.Date('2010-10-15'), 
-                      end.date   = as.Date('2011-10-15')    )
+                      start.date = as.Date('2013-05-15'), 
+                      end.date   = as.Date('2013-10-15')    )
 
 ```
 
