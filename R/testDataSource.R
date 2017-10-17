@@ -80,6 +80,7 @@ TestData = function( n=100 ) {
   }
 
   obj$getWeatherData = function( geocode, useCache=T ) {
+    set.seed(geocode)
     dates = as.POSIXct('2013-01-01',tz = "America/Los_Angeles" ) + 0:(365 * 24 - 1) * 3600
     data = data.frame(
       date         = dates,

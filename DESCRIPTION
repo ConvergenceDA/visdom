@@ -39,6 +39,7 @@ Imports:
     party,
     partykit,
     testthat,
+    properties,
     digest,
     DBI (>= 0.5),
     XML,

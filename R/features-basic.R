@@ -88,8 +88,8 @@ basicFeatures = function(meterData, ...){ # r is an instance of MeterDataClass
   dHalfway <- dMin + (dMax - dMin) / 2
   dHighD   <- rowSums(data > dHalfway,dims=1)
   dMn2mx   <- dMin / dMax
-  dN2d     <- rowMeans(data[,2:5],na.rm=T) / rowMeans(data[,16:19],na.rm=T) # 2-5am comp to 4-7pm
-  nv2dv    <- var(as.vector(data[,2:5]),na.rm=T) / var(as.vector(data[,16:19]),na.rm=T) # var for night 2-5am comp to evening 4-7pm
+  dN2d     <- rowMeans(data[,2:5],na.rm=T) / rowMeans(data[,16:19],na.rm=T) # 1-5am comp to 3-7pm
+  nv2dv    <- var(as.vector(data[,2:5]),na.rm=T) / var(as.vector(data[,16:19]),na.rm=T) # var for night 1-5am comp to evening 3-7pm
   # we need dates for this one...
   #wkend = something to do with the DOW in the dates
   #wkdays = ! wkend

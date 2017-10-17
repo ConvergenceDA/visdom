@@ -150,7 +150,7 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   
   sanityCheckWeatherDataDF( geoWeatherData )
   
-  print('Running getMeterDataClass() - loadas a meter data class object by id')
+  print('Running getMeterDataClass() - loading a meter data class object by id')
   mdc = DATA_SOURCE$getMeterDataClass(id=ids[1], useCache = useCache)
   
   print('Running plot.MeterDataClass() on loaded meter data')
