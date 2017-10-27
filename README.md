@@ -23,6 +23,8 @@ You steps will be:
    
    # find a vignette you are interested in
    vignette(package='visdom')
+   # OR for a menu of options:
+   browseVignettes('visdom')
    vignette('authoring_data_source', package='visdom')
    ```
 2. If you will be contributing code or documentation, follow Hadley Wickham's excellent "Getting Started" introduction to get devtools and documentation generation support: http://r-pkgs.had.co.nz/intro.html#intro-get, or you can follow the same steps and see related notes and caveats in [bootstrap_devel_environment.rmd](./vignettes/bootstrap_devel_environment.rmd) in vignettes.
