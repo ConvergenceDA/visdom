@@ -248,6 +248,7 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
       # it is important that this happens after any filtering ocurrs
       idx = iterator.build.idx(ctx)
       zipIds = ctx$idxLookup$ids
+      if('factor' %in% class(zipIds)) { zipIds = as.character(zipIds) }
       print('[iterator$iterateZip] raw zip code usage data loaded')
       
       featureList = iterator.iterateMeters(zipIds,custFn,ctx,...)
