@@ -97,14 +97,15 @@ iterator.todf = function(lofl) {
 iterator.build.idx = function(ctx) {
   ids = unique(ctx$RAW_DATA$id)
   first = match(ids,ctx$RAW_DATA$id)
-  if( max(diff(first)) < 10 ) {
-    print('Diagnostic head from iterator.build.idx')
-    print( head( ctx$RAW_DATA,5 ) )
-    warning( paste('iterator.build.idx called with ctx$RAW_DATA where match() values on ids',
-                   'are fewer than 10 rows apart. This can occur if a data source does not order',
-                   'getAllData() return values by id, date, which is an assumption of the fast',
-                   'indexing used by the fuction. See the print of the head of the meter data data.frame above.') )
-    
+  if(length(first > 1)) { # if there is more than one id
+    if( max(diff(first)) < 10 ) {
+      print('Diagnostic head from iterator.build.idx')
+      print( head( ctx$RAW_DATA,5 ) )
+      warning( paste('iterator.build.idx called with ctx$RAW_DATA where match() values on ids',
+                     'are fewer than 10 rows apart. This can occur if a data source does not order',
+                     'getAllData() return values by id, date, which is an assumption of the fast',
+                     'indexing used by the fuction. See the print of the head of the meter data data.frame above.') )
+    }
   }
   last = c(first[-1]-1,length(ctx$RAW_DATA$id))
   idxLookup = data.frame(ids,first,last)
@@ -238,13 +239,14 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
                 })
       print('[iterator$iterateZip] weather data loaded')
       
-      zipIds = DATA_SOURCE$getIds(ctx$zip,useCache=T)
+      #zipIds = DATA_SOURCE$getIds(ctx$zip,useCache=T)
       
       # load all raw data for the zip code and indicate that it has not yet been date filtered
       ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
       ctx$ALREADY_DATE_FILTERED = F
       # it is important that this happens after any filtering ocurrs
       idx = iterator.build.idx(ctx)
+      zipIds = ctx$idxLookup$ids
       print('[iterator$iterateZip] raw zip code usage data loaded')
       
       featureList = iterator.iterateMeters(zipIds,custFn,ctx,...)
