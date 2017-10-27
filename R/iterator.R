@@ -245,6 +245,7 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
       # load all raw data for the zip code and indicate that it has not yet been date filtered
       ctx$RAW_DATA = DATA_SOURCE$getAllData(ctx$zip,useCache=T)
       ctx$ALREADY_DATE_FILTERED = F
+      runDateFilterIfNeeded(ctx)
       # it is important that this happens after any filtering ocurrs
       idx = iterator.build.idx(ctx)
       zipIds = ctx$idxLookup$ids
