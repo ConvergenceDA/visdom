@@ -97,7 +97,8 @@ iterator.todf = function(lofl) {
 iterator.build.idx = function(ctx) {
   ids = unique(ctx$RAW_DATA$id)
   first = match(ids,ctx$RAW_DATA$id)
-  if(length(first > 1)) { # if there is more than one id
+  
+  if(length(first) > 1) { # if there is more than one id
     if( max(diff(first)) < 10 ) {
       print('Diagnostic head from iterator.build.idx')
       print( head( ctx$RAW_DATA,5 ) )
