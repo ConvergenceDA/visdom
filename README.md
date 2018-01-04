@@ -5,6 +5,16 @@ To get started, ensure that you can access the repository here: https://github.c
 
 See the code in the vignettes directory, especially the R markdown file [example_feature_extraction.rmd](./vignettes/example_feature_extraction.rmd). Note: rmd's mix commentary and code and this one will give you a sense of what is required to run features on a given sample of meter data. Cleaning them up is still on our todo list, but the raw source will provide a sense of usage for other tasks.
 
+## tl;dr simplest useful run
+   ```r
+   devtools::install_github('convergenceda/visdom') # you must have already run install.packages('devtools')
+   # 100 fake customers with random data - you need to implement your own data soure
+   # make sure it passes sanityCheckDataSource(YourDataSource())!
+   DATA_SOURCE = visdom::TestData(n=100) 
+   run_results = visdom::iterator.iterateMeters( DATA_SOURCE$getIds()[1:10], # just 10 for speed
+                                              visdom::basicFeatures, as_df=T )
+   head(run_results)```
+
 You steps will be:
 
 1. To install VISDOM as a package directly from the github repository, with all of its module dependencies automatically installed, follow the instructions in [install_visdom.rmd](./vignettes/install_visdom.rmd) in the vignettes folder. In a nutsheel, you want to run these commands:
