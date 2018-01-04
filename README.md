@@ -13,9 +13,10 @@ See the code in the vignettes directory, especially the R markdown file [example
    DATA_SOURCE = visdom::TestData(n=100) 
    run_results = visdom::iterator.iterateMeters( DATA_SOURCE$getIds()[1:10], # just 10 for speed
                                               visdom::basicFeatures, as_df=T )
-   head(run_results)```
+   head(run_results)
+   ```
 
-You steps will be:
+Your more detailed steps should be:
 
 1. To install VISDOM as a package directly from the github repository, with all of its module dependencies automatically installed, follow the instructions in [install_visdom.rmd](./vignettes/install_visdom.rmd) in the vignettes folder. In a nutsheel, you want to run these commands:
    ```r
