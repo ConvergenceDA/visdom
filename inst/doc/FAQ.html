@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sam Borgeson" />
 
-<meta name="date" content="2016-10-04" />
+<meta name="date" content="2018-01-04" />
 
 <title>Frequently Asked Questions</title>
 
@@ -32,11 +32,48 @@
 
 <h1 class="title toc-ignore">Frequently Asked Questions</h1>
 <h4 class="author"><em>Sam Borgeson</em></h4>
-<h4 class="date"><em>2016-10-04</em></h4>
+<h4 class="date"><em>2018-01-04</em></h4>
 
 
 
-<p>This will be a document that grows with examples of how to resolve common issues or perform common tasks.</p>
+<p>This FAQ will grow with examples of how to resolve common issues or perform common tasks.</p>
+<hr />
+<p><strong>Q. When authoring a datasource customerID is my original customerID, ID is internal id for VISDOM. Should they always be in ‘cust_id’ and ‘meter_id’ format fount in TestDataSource? And what is the actual difference? Does this mean you can have different ID’s (for example different smart meters) per customer? Or how do I interpret these differences?</strong></p>
+<p>A. As the author of the data source, you get to choose what set of ids you want to key off of. You just need to be consistent. So if you are using meter ids, you know that the data is associated with the meter over time regardless of who was occupying the house, but if it is customer ids then the data will be some span of time from a specific meter. As long as the correct ids are associated with the meter data you want to use (i.e. getIds returns the ids that you can use to query for specific meter data), it will work. The actual values of the ids can be whatever you like, but you should ensure that they are character strings even if they are plausibly numerical. We have seen too many cases where there are leading zeros that get trimmed or the “number” of the id is too long for R’s ints and the ids don’t properly match up anymore.</p>
+<hr />
+<p><strong>Q. Time formats. How does visdom deal with different time resolutions between readings (1 min vs 1 h)?</strong></p>
+<p>A. VISDOM currently supports 15 minute and 1 hr readings, in the format of either 24 or 96 columns of data per day. Other timing is technically possible, but the official recommendation is using your data source to sample it down to one of these intervals for now.</p>
+<hr />
+<p><strong>Q. What timezone to use in input data?</strong></p>
+<p>A. Just be consistent. We usually try for the local timezone of the data, so that it is easier to have an intuitive feel for what you are seeing (i.e. 8am is breakfast time) and so it is more possible to sync with local weather data.</p>
+<hr />
+<p><strong>Q. How does VISDOM account for daylight saving time?</strong></p>
+<p>A. With the 24/96 column formats it ignores the 25th hour of fall back and treats the 24th hour of spring forward as missing data. Note that R is pretty picky about DST and crabby about dates in general. If you see unusual shifts in data timing around March or November in your plots, chances are good that DST is not being handled well.</p>
+<hr />
+<p><strong>Q. In the standard meter data format what hour does each column correspond to?</strong></p>
+<p>A. Your column headers don’t have to match these, but referring to the TestData output, the first column, H1, is 12-1am (i.e. the average of consumption up to but excluding 1am) so H10 is 9-10am, and h24 is 11pm-12am.</p>
+<hr />
+<p><strong>Q. If we want to compare different datasets (for example conventional and high performance buildings), is there currently a way to assign and compare different groups of customers/buildings?</strong></p>
+<p>A. There isn’t a built in idea of two groups, but if your groups are in the same data set, you can just add a custom feature that return each customer’s group assignment as a feature and then you will be able to slice and dice later. If they are literally from different data sets, you will compute their features separately and maybe combine the feature data frames in R using . assuming you have an identical set features for both. Or you can use  to ensure that divergent feature sets are matched up.</p>
+<hr />
+<p><strong>Q. Data preparation: Are missing values as NA or 0?</strong></p>
+<p>A. Missing values should be NA’s. 0 is (can be) a legitimate reading.</p>
+<hr />
+<p><strong>Q. What method to impute missing values (built in or in preprocess)?</strong></p>
+<p>A. That is up to you - if you want, your data source can impute values on the fly before returning meter data or you can do a batch process up front and write the results to a new database table that you will then read from with your data source. The latter will be preferable if you are worried CPU time during feature calculations, but this won’t be a concern unless you have many ids worth of data.</p>
+<hr />
+<p><strong>Q. For what size of total dataset is a database recommended or required?</strong></p>
+<p>A. If you hoping to load data directly from CSVs or RData or something, you are only limited by the ram of your computer, so you should just try it and see. Thousands of customers should be no problem to load into memory together.</p>
+<hr />
+<p><strong>Q. Load Shape Clustering: Is the clustering profile library rich enough to expect it to perform well on customer data that includes also industrial customers and streetlighting.</strong></p>
+<p>A. First of all, the load shape clustering algorithms are protected by a patent and are therefore available separately from the rest of the VISDOM code. You need to ask for permission to work with that code, but non-commercial licensing is free. As for separating data for clustering, this depends on your intended use. Typically you would separate residential, commercial, industry, etc. and fit clusters separately. Even within commercial there is so much diversity of use that it can be good to do separate fits for each sub type (i.e. NAICS or other codes).</p>
+<hr />
+<p><strong>Q. Can we filter out different type of consumers (like residentials, street light, commercial buildings, etc.)</strong></p>
+<p>A. Yes. You can add an additional parameter to your datasource functions that return the lists of ids and meter data to restrict the ids to the ones you are interested in. i.e. if you implement the DATA_SOURCE functions to respond to such a parameter, you can call the functions with that parameter.</p>
+<hr />
+<p><strong>Q. DATA_CACHE: Our data is not in a database but loaded in RData files. Is there then still need to use the Cache functionality?</strong></p>
+<p>A. No the cache isn’t necessary. In fact it is pretty tightly integrated into the database access code, so no DB means you probably don’t need a cache. Also, the cache is just RData files, so you effectively are already using “cached” data…</p>
+<hr />
 
 
 

@@ -4,14 +4,20 @@
 \alias{iterator.iterateMeters}
 \title{Run features for a list of meter ids}
 \usage{
-iterator.iterateMeters(meterList, custFn, ctx, ...)
+iterator.iterateMeters(meterList, custFn, ctx = new.env(), as_df = FALSE,
+  ...)
 }
 \arguments{
 \item{meterList}{The list of meterIds to use to instantiate a \code{MeterDataClass} objects}
 
-\item{custFn}{The feature extraction function to run on each instance of \code{MeterDataClass}.}
+\item{custFn}{The feature extraction function to run on each instance of \code{MeterDataClass}. 
+Can also be a list of feature functions, whose results will be \code{c()}'d together, so make sure the names of their 
+return values are unique!}
 
 \item{ctx}{The ctx environment for the feature extraction.}
+
+\item{as_df}{Boolean (defaulted to FALSE) that determines whether \code{iterator.todf} is run on 
+the results before returning them.}
 
 \item{...}{Additional arguments to be passed to the feature extraction function.}
 }

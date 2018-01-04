@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sam Borgeson" />
 
-<meta name="date" content="2016-10-04" />
+<meta name="date" content="2018-01-04" />
 
 <title>Developing the VISDOM Module</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Developing the VISDOM Module</h1>
 <h4 class="author"><em>Sam Borgeson</em></h4>
-<h4 class="date"><em>2016-10-04</em></h4>
+<h4 class="date"><em>2018-01-04</em></h4>
 
 
 
@@ -93,13 +93,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="install-visdom-as-a-local-package-from-your-source" class="section level1">
 <h1>Install VISDOM as a local package from your source</h1>
-<p>Ensure that your getwd() is the vsidom source dir and then call:</p>
+<p>Ensure that your getwd() is the visdom source dir and then call:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">document</span>()
 devtools::<span class="kw">build_vignettes</span>()
 ?visdom
 ?MeterDataClass
 ?WeatherDataClass</code></pre></div>
-<p>Followed by installing hte package from source, which should resolve and install all the package dependencies, with some exceptions, like for HDF5 support.</p>
+<p>Followed by installing the package from source, which should resolve and install all the package dependencies, with some exceptions, like for HDF5 support.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install</span>(<span class="dt">build_vignettes =</span> T)</code></pre></div>
 <p>Test your install with a fresh R session:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(visdom)

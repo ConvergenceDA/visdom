@@ -130,6 +130,70 @@ showCons = function(cfg) {
 }
 
 #' @title
+#' Utility function that assembles a where clause from a list of named values. All values are 'AND'ed together. 
+#' Does not support nested expressions or 'OR's, except if the values are length() > 1, they are put into an
+#' in() clause enumerating those values.
+#' 
+#' @param config List of named values to be included in the where clause. Supports caracter and numeric classes, 
+#' using in() syntax for those that are length > 1.
+#' 
+#' @param other_clause An arbitrary clause that is prepended to the list of clauses that are 'AND'ed together to form the where statement
+#' 
+#' @param suffix Arbitrary text that is appended to the where clause after it has been generated. For example 'limit 100' or 'order by id'
+#' 
+#' @details
+#' \code{buildWhere} is a utility function builds up a where clause using a passes list with named values. 
+#' Values of different types require different handling with respect to quotation marks and valus that are arrays
+#' are turned into in( ... ) clauses. In the corner case where nothing is passed in, it returns empty string,
+#' so it should be friendly to concatenation to a select statement regardless of whether there are values.
+#'   
+#' @usage buildWhere( config = list(a='foo', b=20, c=c('one','two','three'), d = 1:9) )
+#'        buildWhere( config = list(a='foo', b=20, c=c('one','two','three'), d = 1:9), 
+#'                    other_clause = '(name = "jimmy" or name = "johnny")', 
+#'                    suffix='limit 100' )
+#' 
+#' @export
+buildWhere = function(config, other_clause=NULL, suffix=NULL) {
+  fields = names(config)
+  clauses = c()
+  for( field in fields) {
+    #print(field)
+    val = config[[field]]
+    cls = class(val)
+    if( ! cls %in% c('numeric', 'integer', 'character') ) { stop(paste(cls, 'class of values not supported')) }
+    # use the in() syntax
+    if(length(val) == 1) {
+      if(cls == 'character') {
+        newClause = paste(field, "='", val, "'", sep='')
+      } else if (cls %in% c('numeric', 'integer') ) {
+        newClause = paste(field, "=", val, sep='')
+      }
+    } else if(length(val) > 1) {
+      if(cls == 'character') {
+        newClause = paste(field, " in('", paste(val, collapse="','", sep=''), "')", sep='')
+      } else if (cls %in% c('numeric', 'integer') ) {
+        newClause = paste(field, " in(", paste(val, collapse=",", sep=''), ")", sep='')
+      }
+    } else {
+      stop(paste(field, 'has no values for constructing where clause'))
+    }
+    clauses = c(clauses, newClause)
+  }
+  if( ! is.null(other_clause) ) {
+    clauses = c(other_clause, clauses)
+  }
+  where = ''
+  #print(clauses)
+  if(length(clauses > 0)) {
+    where = paste('where', paste(clauses,collapse=' and '))
+  }
+  if( ! is.null(suffix) ) {
+    where = paste(where, suffix)
+  }
+  return(where)
+}
+
+#' @title
 #' Utility function that runs and returns an arbitrary database query
 #' 
 #' @param query a string representation of the SLQ query to be run.

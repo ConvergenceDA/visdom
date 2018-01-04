@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sam Borgeson" />
 
-<meta name="date" content="2016-10-04" />
+<meta name="date" content="2018-01-04" />
 
 <title>Feature Extraction Usage</title>
 
@@ -70,17 +70,86 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Feature Extraction Usage</h1>
 <h4 class="author"><em>Sam Borgeson</em></h4>
-<h4 class="date"><em>2016-10-04</em></h4>
+<h4 class="date"><em>2018-01-04</em></h4>
 
 
 
-<div id="running-feature-extraction-using-visdom" class="section level1">
-<h1>Running feature extraction using VISDOM</h1>
+<div id="tldr-all-of-these-are-valid-ways-to-do-feature-extraction-runs" class="section level1">
+<h1>tldr: all of these are valid ways to do feature extraction runs</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(visdom)
+
+<span class="co"># No frills basic feature run</span>
+DATA_SOURCE =<span class="st"> </span><span class="kw">TestData</span>(<span class="dt">n=</span><span class="dv">100</span>) <span class="co"># 100 fake customers with random data</span>
+run_results =<span class="st"> </span><span class="kw">iterator.iterateMeters</span>( DATA_SOURCE$<span class="kw">getIds</span>(),
+                                      <span class="dt">custFn =</span> visdom::basicFeatures, 
+                                      <span class="dt">as_df=</span>T )
+<span class="kw">head</span>(run_results)
+
+<span class="co"># Feature function that runs a piecewise regression against outside temperature, using the tou1CP model</span>
+dailyCP =<span class="st"> </span><span class="kw">DescriptorGenerator</span>(  <span class="dt">name=</span><span class="st">'tout1CP'</span>,
+                                <span class="dt">genImpl=</span>toutDailyCPGenerator,
+                                <span class="dt">subset=</span><span class="kw">list</span>(<span class="dt">all=</span><span class="st">&quot;TRUE&quot;</span>),
+                                <span class="dt">cvReps=</span><span class="dv">8</span>) <span class="co"># 1 CP</span>
+
+regressionFeaturesfn =<span class="st"> </span>function(cust,ctx,...) { <span class="co"># for future results</span>
+  result =<span class="st"> </span>dailyCP$<span class="kw">run</span>(cust, <span class="kw">as.daily.df</span>(cust))
+  out =<span class="st"> </span><span class="kw">as.list</span>(<span class="kw">t</span>(result$other))
+  <span class="kw">names</span>(out) =<span class="st"> </span><span class="kw">fixNames</span>(<span class="kw">rownames</span>(result$other), <span class="dt">prefix=</span><span class="st">'dailyCP_'</span>)
+  <span class="kw">return</span>( out )
+}
+
+<span class="co"># you can run more than one feature function at a time if they are passed as a list</span>
+fnList =<span class="st"> </span><span class="kw">c</span>(visdom::basicFeatures, regressionFeaturesfn)
+run_results3 =<span class="st"> </span><span class="kw">iterator.iterateMeters</span>( DATA_SOURCE$<span class="kw">getIds</span>(),
+                                       fnList,
+                                       <span class="dt">ctx=</span>ctx, 
+                                       <span class="dt">as_df=</span>T )
+
+<span class="co"># you can also add the function list to the execution context that VISDOM uses and tell it </span>
+<span class="co"># to look them up there under ctx$fnVector (you have to use that name)</span>
+ctx =<span class="st"> </span><span class="kw">new.env</span>( )
+ctx$fnVector=fnList
+run_results2 =<span class="st"> </span><span class="kw">iterator.iterateMeters</span>( DATA_SOURCE$<span class="kw">getIds</span>(),
+                                       iterator.callAllFromCtx,
+                                       <span class="dt">ctx=</span>ctx, 
+                                       <span class="dt">as_df=</span>T )
+
+<span class="co"># you can also run customers by zip code and only look up the related weather data once to improve speed:</span>
+<span class="kw">iterator.iterateZip</span>(  DATA_SOURCE$<span class="kw">getGeocodes</span>(),
+                      fnList,
+                      <span class="dt">ctx=</span>ctx, 
+                      <span class="dt">as_df=</span>T )
+
+<span class="co"># Or just run all meters in a single zip code</span>
+visdom::<span class="kw">iterator.runZip</span>(<span class="st">'94503'</span>, <span class="co"># just 10 for speed</span>
+                        fnList,
+                        <span class="dt">ctx=</span>ctx, <span class="dt">as_df=</span>T )
+
+<span class="co"># you can even run a single meter, using either its id or class:</span>
+<span class="kw">iterator.runMeter</span>( DATA_SOURCE$<span class="kw">getIds</span>()[<span class="dv">1</span>],
+                   fnList,
+                   <span class="dt">ctx=</span>ctx )
+
+mdc =<span class="st"> </span>DATA_SOURCE$<span class="kw">getMeterDataClass</span>(DATA_SOURCE$<span class="kw">getIds</span>()[<span class="dv">1</span>])
+<span class="kw">iterator.runMeter</span>( mdc,
+                   fnList,
+                   <span class="dt">ctx=</span>ctx )</code></pre></div>
+</div>
+<div id="details-on-running-feature-extraction-using-visdom" class="section level1">
+<h1>Details on running feature extraction using VISDOM</h1>
 <div id="load-the-module" class="section level2">
 <h2>Load the module</h2>
 <p>Load VISDOM (which loads its dependencies) and any supporting libraries your custom feature extraction code will require.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(visdom)
-<span class="kw">library</span>(plyr)</code></pre></div>
+<span class="kw">library</span>(plyr)
+<span class="kw">library</span>(acs)</code></pre></div>
+<pre><code>## Loading required package: stringr</code></pre>
+<pre><code>## Loading required package: XML</code></pre>
+<pre><code>## 
+## Attaching package: 'acs'</code></pre>
+<pre><code>## The following object is masked from 'package:base':
+## 
+##     apply</code></pre>
 </div>
 <div id="load-your-custom-data-source" class="section level2">
 <h2>Load your custom data source</h2>
@@ -107,11 +176,11 @@ peakHOD =<span class="st"> </span>function(meterData,ctx,...) {
                                 <span class="dt">genImpl=</span>toutDailyCPGenerator,
                                 <span class="dt">subset=</span><span class="kw">list</span>(<span class="dt">all=</span><span class="st">&quot;TRUE&quot;</span>),
                                 <span class="dt">cvReps=</span><span class="dv">8</span>) <span class="co"># 1 CP</span></code></pre></div>
-<p>The actual feature funciton calls <code>run()</code> in the generated descriptor, here called <code>dailyCP</code> to run the specified regression model, with optional cross-validation, etc. as specified in the call to DescriptorGenerator. The model parameters of interest are stored in the object returned by <code>run</code> under <code>other</code> values. We return these with the prefix <code>dailyCP_</code>, to distinguish them from any other model outputs we might generate from other models in the same feature run.</p>
+<p>The actual feature function calls <code>run()</code> in the generated descriptor, here called <code>dailyCP</code> to run the specified regression model, with optional cross-validation, etc. as specified in the call to DescriptorGenerator. The model parameters of interest are stored in the object returned by <code>run</code> under <code>other</code> values. We return these with the prefix <code>dailyCP_</code>, to distinguish them from any other model outputs we might generate from other models in the same feature run.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regressionFeaturesfn =<span class="st"> </span>function(cust,ctx,...) { <span class="co"># for future results</span>
-  result =<span class="st"> </span>dailyCP$<span class="kw">run</span>(cust,<span class="kw">as.daily.df</span>(cust))
+  result =<span class="st"> </span>dailyCP$<span class="kw">run</span>(cust, <span class="kw">as.daily.df</span>(cust))
   out =<span class="st"> </span><span class="kw">as.list</span>(<span class="kw">t</span>(result$other))
-  <span class="kw">names</span>(out) =<span class="st"> </span><span class="kw">fixNames</span>(<span class="kw">rownames</span>(result$other),<span class="dt">prefix=</span><span class="st">'dailyCP_'</span>)
+  <span class="kw">names</span>(out) =<span class="st"> </span><span class="kw">fixNames</span>(<span class="kw">rownames</span>(result$other), <span class="dt">prefix=</span><span class="st">'dailyCP_'</span>)
   <span class="kw">return</span>( out )
 }</code></pre></div>
 <p>Weather features can be calculated from the WeatherClass data</p>
@@ -121,7 +190,7 @@ peakHOD =<span class="st"> </span>function(meterData,ctx,...) {
   }
   wf =<span class="st"> </span>ctx$weatherFeatures[[cust$weather$geocode]]
   if( <span class="kw">is.null</span>( wf ) ) {
-    wf =<span class="st"> </span><span class="kw">as.list</span>(<span class="kw">weatherFeatures</span>(cust$weather))
+    wf =<span class="st"> </span><span class="kw">weatherFeatures</span>(cust$weather)
     wf$zip5 &lt;-<span class="st"> </span><span class="ot">NULL</span> <span class="co"># remove the zip code, which we already have</span>
     ctx$weatherFeatures[[cust$weather$geocode]] =<span class="st"> </span>wf
     <span class="kw">print</span>(<span class="st">'computed weather features'</span>)
@@ -142,10 +211,11 @@ peakHOD =<span class="st"> </span>function(meterData,ctx,...) {
 </ol>
 <p>Note that the context, here called <code>ctx</code>, is implemented as a new environment <code>new.env()</code>, which allows values to be set dynamically into the context during code execution. In technical terms, standard R lists are not mutable - a new copy is created for every modification. In other words, they are passed around by making copies of their values and changes functions make to them are not accessible to code that maintains a reference to the original. References to environments, on the other hand, do provide access to any changes made to the referenced environment.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ctx=<span class="kw">new.env</span>()
-ctx$a=<span class="st">'hi'</span>
-ctx$fnVector =<span class="st"> </span><span class="kw">c</span>(custZipfn,basicFeaturesfn,regressionFeaturesfn,weatherFeaturesfn,peakHOD)
-ctx$start.date =<span class="st"> </span><span class="kw">as.Date</span>(<span class="st">'2010-10-15'</span>)
-ctx$end.date   =<span class="st"> </span><span class="kw">as.Date</span>(<span class="st">'2011-10-15'</span>)</code></pre></div>
+ctx$fnVector =<span class="st"> </span><span class="kw">c</span>(custZipfn, basicFeatures, regressionFeaturesfn, weatherFeaturesfn, peakHOD)
+<span class="co"># note that htis is only applied if the meter data is available via ctx$RAW_DATA, rather than a direct lookup</span>
+ctx$dateFilter =<span class="st"> </span><span class="kw">list</span>(<span class="dt">DOW        =</span> <span class="dv">2</span>:<span class="dv">6</span>,
+                      <span class="dt">start.date =</span> <span class="kw">as.Date</span>(<span class="st">'2013-05-15'</span>), 
+                      <span class="dt">end.date   =</span> <span class="kw">as.Date</span>(<span class="st">'2013-10-15'</span>)    )</code></pre></div>
 </div>
 <div id="running-the-feature-extraction-itself" class="section level2">
 <h2>Running the feature extraction itself</h2>
@@ -154,128 +224,8 @@ ctx$end.date   =<span class="st"> </span><span class="kw">as.Date</span>(<span c
                                   iterator.callAllFromCtx, 
                                   <span class="dt">ctx=</span>ctx,
                                   <span class="dt">extra=</span><span class="st">'somedata'</span>)</code></pre></div>
-<pre><code>## [1] &quot;iterator.iterateMeters: 00:00:00:00.19&quot;
-## [1] &quot;  Loading meter meter_1  (1/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.39&quot;
-## [1] &quot;init: 00:00:00:00.42&quot;
-## [1] &quot;computed weather features&quot;
-## [1] &quot;features: 00:00:00:00.83&quot;
-## [1] &quot;  process meterData: 00:00:00:01.30&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:01.49&quot;
-## [1] &quot;  Loading meter meter_2  (2/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.34&quot;
-## [1] &quot;init: 00:00:00:00.36&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.35&quot;
-## [1] &quot;  process meterData: 00:00:00:00.71&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:02.20&quot;
-## [1] &quot;  Loading meter meter_3  (3/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.44&quot;
-## [1] &quot;init: 00:00:00:00.47&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.44&quot;
-## [1] &quot;  process meterData: 00:00:00:00.91&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:03.11&quot;
-## [1] &quot;  Loading meter meter_4  (4/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.41&quot;
-## [1] &quot;init: 00:00:00:00.42&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.42&quot;
-## [1] &quot;  process meterData: 00:00:00:00.84&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:03.95&quot;
-## [1] &quot;  Loading meter meter_5  (5/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.38&quot;
-## [1] &quot;init: 00:00:00:00.40&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.45&quot;
-## [1] &quot;  process meterData: 00:00:00:00.85&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:04.80&quot;
-## [1] &quot;  Loading meter meter_6  (6/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.39&quot;
-## [1] &quot;init: 00:00:00:00.39&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.41&quot;
-## [1] &quot;  process meterData: 00:00:00:00.81&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:05.61&quot;
-## [1] &quot;  Loading meter meter_7  (7/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.34&quot;
-## [1] &quot;init: 00:00:00:00.36&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.38&quot;
-## [1] &quot;  process meterData: 00:00:00:00.74&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:06.35&quot;
-## [1] &quot;  Loading meter meter_8  (8/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.34&quot;
-## [1] &quot;init: 00:00:00:00.35&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.36&quot;
-## [1] &quot;  process meterData: 00:00:00:00.71&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:07.06&quot;
-## [1] &quot;  Loading meter meter_9  (9/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.33&quot;
-## [1] &quot;init: 00:00:00:00.36&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.39&quot;
-## [1] &quot;  process meterData: 00:00:00:00.75&quot;
-## [1] &quot;iterator.iterateMeters: 00:00:00:07.81&quot;
-## [1] &quot;  Loading meter meter_10  (10/10)&quot;
-## [1] &quot;looked up geocode 94305&quot;
-## [1] &quot;Running getMeterData&quot;
-## [1] &quot;weather: 00:00:00:00.36&quot;
-## [1] &quot;init: 00:00:00:00.39&quot;
-## [1] &quot;weather features found in ctx&quot;
-## [1] &quot;features: 00:00:00:00.41&quot;
-## [1] &quot;  process meterData: 00:00:00:00.80&quot;
-## [1] &quot;10 meters: 00:00:00:08.61&quot;</code></pre>
 <p>A list of lists is returned because it is maximally flexible. Some feature functions may opt to return diagnostic, error, residual, model, etc. data that are not scalar features, but have values in diagnosing problems, testing hypotheses, etc. To boild the list of lists down to a data frame of the scalar feature values, we call the utility function <code>iterator.todf()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">runDF =<span class="st"> </span><span class="kw">iterator.todf</span>( aRunOut )</code></pre></div>
-<pre><code>## [1] &quot;Removing non-scalars&quot;
-## 
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |======                                                           |   9%
-  |                                                                       
-  |============                                                     |  18%
-  |                                                                       
-  |==================                                               |  27%
-  |                                                                       
-  |========================                                         |  36%
-  |                                                                       
-  |==============================                                   |  45%
-  |                                                                       
-  |===================================                              |  55%
-  |                                                                       
-  |=========================================                        |  64%
-  |                                                                       
-  |===============================================                  |  73%
-  |                                                                       
-  |=====================================================            |  82%
-  |                                                                       
-  |===========================================================      |  91%
-  |                                                                       
-  |=================================================================| 100%
-## [1] &quot;Running dplyr::bind_rows on the remaining data (fast)&quot;</code></pre>
-<pre><code>## Warning in rbind_all(x, .id): Unequal factor levels: coercing to character</code></pre>
-<pre><code>## [1] &quot;list of lists to data.frame: 00:00:00:00.42&quot;</code></pre>
 <p>With the feature data in hand and in a data frame, it can be cased as RData, incorporated into figures, merged with other customer- or meter-specific data or results form other feature runs, etc.</p>
 </div>
 </div>
@@ -283,27 +233,27 @@ ctx$end.date   =<span class="st"> </span><span class="kw">as.Date</span>(<span c
 <h1>Advanced topics</h1>
 <div id="exporting-your-data" class="section level2">
 <h2>Exporting your data</h2>
-<p>Once your features are computed, you may logically want to save or export them forIn <code>util-export.R</code>, there are several functions that are designed to support exports of your feature data to various useful formats.</p>
+<p>Once your features are computed, you may logically want to save or export them. In <code>util-export.R</code>, there are several functions that are designed to support exports of your feature data to various useful formats.</p>
 <div id="data-for-visdom-web" class="section level3">
 <h3>data for VISDOM-web</h3>
 <p>Feature data for VISDOM-web is exported with specific fields and naming requirements. The rules are: 1. you must include an <code>id</code> column and a <code>zip5</code> column, both of which should be text data.</p>
 <table>
 <thead>
 <tr class="header">
-<th align="left">id</th>
-<th align="left">zip5</th>
-<th align="left">all</th>
-<th align="left">other</th>
-<th align="left">features</th>
+<th>id</th>
+<th>zip5</th>
+<th>all</th>
+<th>other</th>
+<th>features</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">1</td>
-<td align="left">94610</td>
-<td align="left">all</td>
-<td align="left">your other</td>
-<td align="left">feature data</td>
+<td>1</td>
+<td>94610</td>
+<td>all</td>
+<td>your other</td>
+<td>feature data</td>
 </tr>
 </tbody>
 </table>
@@ -317,8 +267,21 @@ ctx$end.date   =<span class="st"> </span><span class="kw">as.Date</span>(<span c
 <div id="csv-export" class="section level3">
 <h3>csv export</h3>
 <p>The simplest export format compatible with VISDOM-web is csv. If you only have a single data frame of features and are not using more complicated data, like load shape encodings, it is a great way to get up and running quickly. Picking up on the feature run example we can call the util-export.R function exportData(), which will automatically clean column names and convert factors to regular strings and save the results to a csv without row names, which corrupt data when imported into VISDOM-web.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">runPlusCensusDF =<span class="st"> </span><span class="kw">mergeCensus</span>(runDF,<span class="dt">zipCol=</span><span class="st">'zip5'</span>)
-<span class="kw">exportData</span>(runPlusCensusDF,<span class="dt">name=</span><span class="st">'myFeatures'</span>,<span class="dt">format=</span><span class="st">'csv'</span>) <span class="co"># csv extension automatically added</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">runPlusCensusDF =<span class="st"> </span><span class="kw">mergeCensus</span>(runDF, <span class="dt">zipCol=</span><span class="st">'zip5'</span>)
+
+<span class="co"># csv file written to getwd() location. csv extension automatically added</span>
+<span class="kw">exportData</span>(<span class="dt">df=</span>runDF, <span class="dt">name=</span><span class="st">'myFeatures'</span>, <span class="dt">format=</span><span class="st">'csv'</span>) </code></pre></div>
+</div>
+<div id="database-export" class="section level3">
+<h3>database export</h3>
+<p>You can also save feature data to a database using a database connection with CREATE TABLE privileges. If <code>overwrite=TRUE</code>, the table will be re-written. Otherwise, the data will be appended to the table. See <code>visdom::writeDatabaseData</code> for options.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">'RMySQL'</span>)
+db_cfg_path =<span class="st"> &quot;db_connect.conf&quot;</span>
+conn =<span class="st"> </span><span class="kw">conf.dbCon</span>(<span class="kw">dbCfg</span>(db_cfg_path))
+run_cfg_path =<span class="st"> </span><span class="kw">file.path</span>(<span class="kw">system.file</span>(<span class="dt">package=</span><span class="st">&quot;visdom&quot;</span>), 
+                         <span class="st">&quot;feature_set_run_conf&quot;</span>, <span class="st">&quot;example_feature_set.conf&quot;</span>)
+<span class="co"># note datesToEpoch ensures that dates are stored as integer seconds since the epoch</span>
+<span class="kw">exportData</span>(<span class="dt">df=</span><span class="kw">datesToEpoch</span>(runDF), <span class="dt">name=</span><span class="ot">NULL</span>, <span class="dt">format=</span><span class="st">&quot;database&quot;</span>, <span class="dt">conn=</span>conn, <span class="dt">overwrite=</span><span class="ot">TRUE</span>, <span class="dt">runConfig=</span><span class="st">&quot;example_feature_set.conf&quot;</span>)</code></pre></div>
 </div>
 </div>
 <div id="parallel-processing" class="section level2">
@@ -332,9 +295,9 @@ ctx$end.date   =<span class="st"> </span><span class="kw">as.Date</span>(<span c
                   <span class="dt">.margins =</span> <span class="dv">1</span>, 
                   <span class="dt">.fun =</span> iterator.runMeter, 
                   iterator.callAllFromCtx, ctx)</code></pre></div>
-<p>where you can add the <code>.parallel=T</code> option, noting that parallel backend configuration, which uses the configuration you set up for foreach support is platform specific, better supported by Revolution R (the open version is called RRO) than standard R distributions, and you need to make decisions about multi-core vs. multi-machine parallelization. There are ample resources online addressing these issues, especially the <a href="https://cran.r-project.org/web/packages/doParallel/vignettes/gettingstartedParallel.pdf">Getting Started with doParallel and foreach pdf</a>. In general you will likely be setting up your foreach configuration by registering the doParallel backend:</p>
+<p>where you can add the <code>.parallel=T</code> option, noting that parallel backend configuration, which uses the configuration you set up for foreach support is platform specific, better supported by Revolution R (the open version is called RRO) than standard R distributions, and you need to make decisions about multi-core vs. multi-machine parallelization. There are ample resources online addressing these issues, especially the <a href="https://cran.r-project.org/web/packages/doParallel/vignettes/gettingstartedParallel.pdf">Getting Started with doParallel and foreach pdf</a>. In general you will likely be setting up your foreach configuration by registering the doParallel backend and ideally alply, etc. will handle the rest:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(doParallel)
-nCores =<span class="st"> </span><span class="dv">2</span>
+nCores =<span class="st"> </span>parallel::<span class="kw">detectCores</span>()
 <span class="kw">registerDoParallel</span>(<span class="dt">cores=</span>nCores) <span class="co"># setup parallel processing on multiple cores</span>
 aRunOut =<span class="st"> </span>plyr::<span class="kw">alply</span>(  <span class="dt">.data =</span> DATA_SOURCE$<span class="kw">getIds</span>(), 
                   <span class="dt">.margins =</span> <span class="dv">1</span>, 
@@ -342,6 +305,22 @@ aRunOut =<span class="st"> </span>plyr::<span class="kw">alply</span>(  <span cl
                   iterator.callAllFromCtx, ctx, 
                   <span class="dt">parallel=</span>T,
                   <span class="dt">.progress=</span><span class="st">'text'</span> )</code></pre></div>
+<p>However, this call has been shown to run serially for some users (i.e. no benefit from parallelization). An alternate approach using foreach is the currently recommended approach. Here we are running all the meter data for each geocode (i.e. zip code in this example) in each parallel process:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(doParallel)
+nCores =<span class="st"> </span>parallel::<span class="kw">detectCores</span>()
+<span class="kw">registerDoParallel</span>(<span class="dt">cores=</span>nCores) <span class="co"># setup parallel processing on multiple cores</span>
+zips =<span class="st"> </span>DATA_SOURCE$<span class="kw">getGeocodes</span>(<span class="dt">useCache=</span>T)
+zipRunOutParallel =<span class="st"> </span><span class="kw">foreach</span>(<span class="dt">i =</span> <span class="kw">length</span>(zips)) %dopar%<span class="st"> </span>{ 
+  zipRunOut =<span class="st"> </span><span class="kw">iterator.iterateZip</span>( <span class="dt">zipList =</span> zips[i],
+                                   <span class="dt">custFn =</span> iterator.callAllFromCtx, 
+                                   <span class="dt">cacheResults =</span> T,
+                                   <span class="dt">ctx=</span>ctx )
+  
+  <span class="kw">return</span>(zipRunOut)
+}
+
+<span class="co"># concat results</span>
+aRunOut =<span class="st"> </span><span class="kw">do.call</span>(c, zipRunOutParallel)</code></pre></div>
 <div id="alternate-1-eliminating-redundant-data-access-with-or-without-parallelization" class="section level3">
 <h3>Alternate 1 (eliminating redundant data access with or without parallelization):</h3>
 <p>Note that one performance optimization that is pretty common when processing large numbers of meters is to load weather data for one location and process all meters from that location with the weather data and all relevant meter data cached in the ctx. This can be a bigger performance boost than naively running each customer in parallel, where data access will redundantly happen over and over. In this case, you might run alply across zip codes, calling a function that loads weather data and all customer data for that zip code, places them both into the ctx and then calls alply with all the customer ids for that zipcode (the underlying code looks in the ctx for weather data and customer data). Technically, this function does not exist. The “official” support for processing customers by zip code is in <code>iterator.iterateZip</code>, which is implemented using standard for loops, but it should be pretty clear from that what to do next if you want a parallelizable version.</p>

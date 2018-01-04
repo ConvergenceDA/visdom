@@ -4,12 +4,13 @@
 \alias{iterator.callAllFromCtx}
 \title{Run feature algorithms specified in the ctx environment}
 \usage{
-iterator.callAllFromCtx(meterId, ctx, ...)
+iterator.callAllFromCtx(meterDataClass, ctx, ...)
 }
 \arguments{
-\item{meterId}{The id that the data source can use to lookup the meter data of interest.}
+\item{meterDataClass}{The \code{\link{MeterDataClass}} object that contains the data to be analyzed.}
 
-\item{ctx}{The ctx environment that configures feature runs and provides a place to store and pass data across feature function calls.}
+\item{ctx}{The ctx environment that contains the list of functions to run under the name \code{fnVector} and
+configures feature runs and provides a place to store and pass data across feature function calls.}
 
 \item{...}{Additional arguments that will be passed into the feature functions.}
 }

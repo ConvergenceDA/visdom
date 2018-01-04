@@ -4,7 +4,7 @@
 \alias{WeatherClass}
 \title{S3 class that holds and normalizes weather data}
 \usage{
-WeatherClass(geocode, doMeans = T, useCache = F, doSG = F)
+WeatherClass(geocode, raw = NULL, doMeans = T, useCache = F, doSG = F)
 }
 \arguments{
 \item{geocode}{Primary geographic locator used by the data source. This is

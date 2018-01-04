@@ -4,8 +4,8 @@
 \alias{ctree.run}
 \title{run a ctree model}
 \usage{
-ctree.run(df, fmla = NULL, sub = T, ctl = NULL, responseVar, ignoreCols,
-  ...)
+ctree.run(df, fmla = NULL, sub = NULL, ctl = NULL, responseVar,
+  ignoreCols, ...)
 }
 \arguments{
 \item{df}{data.frame with response variable to be explained and all explanatory variables to be used in ctree classificaiton}

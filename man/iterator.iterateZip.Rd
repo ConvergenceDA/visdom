@@ -4,13 +4,15 @@
 \alias{iterator.iterateZip}
 \title{Iterate over zip codes, extracting features for meters in each}
 \usage{
-iterator.iterateZip(zipList, custFn, cacheResults = FALSE, ctx = NULL,
-  clearCachedResultsFromRAM = FALSE, ...)
+iterator.iterateZip(zipList, custFn, cacheResults = FALSE, ctx = new.env(),
+  clearCachedResultsFromRAM = FALSE, as_df = FALSE, ...)
 }
 \arguments{
 \item{zipList}{List of all zip codes to iterate over}
 
-\item{custFn}{The feature function to call on \code{MeterDataClass} instances from within each zip code}
+\item{custFn}{The feature function(s) to call on \code{MeterDataClass} instances from within each zip code
+If it is a list of feature functions, the results will be \code{c()}'d together, so make sure the names of their 
+return values are unique!}
 
 \item{cacheResults}{A boolean flag that indicates whether feature results should be cached as RData. 
 If true, the cached data will be looked up prior to feature extraction to bypass running 
@@ -25,17 +27,10 @@ is in effect. This allows for larer runs to be executed and cached without accum
 that after the run, this function will be called again, with useCache=TRUE and this flag set to FALSE, which 
 will simply load and concatenate results from disk to re-create the full set.}
 
+\item{as_df}{Boolean (defaulted to FALSE) that determines whether \code{iterator.todf} is run on 
+the results before returning them.}
+
 \item{...}{Arguments to be passed into the feature function(s).}
-
-\item{zipList}{List of zip codes over which to run the feature.}
-
-\item{custFn}{The feature function(s) to call on \code{MeterDataClass} instances from within the zip code}
-
-\item{cacheResults}{A boolean flag that indicates whether results should be cached as RData. 
-If true, the cached data will be looked up prior to feature extraction to bypass running 
-features for the given zip code while returning the cached results. This can prevent duplicate processing
-and allow an interrupted batch process to resume processing where it left off.
-The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.}
 }
 \description{
 Function that iterates through all passed zip codes, looks up local weather data (once) and 

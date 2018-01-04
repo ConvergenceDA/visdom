@@ -11,17 +11,35 @@
 #' every feature function in the list found in the ctx environment under \code{fnVector}, 
 #' concatenating all the results into a single list with named values.
 #' 
-#' @param meterId The id that the data source can use to lookup the meter data of interest.
-#' @param ctx The ctx environment that configures feature runs and provides a place to store and pass data across feature function calls.
+#' @param meterDataClass The \code{\link{MeterDataClass}} object that contains the data to be analyzed.
+#' @param ctx The ctx environment that contains the list of functions to run under the name \code{fnVector} and
+#' configures feature runs and provides a place to store and pass data across feature function calls.
 #' @param ... Additional arguments that will be passed into the feature functions.
 #' 
 #' @export
-iterator.callAllFromCtx = function(meterId,ctx,...) {
+iterator.callAllFromCtx = function(meterDataClass,ctx,...) {
+  return( iterator.callAll(meterDataClass, ctx=ctx, fnList=ctx$fnVector, ... ) )
+}
+
+#' @title 
+#' Run multiple feature algorithms specified in a list of functions
+#' 
+#' @description
+#' This function passes the meterDataClass object into
+#' every feature function in the list found in the parameter \code{fnList}, 
+#' concatenating all the results into a single list with named values.
+#' 
+#' @param meterDataClass The \code{\link{MeterDataClass}} object that contains the data to be analyzed.
+#' @param ctx The ctx environment that configures feature runs and provides a place to store and pass data across feature function calls.
+#' @param fnList The list of feature extraction functions to be run against the \code{\link{MeterDataClass}}.
+#' @param ... Additional arguments that will be passed into the feature functions.
+#' 
+#' @export
+iterator.callAll = function(meterDataClass, ctx, fnList, ...) {
   out = list()
-  fnVector = ctx$fnVector
-  for(i in 1:length(fnVector)) {
-    f = fnVector[[i]]
-    out = c(out, f(meterId,ctx,...))
+  for(i in 1:length(fnList)) {
+    fn = fnList[[i]]
+    out = c(out, fn(meterDataClass,ctx,...))
   }
   return(out)
 }
@@ -129,19 +147,11 @@ iterator.rbind.scalars = function(a,b) {
 #' 
 #' @param zipList List of all zip codes to iterate over
 #' 
-#' @param custFn The feature function to call on \code{MeterDataClass} instances from within each zip code
+#' @param custFn The feature function(s) to call on \code{MeterDataClass} instances from within each zip code
+#' If it is a list of feature functions, the results will be \code{c()}'d together, so make sure the names of their 
+#' return values are unique!
 #' 
 #' @param cacheResults A boolean flag that indicates whether feature results should be cached as RData. 
-#' If true, the cached data will be looked up prior to feature extraction to bypass running 
-#' features for the given zip code while returning the cached results. This can prevent duplicate processing
-#' and allow an interrupted batch process to resume processing where it left off.
-#' The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.
-#' 
-#' @param zipList List of zip codes over which to run the feature.
-#' 
-#' @param custFn The feature function(s) to call on \code{MeterDataClass} instances from within the zip code
-#' 
-#' @param cacheResults A boolean flag that indicates whether results should be cached as RData. 
 #' If true, the cached data will be looked up prior to feature extraction to bypass running 
 #' features for the given zip code while returning the cached results. This can prevent duplicate processing
 #' and allow an interrupted batch process to resume processing where it left off.
@@ -154,10 +164,13 @@ iterator.rbind.scalars = function(a,b) {
 #' that after the run, this function will be called again, with useCache=TRUE and this flag set to FALSE, which 
 #' will simply load and concatenate results from disk to re-create the full set. 
 #' 
+#' @param as_df Boolean (defaulted to FALSE) that determines whether \code{iterator.todf} is run on 
+#' the results before returning them.
+#' 
 #' @param ... Arguments to be passed into the feature function(s).
 #' 
 #' @export
-iterator.iterateZip = function(zipList,custFn,cacheResults=FALSE,ctx=NULL,clearCachedResultsFromRAM=FALSE,...) {
+iterator.iterateZip = function(zipList, custFn, cacheResults=FALSE, ctx=new.env(), clearCachedResultsFromRAM=FALSE, as_df=FALSE, ...) {
   tic(name='zip code run')
   if(is.null(ctx)) { ctx = list() }
   out = list()
@@ -175,6 +188,7 @@ iterator.iterateZip = function(zipList,custFn,cacheResults=FALSE,ctx=NULL,clearC
   }
   gc()
   toc( name='zip code run' )
+  if(as_df) out = iterator.todf( out )
   return(out)
 }
 
@@ -190,6 +204,8 @@ iterator.iterateZip = function(zipList,custFn,cacheResults=FALSE,ctx=NULL,clearC
 #' @param zip The zip code to use for the weather, meter ids, and meter data lookups
 #' 
 #' @param custFn The feature function(s) to call on \code{MeterDataClass} instances from within the zip code
+#' If it is a list of feature functions, the results will be \code{c()}'d together, so make sure the names of their 
+#' return values are unique!
 #' 
 #' @param cacheResults A boolean flag that indicates whether results should be cached as RData. 
 #' If true, the cached data will be looked up prior to feature extraction to bypass running 
@@ -199,10 +215,13 @@ iterator.iterateZip = function(zipList,custFn,cacheResults=FALSE,ctx=NULL,clearC
 #' 
 #' @param ctx The ctx environment that configures the feature run.
 #' 
+#' @param as_df Boolean (defaulted to FALSE) that determines whether \code{iterator.todf} is run on 
+#' the results before returning them.
+#' 
 #' @param ... Arguments to be passed into the feature function(s).
 #' 
 #' @export
-iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
+iterator.runZip = function(zip,custFn,cacheResults=F,ctx=new.env(),as_df=FALSE,...) {
   featureList = NULL
   weatherFeatures = NULL
   if(is.null(ctx$weatherFeatures)) { ctx$weatherFeatures = list() }
@@ -252,7 +271,7 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
       if('factor' %in% class(zipIds)) { zipIds = as.character(zipIds) }
       print('[iterator$iterateZip] raw zip code usage data loaded')
       
-      featureList = iterator.iterateMeters(zipIds,custFn,ctx,...)
+      featureList = iterator.iterateMeters(zipIds, custFn, ctx, ...)
       toc( name='zip',prefixStr=paste('Processed',length(zipIds),'entries in zipcode',zip) )
       if(cacheResults) {
         featureList.saved = featureList
@@ -266,7 +285,12 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
       },
     finally = function() {  } )
   }
-  return(featureList)
+  if(as_df) {
+    out = iterator.todf( featureList )
+  } else {
+    out = featureList
+  }
+  return(out)
 }
 
 #' @title Run features for a single meterId
@@ -279,20 +303,26 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=NULL,...) {
 #' 
 #' @param meterId The meterId to use to instantiate a \code{MeterDataClass} object
 #' 
-#' @param custFn The feature extraction function to run on the meter data.
+#' @param custFn The feature extraction function(s) to run on the instance of \code{MeterDataClass}. 
+#' If it is a list of feature functions, the results will be \code{c()}'d together, so make sure the names of their 
+#' return values are unique!
 #' 
 #' @param ctx The ctx environment for the feature extraction.
 #' 
 #' @param ... Additional arguments to be passed to the feature extraction function.
 #'
 #' @export
-iterator.runMeter = function(meterId,custFn,ctx,...) {
-  print( paste('  Loading meter data ',meterId,sep='') )
+iterator.runMeter = function(meterId, custFn, ctx, ...) {
+  fnClass = class(custFn)
   tic(name='  process meter')
   meterData = NULL
   tryCatch(
     expr={
-      meterData = getMeterDataClass(meterId, ctx)
+      if( 'MeterDataClass' %in% class(meterId) ) {
+        meterData = meterId
+      } else {
+        meterData = getMeterDataClass(meterId, ctx)
+      }
       issues = validateRes(meterData,minDays=60) # validate function from classes-customer.R checks zeros, too few observations
 
       if(length(issues)>1) # all issues will return with an id, so > 1 indicates a problem
@@ -300,7 +330,11 @@ iterator.runMeter = function(meterId,custFn,ctx,...) {
         print(paste('  WARNING: Bad or insufficient data. Skipping:',paste(colnames(issues),collapse=', ')))
       }
       else {
-        out = custFn(meterData,ctx,...)
+        if( fnClass == 'list') {
+          out = iterator.callAll(meterData, ctx, custFn, ...)
+        } else {
+          out = custFn(meterData, ctx, ...)
+        }
         # in case id isn't already there, add it.
         out$id = meterData$id
         return( out )
@@ -329,14 +363,20 @@ iterator.runMeter = function(meterId,custFn,ctx,...) {
 #' 
 #' @param meterList The list of meterIds to use to instantiate a \code{MeterDataClass} objects
 #' 
-#' @param custFn The feature extraction function to run on each instance of \code{MeterDataClass}.
+#' @param custFn The feature extraction function to run on each instance of \code{MeterDataClass}. 
+#' Can also be a list of feature functions, whose results will be \code{c()}'d together, so make sure the names of their 
+#' return values are unique!
 #' 
 #' @param ctx The ctx environment for the feature extraction.
+#' 
+#' @param as_df Boolean (defaulted to FALSE) that determines whether \code{iterator.todf} is run on 
+#' the results before returning them.
 #' 
 #' @param ... Additional arguments to be passed to the feature extraction function.
 #'
 #' @export
-iterator.iterateMeters = function(meterList,custFn,ctx,...) {
+iterator.iterateMeters = function(meterList, custFn, ctx=new.env(), as_df=FALSE, ...) {
+  fnClass = class(custFn) # used to determine how to run the feature functions
   out = list()
   i = 1
   tic('iterator.iterateMeters')
@@ -361,7 +401,11 @@ iterator.iterateMeters = function(meterList,custFn,ctx,...) {
         }
         else {
           tic('features')
-          newFeatures = custFn(meterData,ctx,...)
+          if( fnClass == 'list') {
+            newFeatures = iterator.callAll(meterData, ctx, custFn, ...)
+          } else {
+            newFeatures = custFn(meterData, ctx, ...)
+          }
           # in case the id isn't there, add it
           newFeatures$id = meterData$id
           out[[i]] = newFeatures
@@ -383,6 +427,7 @@ iterator.iterateMeters = function(meterList,custFn,ctx,...) {
     )
   }
   toc('iterator.iterateMeters',prefixStr=paste(n,'meters'))
+  if(as_df) out = iterator.todf( out )
   return(out)
 }
 

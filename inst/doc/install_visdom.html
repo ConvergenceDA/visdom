@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sam Borgeson" />
 
-<meta name="date" content="2016-10-04" />
+<meta name="date" content="2018-01-04" />
 
 <title>Installing VISDOM</title>
 
@@ -70,13 +70,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Installing VISDOM</h1>
 <h4 class="author"><em>Sam Borgeson</em></h4>
-<h4 class="date"><em>2016-10-04</em></h4>
+<h4 class="date"><em>2018-01-04</em></h4>
 
 
 
 <div id="simplest-approach" class="section level1">
 <h1>Simplest approach</h1>
-<p>There is support in R for installing and updating packages directly from their version control repositories. If you plan to use VISDOM without altering any of its soruce code, this is the preferred method of installation.</p>
+<p>There is support in R for installing and updating packages directly from their version control repositories. If you plan to use VISDOM without altering any of its source code, this is the preferred method of installation.</p>
 <div id="install-visdom-directly-from-github-source" class="section level2">
 <h2>Install VISDOM directly from GitHub source</h2>
 <p>One useful feature of R documentation is its ability to present formatted examples of code usage and outputs, called vignettes. When installing from github, these vignettes are not built by default, largely due to their additional R module dependencies (and their runtimes in some cases). Still, it is highly recommended that you do build and refer to the vignettes. Note that any missing packages that R warns you about can likely be installed using the <code>install.packages</code> command. For example, if a package called <code>plyr</code> is not installed and you try to run code that depends on it, you will get a message like: <code>there is no package called ‘plyr’</code>. You can address this by calling <code>install.packages('plyr')</code> and repeat until your dependencies are all loading correctly.</p>
@@ -90,12 +90,12 @@ devtools::<span class="kw">install_github</span>(<span class="st">&quot;converge
 </div>
 <div id="install-visdom-directly-from-local-source" class="section level2">
 <h2>Install VISDOM directly from local source</h2>
-<p>If you are planning to read through, experiment with, or update the VISDOM source code itself, you will want a local copy of the reopsitory on your machine.</p>
+<p>If you are planning to read through, experiment with, or update the VISDOM source code itself, you will want a local copy of the repository on your machine.</p>
 <p>First ensure that you have cloned the repository into working version only your local machine, choosing one of:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cd</span> /dev
 <span class="kw">git</span> clone git@github.com:convergenceda/visdom.git
 <span class="kw">git</span> clone https://github.com/convergenceda/visdom.git</code></pre></div>
-<p>If you are working within a corporate firewall, it may be necessary to use a proxy server account to connect to GitHub. Here you will need to replace the user and pass with your usernam and password and <code>proxy.server</code> with either the name or ip address of your proxy server. The port <code>8080</code> may also be different for your specific configuration.</p>
+<p>If you are working within a corporate firewall, it may be necessary to use a proxy server account to connect to GitHub. Here you will need to replace the user and pass with your username and password and <code>proxy.server</code> with either the name or ip address of your proxy server. The port <code>8080</code> may also be different for your specific configuration.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">git</span> config --global http.proxy http://user:pass@proxy.server:8080
 <span class="kw">git</span> config --global https.proxy https://user:pass@proxy.server:8080</code></pre></div>
 <p>Then using that location as as your working directory (here we assume <code>/dev/visdom</code>), load requirements for package development and install from source.</p>

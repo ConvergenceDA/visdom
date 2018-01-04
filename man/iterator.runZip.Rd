@@ -4,12 +4,15 @@
 \alias{iterator.runZip}
 \title{Iterate over all meters in a zip code, extracting features for each in a performance optimized manner}
 \usage{
-iterator.runZip(zip, custFn, cacheResults = F, ctx = NULL, ...)
+iterator.runZip(zip, custFn, cacheResults = F, ctx = new.env(),
+  as_df = FALSE, ...)
 }
 \arguments{
 \item{zip}{The zip code to use for the weather, meter ids, and meter data lookups}
 
-\item{custFn}{The feature function(s) to call on \code{MeterDataClass} instances from within the zip code}
+\item{custFn}{The feature function(s) to call on \code{MeterDataClass} instances from within the zip code
+If it is a list of feature functions, the results will be \code{c()}'d together, so make sure the names of their 
+return values are unique!}
 
 \item{cacheResults}{A boolean flag that indicates whether results should be cached as RData. 
 If true, the cached data will be looked up prior to feature extraction to bypass running 
@@ -18,6 +21,9 @@ and allow an interrupted batch process to resume processing where it left off.
 The cache directory is `getwd()` by default, but can be overridden using `ctx$resultsCache`.}
 
 \item{ctx}{The ctx environment that configures the feature run.}
+
+\item{as_df}{Boolean (defaulted to FALSE) that determines whether \code{iterator.todf} is run on 
+the results before returning them.}
 
 \item{...}{Arguments to be passed into the feature function(s).}
 }

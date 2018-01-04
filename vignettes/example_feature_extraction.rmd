@@ -8,8 +8,71 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+#tldr: all of these are valid ways to do feature extraction runs
 
-#Running feature extraction using VISDOM
+```{r eval=FALSE}
+library(visdom)
+
+# No frills basic feature run
+DATA_SOURCE = TestData(n=100) # 100 fake customers with random data
+run_results = iterator.iterateMeters( DATA_SOURCE$getIds(),
+                                      custFn = visdom::basicFeatures, 
+                                      as_df=T )
+head(run_results)
+
+# Feature function that runs a piecewise regression against outside temperature, using the tou1CP model
+dailyCP = DescriptorGenerator(  name='tout1CP',
+                                genImpl=toutDailyCPGenerator,
+                                subset=list(all="TRUE"),
+                                cvReps=8) # 1 CP
+
+regressionFeaturesfn = function(cust,ctx,...) { # for future results
+  result = dailyCP$run(cust, as.daily.df(cust))
+  out = as.list(t(result$other))
+  names(out) = fixNames(rownames(result$other), prefix='dailyCP_')
+  return( out )
+}
+
+# you can run more than one feature function at a time if they are passed as a list
+fnList = c(visdom::basicFeatures, regressionFeaturesfn)
+run_results3 = iterator.iterateMeters( DATA_SOURCE$getIds(),
+                                       fnList,
+                                       ctx=ctx, 
+                                       as_df=T )
+
+# you can also add the function list to the execution context that VISDOM uses and tell it 
+# to look them up there under ctx$fnVector (you have to use that name)
+ctx = new.env( )
+ctx$fnVector=fnList
+run_results2 = iterator.iterateMeters( DATA_SOURCE$getIds(),
+                                       iterator.callAllFromCtx,
+                                       ctx=ctx, 
+                                       as_df=T )
+
+# you can also run customers by zip code and only look up the related weather data once to improve speed:
+iterator.iterateZip(  DATA_SOURCE$getGeocodes(),
+                      fnList,
+                      ctx=ctx, 
+                      as_df=T )
+
+# Or just run all meters in a single zip code
+visdom::iterator.runZip('94503', # just 10 for speed
+                        fnList,
+                        ctx=ctx, as_df=T )
+
+# you can even run a single meter, using either its id or class:
+iterator.runMeter( DATA_SOURCE$getIds()[1],
+                   fnList,
+                   ctx=ctx )
+
+mdc = DATA_SOURCE$getMeterDataClass(DATA_SOURCE$getIds()[1])
+iterator.runMeter( mdc,
+                   fnList,
+                   ctx=ctx )
+
+```
+
+#Details on running feature extraction using VISDOM
 
 ##Load the module
 
@@ -116,7 +179,7 @@ ctx$dateFilter = list(DOW        = 2:6,
 
 The business end of feature extraction is the call to an interator method that is passed meter ids and rules for calling feature function on meter data objects created using the passed data. This single line, runs features on every customer in the list of ids (including all of them) by using the id's to instantiate `CustomerData` objects via the `DATA_SOURCE`. This can be called during feature development and for testing with just a handful of ids (as shown here), or with hundreds of thousands for running features on rich data sets. Note that as a practical matter, the latter call (on large samples of customers) would logically be called with better support for parallel processing and error failover than the simple `iterator.iterateMeters` function provides. This call returns a list of lists of features. So the outter list is indexed by customer id and there is a named list of feature for each customer.
 
-```{r}
+```{r eval=FALSE}
 aRunOut = iterator.iterateMeters( DATA_SOURCE$getIds()[1:10], # just 10 for speed
                                   iterator.callAllFromCtx, 
                                   ctx=ctx,
@@ -125,7 +188,7 @@ aRunOut = iterator.iterateMeters( DATA_SOURCE$getIds()[1:10], # just 10 for spee
 
 A list of lists is returned because it is maximally flexible. Some feature functions may opt to return diagnostic, error, residual, model, etc. data that are not scalar features, but have values in diagnosing problems, testing hypotheses, etc. To boild the list of lists down to a data frame of the scalar feature values, we call the utility function `iterator.todf()`.
 
-```{r}
+```{r eval=FALSE}
 runDF = iterator.todf( aRunOut )
 ```
 

@@ -9,7 +9,9 @@ iterator.runMeter(meterId, custFn, ctx, ...)
 \arguments{
 \item{meterId}{The meterId to use to instantiate a \code{MeterDataClass} object}
 
-\item{custFn}{The feature extraction function to run on the meter data.}
+\item{custFn}{The feature extraction function(s) to run on the instance of \code{MeterDataClass}. 
+If it is a list of feature functions, the results will be \code{c()}'d together, so make sure the names of their 
+return values are unique!}
 
 \item{ctx}{The ctx environment for the feature extraction.}
 
