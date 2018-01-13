@@ -254,7 +254,7 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=new.env(),as_df=FALSE,.
                   weatherFeatures = weatherFeatures(ctx$weather)
                   ctx$weatherFeatures[[zip]] = weatherFeatures },
                 error = function(e) {
-                  print(paste('  WARNING: Could not load weather features for zipcode:',zip))
+                  print(paste('  WARNING: Could not run weather features for zipcode:',zip))
                   print(e)
                 })
       print('[iterator$iterateZip] weather data loaded')
@@ -280,7 +280,7 @@ iterator.runZip = function(zip,custFn,cacheResults=F,ctx=new.env(),as_df=FALSE,.
       }
     },
     error = function(e) {
-        print(paste('  WARNING: Could not load data for zipcode:',zip))
+        print(paste('  WARNING: Could not load or process data for zipcode:',zip))
         print(e)
       },
     finally = function() {  } )
@@ -343,7 +343,7 @@ iterator.runMeter = function(meterId, custFn, ctx, ...) {
     },
     error = function(e) {
       if( is.null(ctx$STOP_ON_ERROR) ) {
-        print(paste('  WARNING: Could not load meter data. Skipping:',meterId))
+        print(paste('  WARNING: Could not compute meter data features. Skipping:',meterId))
         print(e)
       } else {
         if( ctx$STOP_ON_ERROR ) {
@@ -415,7 +415,7 @@ iterator.iterateMeters = function(meterList, custFn, ctx=new.env(), as_df=FALSE,
       },
       error = function(e) {
         if( is.null(ctx$STOP_ON_ERROR) ) {
-          print(paste('  WARNING: Could not load meter data. Skipping:',meterId))
+          print(paste('  WARNING: Could not compute meter data features. Skipping:',meterId))
           print(e)
         } else {
           if( ctx$STOP_ON_ERROR ) {
