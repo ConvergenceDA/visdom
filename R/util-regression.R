@@ -642,13 +642,28 @@ changeCP = function(data,dt=2) {
   return(data)
 }
 
-# returns a matrix of length(sort(unique(membership))) columns, that is all
-# zeros except for the regressor values that match the membership values
-# corresponding to the column. This supports regression with separate
-# coefficints for each group defined by the membership
-# for example, regressor.split(Tout,dates$hour) will return a matrix with 24
-# columns, where the only non-zero entry per row contains the Tout value in
-# the column corresponding to the hour of day it was recorded
+#' @title
+#' Split a single column of values into multiple columns as determined by group membership
+#' 
+#' @description 
+#' Split a column of data by membership in discrete groups (as with factor levels) 
+#' data into multiple columns containing just the values corresponding to the membership
+#' indicator associated with the column and zeros otherwise.
+#' 
+#' @return 
+#' A matrix of length(sort(unique(membership))) columns, that is all
+#' zeros except for the regressor values that match the membership values
+#' corresponding to the column. This supports regression with separate
+#' coefficints for each group defined by the membership
+#' for example, regressor.split(Tout,dates$hour) will return a matrix with 24
+#' columns, where the only non-zero entry per row contains the Tout value in
+#' the column corresponding to the hour of day it was recorded
+#' 
+#' @param regressor The vector of data to be split
+#' 
+#' @param membership A vector of the same length as the regressor that assigns group membership categorically.
+#' If the regressor is a factor, no membership assignment is required.
+#' 
 #' @export
 regressor.split = function(regressor,membership=NULL) {
   mat <- c()
@@ -667,17 +682,32 @@ regressor.split = function(regressor,membership=NULL) {
   return(mat * regressor)
 }
 
-# break a vector out for continuous piecewise regression (i.e. the fitted
-# segments will join eachother at each end) into a matrix whose row
-# totals are the original values, but whose columns divide the value across
-# a set of bins, so 82 across bins with boundaries c(50,60,65,70,80,90)
-# becomes the row 50,10,5,5,10,2,0, which sums to 82...
-# This is very useful for finding rough change points in thermal response
-# as is expected for buildings with clear setpoints
-
-# TODO: This can create a column of zeros, which should break the regression
-# so we might need to prune the columns when we're done and keep track of
-# which bins are in play when comparing across regressions
+#' @title
+#' Break a vector into piecewise regressor columns, using the specified breaks
+#' 
+#' @description 
+#' break a vector out for continuous piecewise regression (i.e. the fitted
+#' segments will join eachother at each end) into a matrix whose row
+#' totals are the original values, but whose columns divide the value across
+#' a set of bins, so 82 across bins with boundaries c(50,60,65,70,80,90)
+#' becomes the row 50,10,5,5,10,2,0, which sums to 82...
+#' This is very useful for finding rough change points in thermal response
+#' as is expected for buildings with clear setpoints
+#' 
+#' @param regressor The single array of regressor values to be broken out into piecewise columns.
+#' 
+#' @param bins - numerical arry whose values are the break points defining the piecewise regressors
+#' 
+#' @param diverge - Defautl FALSE: Whether the first column contains the distance of
+#' the value from the bottom change point (rather than from 0)
+#'
+#' @details
+#' TODO: This can create a column of zeros, which should break the regression
+#' so we might need to prune the columns when we're done and keep track of
+#' which bins are in play when comparing across regressions
+#' 
+#' @seealso \code{\link{piecewise.regressor}} for 'apply' syntax
+#'
 #' @export
 regressor.piecewise = function(regressor,bins,diverge=F) {
   if(any(is.na(bins))) return(as.matrix(regressor)) # if bins itself is NA or any of its values are NA, return the original data
@@ -706,7 +736,36 @@ regressor.piecewise = function(regressor,bins,diverge=F) {
   return(mat)
 }
 
-# convienience function putting the bins first for apply style calls...
+#' @title
+#' Break a vector into piecewise regressor columns, using the specified breaks (aka bins)
+#' 
+#' @description 
+#' convienience reordering of \code{\link{regressor.piecewise}} putting the bins first for apply style calls...
+#' 
+#' break a vector out for continuous piecewise regression (i.e. the fitted
+#' segments will join eachother at each end) into a matrix whose row
+#' totals are the original values, but whose columns divide the value across
+#' a set of bins, so 82 across bins with boundaries c(50,60,65,70,80,90)
+#' becomes the row 50,10,5,5,10,2,0, which sums to 82...
+#' This is very useful for finding rough change points in thermal response
+#' as is expected for buildings with clear setpoints
+#' 
+#' @param bins - numerical arry whose values are the break points defining the piecewise regressors
+#'
+#' @param regressor The single array of regressor values to be broken out into piecewise columns.
+#' 
+#' @param diverge - Defautl FALSE: Whether the first column contains the distance of
+#' the value from the bottom change point (rather than from 0)
+#'
+#' @details
+#' This can be used in an \code{apply} setting to run a parametric grid search of break points.
+#' 
+#' TODO: This can create a column of zeros, which should break the regression
+#' so we might need to prune the columns when we're done and keep track of
+#' which bins are in play when comparing across regressions
+#' 
+#' @seealso \code{\link{regressor.piecewise}} for 'normal' syntax
+#'
 #' @export
 piecewise.regressor = function(bins,regressor,...) return(regressor.piecewise(regressor, bins,...))
 
@@ -715,8 +774,15 @@ piecewise.regressor = function(bins,regressor,...) return(regressor.piecewise(re
 library(timeDate)
 hdays = as.Date(holidayNYSE(2008:2011))
 
-# Given a MeterDataClass instance (meterData), regressorDF returns a data.frame consisting of a standard set of
-# regressor columns suitable for passing into a call to lm.
+#' @title
+#' data.frame formatting of \code{\link{MeterDataClass}} data
+#' 
+#' @description 
+#' Given a MeterDataClass instance (meterData), regressorDF returns a data.frame consisting of a standard set of
+#' regressor columns suitable for passing into a call to lm.
+#' 
+#' @param meterData The meter data class to be converted
+#' 
 #' @export
 regressorDF = function(meterData,norm=FALSE,rm.na=FALSE) {
   wday       = meterData$dates$wday
