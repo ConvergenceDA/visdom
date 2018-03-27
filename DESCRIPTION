@@ -37,7 +37,6 @@ Imports:
     solaR,
     gridExtra,
     party,
-    partykit,
     testthat,
     properties,
     digest,
@@ -48,6 +47,7 @@ Imports:
 Remotes: github::josiahjohnston/acs
 Suggests:
     foreach,
+    partykit,
     doParallel,
     foreign,
     knitr,
