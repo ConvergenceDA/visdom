@@ -20,6 +20,8 @@ fixNames = function(df,prefix='') {
     nms = names(df)
   } else if ('character' %in% class(df) ) {
     nms = df
+  } else if ('factor' %in% class(df) ) {
+    nms = levels(df)
   } else {
     stop(paste("Unrecognized class.", class(df),"Can't figure out names to be fixed"))
   }
