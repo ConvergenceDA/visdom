@@ -234,8 +234,26 @@ MeterDataClass = function(id,geocode=NULL,weather=NULL,data=NULL,gasData=NULL,us
   return(obj)
 }
 
+# if the passed value is unassigned, assign it from the passed context.
+# If that doesn't work use the provided default.
+default_from_ctx = function( value, name, ctx=NULL, default=NULL ) {
+  if( is.null(value) ) {
+    value = default
+    if( ! is.null(ctx) ) {
+      if( exists(name, envir = ctx) ) {
+        value = get( name, envir = ctx)
+      }
+    }
+  }
+  return(value)
+}
+
 #' @export
-validateRes = function(r,minDays=180,minKwMean=0.110,maxZeroPct=0.15) {
+validateRes = function(r, minDays=NULL, minKwMean=NULL, maxZeroPct=NULL, ctx=NULL) {
+  minDays    = default_from_ctx(minDays,    name='validate.minDays',    ctx=ctx, default=180)
+  minKwMean  = default_from_ctx(minKwMean,  name='validate.minKwMean',  ctx=ctx, default=0.110)
+  maxZeroPct = default_from_ctx(maxZeroPct, name='validate.maxZeroPct', ctx=ctx, default=0.15)
+
   issues = data.frame(id=r$id)
   #timeDiffs = diff(r$dates)
   #units(timeDiffs) <- "hours"
@@ -247,7 +265,7 @@ validateRes = function(r,minDays=180,minKwMean=0.110,maxZeroPct=0.15) {
   if( dayCount < minDays)     issues[paste('days',minDays,sep='')]= dayCount # less than 180 days (could be non-consecutive)
   #if( span < 270 )           issues$span270    = span # spanning less than 270 days total
   #if( maxtd > 60 )           issues$bigdiff    = maxtd # more than 2 months of missing data
-  if( kwmean < minKwMean )    issues$lowmean    = kwmean # mean less than 110W is almost always empty or bad readings
+  if( kwmean < minKwMean )    issues$lowmean    = kwmean # mean less than 180W is almost always empty or bad readings
   if( zerospct > maxZeroPct ) issues[paste('zerospct',maxZeroPct,sep='')] = zerospct # over 15% of readings are zero
   return(issues)
 }

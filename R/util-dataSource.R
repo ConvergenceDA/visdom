@@ -146,7 +146,7 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
   
   # data frame of all weather data for a given geo code location
   print('Running getWeather() - loads weather data assocaited with an optional geo code, or all available weather data when geo code is not specified.')
-  geoWeatherData = DATA_SOURCE$getWeather(geocode = geos[1], useCache = useCache)
+  geoWeatherData = DATA_SOURCE$getWeatherData(geocode = geos[1], useCache = useCache)
   
   sanityCheckWeatherDataDF( geoWeatherData )
   
@@ -206,7 +206,7 @@ sanityCheckDataSource = function(DATA_SOURCE, useCache=FALSE) {
     i = i+1
     print(paste('Working on weather for',geo,'(',i,'/',n,')'))
     tic('geo load')
-    geoData = DATA_SOURCE$getWeather(geocode = geo,useCache = useCache)
+    geoData = DATA_SOURCE$getWeatherData(geocode = geo,useCache = useCache)
     print(paste(nrow(geoData),'weather observations.'))
     toc('geo load')
   }

@@ -89,6 +89,25 @@ iterator.todf = function(lofl) {
 }
 
 #' @title 
+#' Flatten valudation error data returned by iterator functions into a \code{data.frame}.
+#' 
+#' @description
+#' Itertor functions like \code{iterator.iterateMeters} return lists of lists of derived features indexed by meterIds. 
+#' This function flattens any valudation errors in these lists into data.frame, with one row per meterId and columns for every validation error found.
+#' 
+#' @param lofl The list of lists for feature results that should be flattened into a single valudation summary data frame, with one row per meterId.
+#' 
+#' @details 
+#' 
+#' This funtion relies on the validation logic storing validation errors in a data frame under the name "issues" 
+#' in the returned list of features for each customer.
+#' 
+#' @export
+iterator.issues.todf = function(lofl) {
+  do.call(what = plyr::rbind.fill, args = plyr::llply(lofl, .fun=function(x) x$ISSUES ) )
+}
+
+#' @title 
 #' Optimize single meter lookup in a data.frame containing many meters
 #' 
 #' @description
@@ -316,43 +335,47 @@ iterator.runMeter = function(meterId, custFn, ctx, ...) {
   fnClass = class(custFn)
   tic(name='  process meter')
   meterData = NULL
-  tryCatch(
+  result = tryCatch(
     expr={
       if( 'MeterDataClass' %in% class(meterId) ) {
         meterData = meterId
       } else {
         meterData = getMeterDataClass(meterId, ctx)
       }
-      issues = validateRes(meterData,minDays=60) # validate function from classes-customer.R checks zeros, too few observations
+      issues = validateRes(meterData,minDays=60, ctx=ctx) # validate function from classes-customer.R checks zeros, too few observations
 
       if(length(issues)>1) # all issues will return with an id, so > 1 indicates a problem
       {
-        print(paste('  WARNING: Bad or insufficient data. Skipping:',paste(colnames(issues),collapse=', ')))
+        print(paste('  WARNING: Failed validation: ',paste(colnames(issues),collapse=', ')))
+        result = list(ISSUES = issues)
       }
       else {
         if( fnClass == 'list') {
-          out = iterator.callAll(meterData, ctx, custFn, ...)
+          result = iterator.callAll(meterData, ctx, custFn, ...)
         } else {
-          out = custFn(meterData, ctx, ...)
+          result = custFn(meterData, ctx, ...)
         }
         # in case id isn't already there, add it.
-        out$id = meterData$id
-        return( out )
+        result$id = meterData$id
         toc(name='  process meter')
       }
+      result
     },
     error = function(e) {
+      msg = capture.output( { print(conditionMessage(e)) } )
+      result = list(ISSUES=data.frame(id=meterId, error=msg ) )
       if( is.null(ctx$STOP_ON_ERROR) ) {
         print(paste('  WARNING: Could not compute meter data features. Skipping:',meterId))
         print(e)
+        return(result)
       } else {
         if( ctx$STOP_ON_ERROR ) {
           stop(e)
         }
       }
-    },
-    finally = function() { return(NA) }
+    }
   )
+  return(result)
 }
 
 #' @title Run features for a list of meter ids
@@ -378,26 +401,27 @@ iterator.runMeter = function(meterId, custFn, ctx, ...) {
 iterator.iterateMeters = function(meterList, custFn, ctx=new.env(), as_df=FALSE, ...) {
   fnClass = class(custFn) # used to determine how to run the feature functions
   out = list()
-  i = 1
+  i = 0
   tic('iterator.iterateMeters')
   n = length(meterList)
   for (meterId in meterList) {
+    i = i + 1
     toc('iterator.iterateMeters')
     print( paste('  Loading meter ',meterId, ' ', ctx$zip,' (',i,'/',n,')',sep='') )
-    i = i + 1
+    
 
     tic(name='  process meterData')
     meterData = NULL
-    tryCatch(
+    result = tryCatch(
       expr={
         meterData = getMeterDataClass(meterId, ctx)
         #toc(name='  process meterData',prefixStr='getMeterDataClass')
-        issues = validateRes(meterData,minDays=60) # validate function from classes-customer.R checks zeros, too few observations
+        issues = validateRes(meterData,minDays=60, ctx=ctx) # validate function from classes-customer.R checks zeros, too few observations
 
         if(length(issues)>1) # all issues will return with an id, so > 1 indicates a problem
         {
-
           print(paste('  WARNING: Bad or insufficient data. Skipping:',paste(colnames(issues),collapse=', ')))
+          result = list(ISSUES=issues)
         }
         else {
           tic('features')
@@ -408,15 +432,19 @@ iterator.iterateMeters = function(meterList, custFn, ctx=new.env(), as_df=FALSE,
           }
           # in case the id isn't there, add it
           newFeatures$id = meterData$id
-          out[[i]] = newFeatures
+          result = newFeatures
           toc('features')
           toc(name='  process meterData')
         }
+        result
       },
       error = function(e) {
+        msg = capture.output( { print(conditionMessage(e)) } )
+        res = list(ISSUES=data.frame(id=meterId, error=msg ) )
         if( is.null(ctx$STOP_ON_ERROR) ) {
           print(paste('  WARNING: Could not compute meter data features. Skipping:',meterId))
           print(e)
+          return(res)
         } else {
           if( ctx$STOP_ON_ERROR ) {
             traceback(2)
@@ -425,6 +453,7 @@ iterator.iterateMeters = function(meterList, custFn, ctx=new.env(), as_df=FALSE,
         }
       }
     )
+    out[[i]] = result
   }
   toc('iterator.iterateMeters',prefixStr=paste(n,'meters'))
   if(as_df) out = iterator.todf( out )
