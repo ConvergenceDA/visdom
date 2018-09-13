@@ -34,6 +34,7 @@ regressionFeaturesfn = function(cust,ctx,...) { # for future results
 }
 
 # you can run more than one feature function at a time if they are passed as a list
+ctx = new.env( )
 fnList = c(visdom::basicFeatures, regressionFeaturesfn)
 run_results3 = iterator.iterateMeters( DATA_SOURCE$getIds(),
                                        fnList,
